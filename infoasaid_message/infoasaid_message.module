@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Infoasaid Message feature.
+ */
+
+include_once('infoasaid_message.features.inc');

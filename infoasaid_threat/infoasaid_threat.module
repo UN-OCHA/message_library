@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Infoasaid - Threat feature.
+ */
+
+include_once('infoasaid_threat.features.inc');

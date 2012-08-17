@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Infoasaid - FAQ feature.
+ */
+
+include_once('infoasaid_faq.features.inc');

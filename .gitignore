@@ -1,0 +1,24 @@
+# Eclipse specific
+.buildpath
+.project
+.metadata
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# OSX specific
+.DS_Store
+# Thumbnails
+._*
+.Spotlight-V100
+.Trashes
+
+# Textmate specific
+*.tmproj
+*.tmproject
+tmtags
