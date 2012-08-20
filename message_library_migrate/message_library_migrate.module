@@ -51,78 +51,99 @@ function message_library_register_migrations() {
   // required arguments. Note that in Drupal 6 vocabularies did not have machine
   // names, so we use the vocabulary ID to uniquely identify them.
   $vocabulary_arguments = array(
-      // ------- Message --------------------------
-      // ------------------------------------------
-      // At Risk Groups (vid - 2)
-      array('description' => t('Migration of term [At Risk Groups]'),
-          'machine_name' => 'TermAtRiskGroups',
-          'source_vocabulary' => '2',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'at_risk_groups',),
-      // Target Audience (vid - 1)
-      array('description' => t('Migration of term [Target Audience]'),
-          'machine_name' => 'TermTargetAudience',
-          'source_vocabulary' => '1',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'target_audience',),
-      // Sensitivity (vid - 17)
-      array('description' => t('Migration of term [Sensitivity]'),
-          'machine_name' => 'TermSensitivity',
-          'source_vocabulary' => '17',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'sensitivity',),
-      // Information Type (vid - 14)
-      array('description' => t('Migration of term [Information Type]'),
-          'machine_name' => 'TermInformationType',
-          'source_vocabulary' => '14',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'information_type',),
-      // ------- Threat ---------------------------
-      // ------------------------------------------
-      // Hazard (vid - 11)
-      array('description' => t('Migration of term [Hazard]'),
-          'machine_name' => 'TermHazard', 'source_vocabulary' => '11',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'hazard',),
-      // Issues (vid - 12)
-      array('description' => t('Migration of term [Issues]'),
-          'machine_name' => 'TermIssues', 'source_vocabulary' => '12',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'issues',),
-      // Sector (vid - 3)
-      array('description' => t('Migration of term [Sector]'),
-          'machine_name' => 'TermSector', 'source_vocabulary' => '3',
-          // D6 Vocabulary ID
-          'destination_vocabulary' => 'sector',),);
+    // ------- Message --------------------------
+    // ------------------------------------------
+    // At Risk Groups (vid - 2)
+    array('description' => t('Migration of term [At Risk Groups]'),
+      'machine_name' => 'TermAtRiskGroups',
+      'source_vocabulary' => '2',
+      'destination_vocabulary' => 'at_risk_groups',
+    ),
+
+    // Target Audience (vid - 1)
+    array('description' => t('Migration of term [Target Audience]'),
+      'machine_name' => 'TermTargetAudience',
+      'source_vocabulary' => '1',
+      'destination_vocabulary' => 'target_audience'
+    ),
+
+    // Sensitivity (vid - 17)
+    array('description' => t('Migration of term [Sensitivity]'),
+      'machine_name' => 'TermSensitivity',
+      'source_vocabulary' => '17',
+      'destination_vocabulary' => 'sensitivity'
+    ),
+
+    // Information Type (vid - 14)
+    array('description' => t('Migration of term [Information Type]'),
+      'machine_name' => 'TermInformationType',
+      'source_vocabulary' => '14',
+      'destination_vocabulary' => 'information_type'
+    ),
+
+    // ------- Threat ---------------------------
+    // ------------------------------------------
+    // Hazard (vid - 11)
+    array('description' => t('Migration of term [Hazard]'),
+      'machine_name' => 'TermHazard', 'source_vocabulary' => '11',
+      'destination_vocabulary' => 'hazard'
+    ),
+
+    // Issues (vid - 12)
+    array('description' => t('Migration of term [Issues]'),
+      'machine_name' => 'TermIssues', 'source_vocabulary' => '12',
+      'destination_vocabulary' => 'issues'
+    ),
+
+    // Sector (vid - 3)
+    array('description' => t('Migration of term [Sector]'),
+      'machine_name' => 'TermSector', 'source_vocabulary' => '3',
+      'destination_vocabulary' => 'sector'
+    )
+  );
+
   // Again, we're using the migrate_d2d class directly.
   // The soft dependency says that while we don't have to run the user migration
   // first, we want to make sure it's listed first so the vocubularies are
   // listed right ahead of the node migrations.
   $common_vocabulary_arguments = $common_arguments
-      + array('class_name' => 'DrupalTerm6Migration',);
+      + array('class_name' => 'DrupalTerm6Migration');
+
   foreach ($vocabulary_arguments as $arguments) {
     $arguments += $common_vocabulary_arguments;
-    Migration::registerMigration($arguments['class_name'],
-        $arguments['machine_name'], $arguments);
+    Migration::registerMigration(
+      $arguments['class_name'],
+      $arguments['machine_name'],
+      $arguments
+    );
   }
+
+
   /* Content Migration
    * ------------------------------------------------------------------------*/
   // Node migrations - each has its own class derived from the migrate_d2d class,
   // specifying its particular field mappings and transformations. source_type
   // and destination_type are required arguments.
   $node_arguments = array(
-      // Message
-      array('machine_name' => 'NodeMessageMigration',
-          'class_name' => 'InfoasaidNodeMessageMigration',
-          'description' => t('Migration of [Message] nodes from Drupal 6'),
-          'source_type' => 'message', 'destination_type' => 'message',));
+    // Message
+    array(
+      'machine_name' => 'NodeMessageMigration',
+      'class_name' => 'InfoasaidNodeMessageMigration',
+      'description' => t('Migration of [Message] nodes from Drupal 6'),
+      'source_type' => 'message', 'destination_type' => 'message'
+    )
+  );
+
   // Tell the node migrations where the users are coming from, so they can
   // set up the dependency and resolve D6->D7 uids.
   $common_node_arguments = $common_arguments + array();
   foreach ($node_arguments as $arguments) {
     $arguments = array_merge_recursive($arguments, $common_node_arguments);
-    Migration::registerMigration($arguments['class_name'],
-        $arguments['machine_name'], $arguments);
+    Migration::registerMigration(
+      $arguments['class_name'],
+      $arguments['machine_name'],
+      $arguments
+    );
   }
 }
 
@@ -130,7 +151,6 @@ function message_library_register_migrations() {
  * Custom class for migrating the content - Guide
  */
 class InfoasaidNodeGuideMigration extends DrupalNode6Migration {
-
   public function __construct(array $arguments) {
   }
 }
@@ -139,7 +159,6 @@ class InfoasaidNodeGuideMigration extends DrupalNode6Migration {
  * Integration for the content type - 'Message'
  */
 class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
-
   public function __construct(array $arguments) {
     parent::__construct($arguments);
   }
