@@ -1,0 +1,11 @@
+name = Message Library Migrate
+description = Provide some testing data for Message Library
+core = 7.x
+package = Features
+version = 7.x-1.0-dev
+project = message_library_migrate
+features[features_api][] = api:1
+dependencies[] = migrate
+dependencies[] = migrate_ui
+dependencies[] = migrate_extras
+dependencies[] = migrate_d2d
