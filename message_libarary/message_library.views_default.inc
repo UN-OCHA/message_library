@@ -9,6 +9,7 @@
  */
 function message_library_views_default_views() {
   $export = array();
+
   $view = new view;
   $view->name = 'message_library';
   $view->description = '';
@@ -18,6 +19,7 @@ function message_library_views_default_views() {
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['access']['type'] = 'perm';
@@ -36,8 +38,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
   $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
   $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display
-      ->display_options['fields']['title']['alter']['word_boundary'] = 0;
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 0;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 0;
   $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
   $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
@@ -57,9 +58,19 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  $translatables['message_library'] = array(t('Master'), t('more'), t('Apply'),
-      t('Reset'), t('Sort by'), t('Asc'), t('Desc'), t('Items per page'),
-      t('- All -'), t('Offset'),);
+  $translatables['message_library'] = array(
+    t('Master'),
+    t('more'),
+    t('Apply'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+  );
   $export['message_library'] = $view;
+
   return $export;
 }
