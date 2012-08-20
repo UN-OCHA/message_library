@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Infoasaid - Research feature.
- */
-
-include_once('infoasaid_research.features.inc');

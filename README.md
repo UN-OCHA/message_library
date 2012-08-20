@@ -227,9 +227,9 @@ This is a content view, for content type *Message*. Page path is : `/message-lib
 **(2) Several links here:**
 
 - Clicking on the result in column threat will to the path like
-	> `/message-library/children-stop-going-school`
+  > `/message-library/children-stop-going-school`
 - Clicking on a item in the column **Information requirment** will redirect to a absoluteoslute path like
-	> `http://infoasaidorg6_dev.local/message-library/children-stop-going-school#3802`
+  > `http://infoasaidorg6_dev.local/message-library/children-stop-going-school#3802`
 
 
 **(3) Exposed filters on this display:**
@@ -343,18 +343,18 @@ This module is responsible for:
 
 ~~~
 <form id="iaa_notices_warning_cgi" action="<?php echo url("cgi-message-library/accepted"); ?>">
-	<input type="hidden" id="iaa_notices_warning_cgi_destination" value="<?php echo $_GET['destination']; ?>" name="destination" />
-	<div class="iaa_notices_warning_cgi_text">
-	    <!--This node is a page node, nid is 6709 -->
-		<?php echo $node->body; ?>
-	</div>
-	<div class="iaa_notices_warning_cgi_button">
-		<input type="checkbox" name="understand" id="iaa_notices_warning_cgi_understand" value="1" /> <?php echo t("I accept"); ?><br />
-		<?php if (!user_is_logged_in()) : ?>
-			<input type="checkbox" name="login" id="iaa_notices_warning_cgi_login" value="1" /> <?php echo t("I want to register"); ?><br />
-		<?php endif; ?>
-	</div>
-	<input type="submit" value="<?php echo t("GO"); ?>" id="iaa_notices_warning_cgi_submit" />
+  <input type="hidden" id="iaa_notices_warning_cgi_destination" value="<?php echo $_GET['destination']; ?>" name="destination" />
+  <div class="iaa_notices_warning_cgi_text">
+      <!--This node is a page node, nid is 6709 -->
+    <?php echo $node->body; ?>
+  </div>
+  <div class="iaa_notices_warning_cgi_button">
+    <input type="checkbox" name="understand" id="iaa_notices_warning_cgi_understand" value="1" /> <?php echo t("I accept"); ?><br />
+    <?php if (!user_is_logged_in()) : ?>
+      <input type="checkbox" name="login" id="iaa_notices_warning_cgi_login" value="1" /> <?php echo t("I want to register"); ?><br />
+    <?php endif; ?>
+  </div>
+  <input type="submit" value="<?php echo t("GO"); ?>" id="iaa_notices_warning_cgi_submit" />
 </form>
 ~~~
 
@@ -363,14 +363,14 @@ If the user choose *I want to register*, then a popup form is displayed. This is
 
 ~~~
 <div id="iaa_notices_warning_form_login">
-	<div class="">
-		<?php
-			echo drupal_get_form('iaa_notices_warning_login_block');
-		?>
-	</div>
-	<div class="">
-		<button class="_iaa_notices_warning_form_login_no_account"><?php echo t("I haven't an account"); ?></button>
-	</div>
+  <div class="">
+    <?php
+      echo drupal_get_form('iaa_notices_warning_login_block');
+    ?>
+  </div>
+  <div class="">
+    <button class="_iaa_notices_warning_form_login_no_account"><?php echo t("I haven't an account"); ?></button>
+  </div>
 </div>
 ~~~
 
@@ -532,7 +532,7 @@ This allows the admin to edit the help message in the message library.
 
 ### 4.8 VIEWS IAA Issues (views_iaa_issues)
 
- 
+
 ### 4.9 Prev/Next IAA (prev_next_iaa)
 Table `prev_next_iaa_node` was installed by this module.
 
@@ -540,10 +540,33 @@ Table `prev_next_iaa_node` was installed by this module.
 ### 4.10 Prev/Next IAA for Views (prev_next_iaa_views)
 
 
-## 5. Relevant views
+## 5. Notes
 
-### 5.1 
+Qutoted from [this discussion](http://atrium.wiredcraft.com/internews/node/4681#comment-6286) in atrium:
 
+> We are dropping the Message Bundle features for now. This means that we won't
+use the Hazard taxonomy anymore (I'll hide it in the message forms and body
+via CSS on the live site) and that they will disappear from the Message Library
+home page as well (again via CSS).
+
+> The field name 'hazard' needs to be removed in section 1.2. (as per our discussion today) and in section 2.1 [JM: I will hide the field myself on the live site as its not in the scope of Wiredcraft's mission. WiredCraft please implement the field but hide it via CSS on the slave instance]
+> In section 2.2 Issues, please remove 2338 - CCCM Natural disaster [JM: This should be done by you on the live site as it is Content related, I can show you how to do it in Loic's absence]
+> In section 2.3 Sector, CCCM needs to be added [JM: Same as this is content]
+> IN section 3.1.1 (3) 'hazard' needs to be removed [JM: I'm taking care of this on the live site. WiredCraft, same thing, please implement it but hide it]
+> IN section 3.1.3 - 'Bundle page' needs to be removed [JM: Again, I'll deal with the live site and WireCraft can implement but hide]
+> In section 4.1 Search highlight - the cluster person for Mine risk education told me that when he does a search for Mine risk education messages, several WASH messages are listed because the word 'risk' is in the message. Can anything be done about this? [JM: Miranda, this is a question for Loic].
+> Here are my comments. In general the main components of the Message Library have been captured but there are a number of customization that didn't make it into the list which I'll try to list here:
+
+> Please note that the Disclaimer feature (and its editable text) are also part of the Message Library : http://www.infoasaid.org/cgi-message-library?destination=%2Fmessage-library
+> Please note that there are PDF generation and RTF generation features (Download and email) that allow to export the whole library, current searches or individual messages.
+> Please note there is a feature allowing administrators to change inline the text of the Help that is displayed when clicking on the blue I icons.
+> Please note that in the Advanced search, there is a toggle link "Sectors/Alphabetically" that allows to display different taxonomies.
+> Please note that in search results there is a feature that not only highlights results for the current search but also allow to browse through next and previous results inside the same Threat or across different Threats (you can test by searching for "Injury" clicking on the first result, then click on the link "Next highlight message" repeatedly which will then take you to another Threat once all the Messages that contain the search term on the same page have been viewed - with an anchor.
+> Please note that some messages have a sensitivity field which triggers a custom behavior that you can see here (http://www.infoasaid.org/message-library/explosive-remnants-war on "Advice on prevention for young children" for a message marked as Sensitive, or here http://www.infoasaid.org/message-library/gbv on "Where to go for advice / treatment for rape" for very sensitive messages).
+> Given the absence of documentation it could be that there are other aspects that I'm missing but to make sure everything is covered thoroughly I recommend going through:
+
+> the custom modules that are in sites/infoasaid.org/modules/infoasaid/ to check what is related to the Message Library.
+> the original request for quotation which described the featured that were developed during Lot 1 of our Phase II beta development phase.
 
 
 

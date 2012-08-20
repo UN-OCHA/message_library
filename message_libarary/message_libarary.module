@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Message Libarary feature.
+ */
+
+include_once 'message_libarary.features.inc';

@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Infoasaid - AAR feature.
- */
-
-include_once('infoasaid_aar.features.inc');
