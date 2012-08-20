@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * message_libarary.features.user_permission.inc
+ * message_library.features.user_permission.inc
  */
 
 /**
  * Implements hook_user_default_permissions().
  */
-function message_libarary_user_default_permissions() {
+function message_library_user_default_permissions() {
   $permissions = array();
 
   // Exported permission: create message content.
@@ -52,6 +52,13 @@ function message_libarary_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: delete terms in 17.
+  $permissions['delete terms in 17'] = array(
+    'name' => 'delete terms in 17',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
   // Exported permission: delete terms in 18.
   $permissions['delete terms in 18'] = array(
     'name' => 'delete terms in 18',
@@ -69,6 +76,13 @@ function message_libarary_user_default_permissions() {
   // Exported permission: delete terms in 20.
   $permissions['delete terms in 20'] = array(
     'name' => 'delete terms in 20',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
+  // Exported permission: delete terms in 21.
+  $permissions['delete terms in 21'] = array(
+    'name' => 'delete terms in 21',
     'roles' => array(),
     'module' => 'taxonomy',
   );
@@ -101,6 +115,13 @@ function message_libarary_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: edit terms in 17.
+  $permissions['edit terms in 17'] = array(
+    'name' => 'edit terms in 17',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
   // Exported permission: edit terms in 18.
   $permissions['edit terms in 18'] = array(
     'name' => 'edit terms in 18',
@@ -111,6 +132,13 @@ function message_libarary_user_default_permissions() {
   // Exported permission: edit terms in 19.
   $permissions['edit terms in 19'] = array(
     'name' => 'edit terms in 19',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
+  // Exported permission: edit terms in 2.
+  $permissions['edit terms in 2'] = array(
+    'name' => 'edit terms in 2',
     'roles' => array(),
     'module' => 'taxonomy',
   );

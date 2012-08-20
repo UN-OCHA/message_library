@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * message_libarary.strongarm.inc
+ * message_library.strongarm.inc
  */
 
 /**
  * Implements hook_strongarm().
  */
-function message_libarary_strongarm() {
+function message_library_strongarm() {
   $export = array();
 
   $strongarm = new stdClass();

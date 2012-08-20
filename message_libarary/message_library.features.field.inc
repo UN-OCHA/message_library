@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * message_libarary.features.field.inc
+ * message_library.features.field.inc
  */
 
 /**
  * Implements hook_field_default_fields().
  */
-function message_libarary_field_default_fields() {
+function message_library_field_default_fields() {
   $fields = array();
 
   // Exported field: 'node-message-field_alert_quesiton'.

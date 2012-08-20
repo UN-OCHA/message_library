@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * message_libarary.features.inc
+ * message_library.features.inc
  */
 
 /**
  * Implements hook_ctools_plugin_api().
  */
-function message_libarary_ctools_plugin_api() {
+function message_library_ctools_plugin_api() {
   list($module, $api) = func_get_args();
   if ($module == "strongarm" && $api == "strongarm") {
     return array("version" => "1");
@@ -15,9 +15,16 @@ function message_libarary_ctools_plugin_api() {
 }
 
 /**
+ * Implements hook_views_api().
+ */
+function message_library_views_api() {
+  return array("version" => "3.0");
+}
+
+/**
  * Implements hook_node_info().
  */
-function message_libarary_node_info() {
+function message_library_node_info() {
   $items = array(
     'message' => array(
       'name' => t('Message'),

@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * message_libarary.features.taxonomy.inc
+ * message_library.features.taxonomy.inc
  */
 
 /**
  * Implements hook_taxonomy_default_vocabularies().
  */
-function message_libarary_taxonomy_default_vocabularies() {
+function message_library_taxonomy_default_vocabularies() {
   return array(
     'at_risk_groups' => array(
       'name' => 'At Risk Groups',
