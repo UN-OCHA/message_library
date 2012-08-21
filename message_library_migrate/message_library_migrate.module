@@ -148,14 +148,6 @@ function message_library_register_migrations() {
 }
 
 /**
- * Custom class for migrating the content - Guide
- */
-class InfoasaidNodeGuideMigration extends DrupalNode6Migration {
-  public function __construct(array $arguments) {
-  }
-}
-
-/**
  * Integration for the content type - 'Message'
  */
 class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
