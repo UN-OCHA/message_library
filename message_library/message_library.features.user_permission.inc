@@ -52,51 +52,44 @@ function message_library_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: delete terms in 17.
-  $permissions['delete terms in 17'] = array(
-    'name' => 'delete terms in 17',
+  // Exported permission: delete terms in at_risk_groups.
+  $permissions['delete terms in at_risk_groups'] = array(
+    'name' => 'delete terms in at_risk_groups',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in 18.
-  $permissions['delete terms in 18'] = array(
-    'name' => 'delete terms in 18',
+  // Exported permission: delete terms in hazard.
+  $permissions['delete terms in hazard'] = array(
+    'name' => 'delete terms in hazard',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in 19.
-  $permissions['delete terms in 19'] = array(
-    'name' => 'delete terms in 19',
+  // Exported permission: delete terms in issues.
+  $permissions['delete terms in issues'] = array(
+    'name' => 'delete terms in issues',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in 20.
-  $permissions['delete terms in 20'] = array(
-    'name' => 'delete terms in 20',
+  // Exported permission: delete terms in sector.
+  $permissions['delete terms in sector'] = array(
+    'name' => 'delete terms in sector',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in 21.
-  $permissions['delete terms in 21'] = array(
-    'name' => 'delete terms in 21',
+  // Exported permission: delete terms in sensitivity.
+  $permissions['delete terms in sensitivity'] = array(
+    'name' => 'delete terms in sensitivity',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in 22.
-  $permissions['delete terms in 22'] = array(
-    'name' => 'delete terms in 22',
-    'roles' => array(),
-    'module' => 'taxonomy',
-  );
-
-  // Exported permission: delete terms in 23.
-  $permissions['delete terms in 23'] = array(
-    'name' => 'delete terms in 23',
+  // Exported permission: delete terms in target_audience.
+  $permissions['delete terms in target_audience'] = array(
+    'name' => 'delete terms in target_audience',
     'roles' => array(),
     'module' => 'taxonomy',
   );
@@ -129,44 +122,44 @@ function message_library_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: edit terms in 17.
-  $permissions['edit terms in 17'] = array(
-    'name' => 'edit terms in 17',
+  // Exported permission: edit terms in at_risk_groups.
+  $permissions['edit terms in at_risk_groups'] = array(
+    'name' => 'edit terms in at_risk_groups',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in 18.
-  $permissions['edit terms in 18'] = array(
-    'name' => 'edit terms in 18',
+  // Exported permission: edit terms in hazard.
+  $permissions['edit terms in hazard'] = array(
+    'name' => 'edit terms in hazard',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in 19.
-  $permissions['edit terms in 19'] = array(
-    'name' => 'edit terms in 19',
+  // Exported permission: edit terms in issues.
+  $permissions['edit terms in issues'] = array(
+    'name' => 'edit terms in issues',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in 20.
-  $permissions['edit terms in 20'] = array(
-    'name' => 'edit terms in 20',
+  // Exported permission: edit terms in sector.
+  $permissions['edit terms in sector'] = array(
+    'name' => 'edit terms in sector',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in 22.
-  $permissions['edit terms in 22'] = array(
-    'name' => 'edit terms in 22',
+  // Exported permission: edit terms in sensitivity.
+  $permissions['edit terms in sensitivity'] = array(
+    'name' => 'edit terms in sensitivity',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in 23.
-  $permissions['edit terms in 23'] = array(
-    'name' => 'edit terms in 23',
+  // Exported permission: edit terms in target_audience.
+  $permissions['edit terms in target_audience'] = array(
+    'name' => 'edit terms in target_audience',
     'roles' => array(),
     'module' => 'taxonomy',
   );

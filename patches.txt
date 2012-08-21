@@ -1,0 +1,7 @@
+; Fatal error: Class EntityReference_SelectionHandler_Views 
+; http://drupal.org/node/1608358
+http://drupal.org/files/1608358-selectionhandler-views-broken.patch
+
+; Use vocabulary machine name for permissions
+; http://drupal.org/node/995156
+http://drupal.org/files/995156-31_portable_taxonomy_permissions-D7-15.patch
