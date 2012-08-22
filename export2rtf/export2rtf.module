@@ -1,6 +1,6 @@
 <?php
 
-include_once 'libraries/messageRtfFile.php';
+include_once drupal_get_path('module', 'export2rtf') . '/libraries/messageRtfFile.php';
 
 /**
  * Implements hook_init().
@@ -11,7 +11,7 @@ function export2rtf_init() {
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function export2rtf_menu() {
   $items = array();
@@ -27,23 +27,31 @@ function export2rtf_menu() {
 }
 
 /**
- * Implementation of hook_block().
+ * Implements hook_block_info().
  */
-function export2rtf_block($op = 'list', $delta = 0, $edit = array()) {
-  if ($op == 'list') {
-    $blocks[0] = array(
+function export2rtf_block_info() {
+  // TODO Rename block deltas (e.g. delta-0) to readable strings.
+  if (TRUE) {
+    $blocks['delta-0'] = array(
       'info' => t('Export To RTF link'),
-      'cache' => BLOCK_CACHE_PER_ROLE
+      'cache' => DRUPAL_CACHE_PER_ROLE,
     );
     return $blocks;
   }
-  else if ($op == 'view') {
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function export2rtf_block_view($delta) {
+  // TODO Rename block deltas (e.g. delta-0) to readable strings.
+  if (TRUE) {
     $block = array();
     switch ($delta) {
-      case 0 :
+      case 'delta-0':
         $block = array(
           'subject' => t('Export To RTF links'),
-          'content' => theme('export2rtf')
+          'content' => theme('export2rtf'),
         );
         break;
     }
@@ -51,9 +59,14 @@ function export2rtf_block($op = 'list', $delta = 0, $edit = array()) {
   }
 }
 
+/**
+ * Implements hook_block().
+ */
+function export2rtf_block_OLD($op = 'list', $delta = 0, $edit = array()) { }
+
 
 /**
- * Implements of hook_theme()
+ * Implements hook_theme().
  * @param $existing
  * @param $type
  * @param $theme
@@ -64,15 +77,19 @@ function export2rtf_theme($existing, $type, $theme, $path) {
   return array(
     'export2rtf' => array(
       'template' => 'templates/export2rtf',
-      'arguments' => array()
-    )
+      'variables' => array(),
+    ),
   );
 }
 
 
-function export2rtf_getUrl($arg0 = "", $arg1 = "") {
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function export2rtf_getUrl($arg0 = '', $arg1 = '') {
   if (arg(0) == 'node' && is_numeric(arg(1))) {
-    return url("export2rtf/").arg(1);
+    return url('export2rtf/') . arg(1);
   }
-  return url("export2rtf");
+  return url('export2rtf');
 }
