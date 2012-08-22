@@ -14,7 +14,7 @@ class MessageRtfFile extends RtfFile {
     $rtf = 'Issue: ';
     $i = 0;
     foreach ($issues as $issue) {
-      $taxo = taxonomy_term_load($issue['value']);
+      $taxo = taxonomy_term_load($issue['tid']);
       $rtf .= $taxo->name;
       $i++;
       if ($i < count($issues)) {
@@ -57,10 +57,10 @@ class MessageRtfFile extends RtfFile {
     $rtf = '\ul At risk group\ulnone : ';
     $i = 0;
     foreach ($groups as $group) {
-      $taxo = taxonomy_term_load($group['value']);
+      $taxo = taxonomy_term_load($group['tid']);
       $rtf .= $taxo->name;
       $i++;
-      if ($i < count($issues)) {
+      if ($i < count($groups)) {
         $rtf .= ', ';
       }
     }
@@ -76,10 +76,10 @@ class MessageRtfFile extends RtfFile {
     $rtf = '\ul Target audience\ulnone : ';
     $i = 0;
     foreach ($targets as $target) {
-      $taxo = taxonomy_term_load($target['value']);
+      $taxo = taxonomy_term_load($target['tid']);
       $rtf .= $taxo->name;
       $i++;
-      if ($i < count($issues)) {
+      if ($i < count($targets)) {
         $rtf .= ', ';
       }
     }
