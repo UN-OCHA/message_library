@@ -1,0 +1,6 @@
+; $Id: export2rtf.info,v 1.0 2011/10/19 Tubaldo Hervé $
+name =  Export to RTF
+description = Export "Message Library" to RTF
+package = Infoasaid
+version = VERSION
+core = 6.x
