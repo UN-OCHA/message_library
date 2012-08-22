@@ -27,6 +27,11 @@ function message_library_views_default_views() {
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
+  $handler->display->display_options['exposed_form']['options']['reset_button'] = TRUE;
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Reset Search';
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = 1;
+  $handler->display->display_options['exposed_form']['options']['autosubmit_hide'] = 0;
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['pager']['options']['items_per_page'] = '20';
   $handler->display->display_options['pager']['options']['offset'] = '0';
@@ -428,15 +433,27 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_audience']['expose']['identifier'] = 'field_message_audience';
   $handler->display->display_options['filters']['field_message_audience']['expose']['reduce'] = 0;
 
-  /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'search_page');
+  /* Display: Search Page */
+  $handler = $view->new_display('page', 'Search Page', 'search_page');
   $handler->display->display_options['path'] = 'message-library';
+
+  /* Display: Edit Page */
+  $handler = $view->new_display('page', 'Edit Page', 'edit_page');
+  $handler->display->display_options['path'] = 'edit-message-library';
+
+  /* Display: Bundle Page */
+  $handler = $view->new_display('page', 'Bundle Page', 'bundle_page');
+  $handler->display->display_options['path'] = 'message-library-bundle';
+
+  /* Display: Feed */
+  $handler = $view->new_display('page', 'Feed', 'feed');
+  $handler->display->display_options['path'] = 'message-library/export';
   $translatables['message_library'] = array(
     t('Master'),
     t('Message Library'),
     t('more'),
-    t('Apply'),
-    t('Reset'),
+    t('Search'),
+    t('Reset Search'),
     t('Sort by'),
     t('Asc'),
     t('Desc'),
@@ -459,7 +476,10 @@ function message_library_views_default_views() {
     t('Websites'),
     t('Quick Search'),
     t('Issues'),
-    t('Page'),
+    t('Search Page'),
+    t('Edit Page'),
+    t('Bundle Page'),
+    t('Feed'),
   );
   $export['message_library'] = $view;
 
