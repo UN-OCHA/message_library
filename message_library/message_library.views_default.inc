@@ -28,7 +28,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '20';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = 0;
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
     'nid' => 'nid',
@@ -70,6 +73,21 @@ function message_library_views_default_views() {
   $handler->display->display_options['style_options']['override'] = 1;
   $handler->display->display_options['style_options']['sticky'] = 0;
   $handler->display->display_options['style_options']['empty_table'] = 0;
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  $handler->display->display_options['header']['result']['empty'] = FALSE;
+  $handler->display->display_options['header']['result']['content'] = '@total records matched criteria.
+';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = FALSE;
+  $handler->display->display_options['empty']['area']['content'] = 'There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.';
+  $handler->display->display_options['empty']['area']['format'] = 'simple';
+  $handler->display->display_options['empty']['area']['tokenize'] = 0;
   /* Relationship: Indexed Node: Threat */
   $handler->display->display_options['relationships']['field_message_threat']['id'] = 'field_message_threat';
   $handler->display->display_options['relationships']['field_message_threat']['table'] = 'search_api_index_node_search';
@@ -178,6 +196,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_threat_category']['hide_empty'] = 0;
   $handler->display->display_options['fields']['field_threat_category']['empty_zero'] = 0;
   $handler->display->display_options['fields']['field_threat_category']['hide_alter_empty'] = 1;
+  $handler->display->display_options['fields']['field_threat_category']['list']['mode'] = 'first';
   $handler->display->display_options['fields']['field_threat_category']['link_to_entity'] = 0;
   $handler->display->display_options['fields']['field_threat_category']['view_mode'] = 'full';
   /* Field: Indexed Node: Threat */
@@ -227,7 +246,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title_1']['hide_empty'] = 0;
   $handler->display->display_options['fields']['title_1']['empty_zero'] = 0;
   $handler->display->display_options['fields']['title_1']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 1;
   /* Field: Indexed Node: At risk group */
   $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
   $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_node_search';
@@ -357,9 +376,60 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_url']['delta_reversed'] = 0;
   $handler->display->display_options['fields']['field_message_url']['delta_first_last'] = 0;
   $handler->display->display_options['fields']['field_message_url']['field_api_classes'] = 0;
+  /* Filter criterion: Search: Fulltext search */
+  $handler->display->display_options['filters']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['field'] = 'search_api_views_fulltext';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['operator_id'] = 'search_api_views_fulltext_op';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['label'] = 'Quick Search';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['operator'] = 'search_api_views_fulltext_op';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['identifier'] = 'search_api_views_fulltext';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['fields'] = array(
+    'field_humprofile_source' => 'field_humprofile_source',
+    'field_message_group_risk_comment' => 'field_message_group_risk_comment',
+    'field_message_target_comment' => 'field_message_target_comment',
+    'field_message_sensitivity_messag' => 'field_message_sensitivity_messag',
+    'field_message_sensitivity_questi' => 'field_message_sensitivity_questi',
+    'field_message_sensitivity_causes' => 'field_message_sensitivity_causes',
+    'field_message_group_mess' => 'field_message_group_mess',
+  );
+  /* Filter criterion: Indexed Node: Issue */
+  $handler->display->display_options['filters']['field_threat_category_1']['id'] = 'field_threat_category_1';
+  $handler->display->display_options['filters']['field_threat_category_1']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_threat_category_1']['field'] = 'field_threat_category';
+  $handler->display->display_options['filters']['field_threat_category_1']['value'] = array();
+  $handler->display->display_options['filters']['field_threat_category_1']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_threat_category_1']['expose']['operator_id'] = 'field_threat_category_1_op';
+  $handler->display->display_options['filters']['field_threat_category_1']['expose']['label'] = 'Issues';
+  $handler->display->display_options['filters']['field_threat_category_1']['expose']['operator'] = 'field_threat_category_1_op';
+  $handler->display->display_options['filters']['field_threat_category_1']['expose']['identifier'] = 'field_threat_category_1';
+  $handler->display->display_options['filters']['field_threat_category_1']['expose']['reduce'] = 0;
+  /* Filter criterion: Indexed Node: At risk group */
+  $handler->display->display_options['filters']['field_message_group_risk']['id'] = 'field_message_group_risk';
+  $handler->display->display_options['filters']['field_message_group_risk']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_message_group_risk']['field'] = 'field_message_group_risk';
+  $handler->display->display_options['filters']['field_message_group_risk']['value'] = array();
+  $handler->display->display_options['filters']['field_message_group_risk']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_message_group_risk']['expose']['operator_id'] = 'field_message_group_risk_op';
+  $handler->display->display_options['filters']['field_message_group_risk']['expose']['label'] = 'At risk group';
+  $handler->display->display_options['filters']['field_message_group_risk']['expose']['operator'] = 'field_message_group_risk_op';
+  $handler->display->display_options['filters']['field_message_group_risk']['expose']['identifier'] = 'field_message_group_risk';
+  $handler->display->display_options['filters']['field_message_group_risk']['expose']['reduce'] = 0;
+  /* Filter criterion: Indexed Node: Target audience */
+  $handler->display->display_options['filters']['field_message_audience']['id'] = 'field_message_audience';
+  $handler->display->display_options['filters']['field_message_audience']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_message_audience']['field'] = 'field_message_audience';
+  $handler->display->display_options['filters']['field_message_audience']['value'] = array();
+  $handler->display->display_options['filters']['field_message_audience']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_message_audience']['expose']['operator_id'] = 'field_message_audience_op';
+  $handler->display->display_options['filters']['field_message_audience']['expose']['label'] = 'Target audience';
+  $handler->display->display_options['filters']['field_message_audience']['expose']['operator'] = 'field_message_audience_op';
+  $handler->display->display_options['filters']['field_message_audience']['expose']['identifier'] = 'field_message_audience';
+  $handler->display->display_options['filters']['field_message_audience']['expose']['reduce'] = 0;
 
   /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'page');
+  $handler = $view->new_display('page', 'Page', 'search_page');
   $handler->display->display_options['path'] = 'message_library';
   $translatables['message_library'] = array(
     t('Master'),
@@ -373,6 +443,9 @@ function message_library_views_default_views() {
     t('Items per page'),
     t('- All -'),
     t('Offset'),
+    t('@total records matched criteria.
+'),
+    t('There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.'),
     t('Threat'),
     t('.'),
     t('Threat URL'),
@@ -384,6 +457,8 @@ function message_library_views_default_views() {
     t('Message'),
     t('Resources'),
     t('Websites'),
+    t('Quick Search'),
+    t('Issues'),
     t('Page'),
   );
   $export['message_library'] = $view;
