@@ -117,10 +117,10 @@ function message_library_strongarm() {
     'extra_fields' => array(
       'form' => array(
         'title' => array(
-          'weight' => '-5',
+          'weight' => '1',
         ),
         'path' => array(
-          'weight' => '30',
+          'weight' => '0',
         ),
       ),
       'display' => array(),

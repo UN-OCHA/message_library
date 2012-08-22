@@ -70,11 +70,11 @@ function message_library_views_default_views() {
   $handler->display->display_options['style_options']['override'] = 1;
   $handler->display->display_options['style_options']['sticky'] = 0;
   $handler->display->display_options['style_options']['empty_table'] = 0;
-  /* Relationship: Indexed Node: Threat */
+  /* Relationship: Broken/missing handler */
   $handler->display->display_options['relationships']['field_threat']['id'] = 'field_threat';
   $handler->display->display_options['relationships']['field_threat']['table'] = 'search_api_index_node_search';
   $handler->display->display_options['relationships']['field_threat']['field'] = 'field_threat';
-  /* Field: Node: Issue */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['field_issue']['id'] = 'field_issue';
   $handler->display->display_options['fields']['field_issue']['table'] = 'entity_node';
   $handler->display->display_options['fields']['field_issue']['field'] = 'field_issue';
@@ -97,8 +97,6 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_issue']['hide_empty'] = 0;
   $handler->display->display_options['fields']['field_issue']['empty_zero'] = 0;
   $handler->display->display_options['fields']['field_issue']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['field_issue']['link_to_entity'] = 1;
-  $handler->display->display_options['fields']['field_issue']['view_mode'] = 'full';
   /* Field: Indexed Node: Node ID */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_node_search';
@@ -149,7 +147,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title']['empty_zero'] = 0;
   $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['title']['link_to_entity'] = 0;
-  /* Field: Indexed Node: Threat */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['field_threat']['id'] = 'field_threat';
   $handler->display->display_options['fields']['field_threat']['table'] = 'search_api_index_node_search';
   $handler->display->display_options['fields']['field_threat']['field'] = 'field_threat';
@@ -171,8 +169,6 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_threat']['hide_empty'] = 0;
   $handler->display->display_options['fields']['field_threat']['empty_zero'] = 0;
   $handler->display->display_options['fields']['field_threat']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['field_threat']['link_to_entity'] = 1;
-  $handler->display->display_options['fields']['field_threat']['view_mode'] = 'full';
   /* Field: Indexed Node: Title */
   $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
   $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_node_search';
@@ -222,7 +218,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['nid_1']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['nid_1']['format_plural'] = 0;
   $handler->display->display_options['fields']['nid_1']['link_to_entity'] = 0;
-  /* Field: Indexed Node: Message */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['field_message']['id'] = 'field_message';
   $handler->display->display_options['fields']['field_message']['table'] = 'search_api_index_node_search';
   $handler->display->display_options['fields']['field_message']['field'] = 'field_message';
@@ -244,8 +240,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message']['hide_empty'] = 0;
   $handler->display->display_options['fields']['field_message']['empty_zero'] = 0;
   $handler->display->display_options['fields']['field_message']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['field_message']['field_api_classes'] = 0;
-  /* Field: Indexed Node: Examples of Communication around this issue */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['field_com_example']['id'] = 'field_com_example';
   $handler->display->display_options['fields']['field_com_example']['table'] = 'search_api_index_node_search';
   $handler->display->display_options['fields']['field_com_example']['field'] = 'field_com_example';
@@ -268,8 +263,6 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_com_example']['hide_empty'] = 0;
   $handler->display->display_options['fields']['field_com_example']['empty_zero'] = 0;
   $handler->display->display_options['fields']['field_com_example']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['field_com_example']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['field_com_example']['field_api_classes'] = 0;
   /* Field: Node: Node ID */
   $handler->display->display_options['fields']['nid_2']['id'] = 'nid_2';
   $handler->display->display_options['fields']['nid_2']['table'] = 'entity_node';
@@ -313,14 +306,15 @@ function message_library_views_default_views() {
     t('Items per page'),
     t('- All -'),
     t('Offset'),
-    t('Threat'),
-    t('Issue'),
+    t('field_threat'),
+    t('Broken handler entity_node.field_issue'),
     t('.'),
     t(','),
     t('Title'),
+    t('Broken handler search_api_index_node_search.field_threat'),
     t('Information requirement'),
     t('Node ID'),
-    t('Message'),
+    t('Broken handler search_api_index_node_search.field_message'),
     t('Resources'),
     t('Page'),
   );

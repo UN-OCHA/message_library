@@ -10,35 +10,42 @@
 function message_library_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'node-message-field_alert_quesiton'.
-  $fields['node-message-field_alert_quesiton'] = array(
+  // Exported field: 'node-message-field_message_audience'.
+  $fields['node-message-field_message_audience'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_alert_quesiton',
+      'field_name' => 'field_message_audience',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
-        'format' => array(
+        'tid' => array(
           'columns' => array(
-            'format' => 'format',
+            'tid' => 'tid',
           ),
-          'table' => 'filter_format',
+          'table' => 'taxonomy_term_data',
         ),
       ),
       'indexes' => array(
-        'format' => array(
-          0 => 'format',
+        'tid' => array(
+          0 => 'tid',
         ),
       ),
       'locked' => '0',
-      'module' => 'text',
+      'module' => 'taxonomy',
       'settings' => array(
-        'max_length' => '255',
-        'profile2_private' => FALSE,
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'target_audience',
+            'parent' => '0',
+          ),
+        ),
       ),
       'translatable' => '0',
-      'type' => 'text',
+      'type' => 'taxonomy_term_reference',
     ),
     'field_instance' => array(
       'bundle' => 'message',
@@ -48,10 +55,10 @@ function message_library_field_default_fields() {
       'display' => array(
         'default' => array(
           'label' => 'above',
-          'module' => 'text',
+          'module' => 'taxonomy',
           'settings' => array(),
-          'type' => 'text_default',
-          'weight' => 8,
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 20,
         ),
         'ical' => array(
           'label' => 'above',
@@ -67,33 +74,115 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_alert_quesiton',
-      'label' => 'Alert questions',
+      'field_name' => 'field_message_audience',
+      'label' => 'Target audience',
       'required' => 0,
       'settings' => array(
-        'text_processing' => '0',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'text',
-        'settings' => array(
-          'size' => '60',
-        ),
-        'type' => 'text_textfield',
-        'weight' => '10',
+        'module' => 'options',
+        'settings' => array(),
+        'type' => 'options_select',
+        'weight' => '5',
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_arg_comment'.
-  $fields['node-message-field_arg_comment'] = array(
+  // Exported field: 'node-message-field_message_example_communic'.
+  $fields['node-message-field_message_example_communic'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_example_communic',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(
+        'fid' => array(
+          'columns' => array(
+            'fid' => 'fid',
+          ),
+          'table' => 'file_managed',
+        ),
+      ),
+      'indexes' => array(
+        'fid' => array(
+          0 => 'fid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'file',
+      'settings' => array(
+        'display_default' => 0,
+        'display_field' => 0,
+        'uri_scheme' => 'public',
+      ),
+      'translatable' => '0',
+      'type' => 'file',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'file',
+          'settings' => array(),
+          'type' => 'file_default',
+          'weight' => 29,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_example_communic',
+      'label' => 'Examples of Communication around this issue',
+      'required' => 0,
+      'settings' => array(
+        'description_field' => 1,
+        'file_directory' => '',
+        'file_extensions' => 'jpg pdf png gif doc docx mp3 mp4 avi flv',
+        'max_filesize' => '',
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'file',
+        'settings' => array(
+          'progress_indicator' => 'throbber',
+        ),
+        'type' => 'file_generic',
+        'weight' => 13,
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_group_mess'.
+  $fields['node-message-field_message_group_mess'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_arg_comment',
+      'field_name' => 'field_message_group_mess',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
         'format' => array(
           'columns' => array(
@@ -109,12 +198,9 @@ function message_library_field_default_fields() {
       ),
       'locked' => '0',
       'module' => 'text',
-      'settings' => array(
-        'max_length' => '255',
-        'profile2_private' => FALSE,
-      ),
+      'settings' => array(),
       'translatable' => '0',
-      'type' => 'text',
+      'type' => 'text_long',
     ),
     'field_instance' => array(
       'bundle' => 'message',
@@ -127,7 +213,7 @@ function message_library_field_default_fields() {
           'module' => 'text',
           'settings' => array(),
           'type' => 'text_default',
-          'weight' => 4,
+          'weight' => 28,
         ),
         'ical' => array(
           'label' => 'above',
@@ -143,10 +229,36 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_arg_comment',
-      'label' => 'At risk group comment',
-      'required' => 0,
+      'field_name' => 'field_message_group_mess',
+      'label' => 'Message',
+      'required' => 1,
       'settings' => array(
+        'better_formats' => array(
+          'allowed_formats' => array(
+            'filtered_html' => 'filtered_html',
+            'full_html' => 'full_html',
+            'plain_text' => 'plain_text',
+            'simple' => 'simple',
+          ),
+          'allowed_formats_toggle' => 0,
+          'default_order_toggle' => 0,
+          'default_order_wrapper' => array(
+            'formats' => array(
+              'filtered_html' => array(
+                'weight' => '0',
+              ),
+              'full_html' => array(
+                'weight' => '0',
+              ),
+              'plain_text' => array(
+                'weight' => '10',
+              ),
+              'simple' => array(
+                'weight' => '0',
+              ),
+            ),
+          ),
+        ),
         'text_processing' => '0',
         'user_register_form' => FALSE,
       ),
@@ -154,22 +266,25 @@ function message_library_field_default_fields() {
         'active' => 1,
         'module' => 'text',
         'settings' => array(
-          'size' => '60',
+          'rows' => '5',
         ),
-        'type' => 'text_textfield',
-        'weight' => '3',
+        'type' => 'text_textarea',
+        'weight' => '2',
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_at_risk_group'.
-  $fields['node-message-field_at_risk_group'] = array(
+  // Exported field: 'node-message-field_message_group_risk'.
+  $fields['node-message-field_message_group_risk'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_at_risk_group',
+      'field_name' => 'field_message_group_risk',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
         'tid' => array(
           'columns' => array(
@@ -192,7 +307,6 @@ function message_library_field_default_fields() {
             'parent' => '0',
           ),
         ),
-        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'taxonomy_term_reference',
@@ -208,7 +322,7 @@ function message_library_field_default_fields() {
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 9,
+          'weight' => 17,
         ),
         'ical' => array(
           'label' => 'above',
@@ -224,7 +338,7 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_at_risk_group',
+      'field_name' => 'field_message_group_risk',
       'label' => 'At risk group',
       'required' => 1,
       'settings' => array(
@@ -235,54 +349,55 @@ function message_library_field_default_fields() {
         'module' => 'hs_taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_hs',
-        'weight' => '2',
+        'weight' => '3',
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_com_example'.
-  $fields['node-message-field_com_example'] = array(
+  // Exported field: 'node-message-field_message_group_risk_comment'.
+  $fields['node-message-field_message_group_risk_comment'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_com_example',
+      'field_name' => 'field_message_group_risk_comment',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
-        'fid' => array(
+        'format' => array(
           'columns' => array(
-            'fid' => 'fid',
+            'format' => 'format',
           ),
-          'table' => 'file_managed',
+          'table' => 'filter_format',
         ),
       ),
       'indexes' => array(
-        'fid' => array(
-          0 => 'fid',
+        'format' => array(
+          0 => 'format',
         ),
       ),
       'locked' => '0',
-      'module' => 'file',
+      'module' => 'text',
       'settings' => array(
-        'display_default' => 0,
-        'display_field' => 0,
-        'profile2_private' => FALSE,
-        'uri_scheme' => 'public',
+        'max_length' => '255',
       ),
       'translatable' => '0',
-      'type' => 'file',
+      'type' => 'text',
     ),
     'field_instance' => array(
       'bundle' => 'message',
+      'default_value' => NULL,
       'deleted' => '0',
       'description' => '',
       'display' => array(
         'default' => array(
           'label' => 'above',
-          'module' => 'file',
+          'module' => 'text',
           'settings' => array(),
-          'type' => 'file_default',
-          'weight' => 5,
+          'type' => 'text_default',
+          'weight' => 19,
         ),
         'ical' => array(
           'label' => 'above',
@@ -298,47 +413,62 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_com_example',
-      'label' => 'Examples of Communication around this issue',
+      'field_name' => 'field_message_group_risk_comment',
+      'label' => 'Target audience comment',
       'required' => 0,
       'settings' => array(
-        'description_field' => 0,
-        'file_directory' => '',
-        'file_extensions' => 'jpg pdf png gif doc docx mp3 mp4 avi flv',
-        'max_filesize' => '',
+        'better_formats' => array(
+          'allowed_formats' => array(
+            'filtered_html' => 'filtered_html',
+            'full_html' => 'full_html',
+            'plain_text' => 'plain_text',
+            'simple' => 'simple',
+          ),
+          'allowed_formats_toggle' => 0,
+          'default_order_toggle' => 0,
+          'default_order_wrapper' => array(
+            'formats' => array(
+              'filtered_html' => array(
+                'weight' => '0',
+              ),
+              'full_html' => array(
+                'weight' => '0',
+              ),
+              'plain_text' => array(
+                'weight' => '10',
+              ),
+              'simple' => array(
+                'weight' => '0',
+              ),
+            ),
+          ),
+        ),
+        'text_processing' => '0',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'file',
+        'module' => 'text',
         'settings' => array(
-          'filefield_sources' => array(
-            'filefield_sources' => array(),
-            'source_attach' => array(
-              'absolute' => 0,
-              'attach_mode' => 'move',
-              'path' => 'file_attach',
-            ),
-            'source_reference' => array(
-              'autocomplete' => '0',
-            ),
-          ),
-          'progress_indicator' => 'throbber',
+          'size' => '60',
         ),
-        'type' => 'file_generic',
-        'weight' => '12',
+        'type' => 'text_textfield',
+        'weight' => '4',
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_info_type'.
-  $fields['node-message-field_info_type'] = array(
+  // Exported field: 'node-message-field_message_info_type'.
+  $fields['node-message-field_message_info_type'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '-1',
+      'cardinality' => '1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_info_type',
+      'field_name' => 'field_message_info_type',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
         'tid' => array(
           'columns' => array(
@@ -361,7 +491,6 @@ function message_library_field_default_fields() {
             'parent' => '0',
           ),
         ),
-        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'taxonomy_term_reference',
@@ -377,7 +506,7 @@ function message_library_field_default_fields() {
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 10,
+          'weight' => 22,
         ),
         'ical' => array(
           'label' => 'above',
@@ -393,7 +522,7 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_info_type',
+      'field_name' => 'field_message_info_type',
       'label' => 'Information Type',
       'required' => 1,
       'settings' => array(
@@ -401,22 +530,324 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'options',
+        'module' => 'hs_taxonomy',
         'settings' => array(),
-        'type' => 'options_select',
-        'weight' => '6',
+        'type' => 'taxonomy_hs',
+        'weight' => '7',
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_link'.
-  $fields['node-message-field_link'] = array(
+  // Exported field: 'node-message-field_message_sensitivity'.
+  $fields['node-message-field_message_sensitivity'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '-1',
+      'cardinality' => '1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_link',
+      'field_name' => 'field_message_sensitivity',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+          'table' => 'taxonomy_term_data',
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'taxonomy',
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'sensitivity',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'translatable' => '0',
+      'type' => 'taxonomy_term_reference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'taxonomy',
+          'settings' => array(),
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 23,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_sensitivity',
+      'label' => 'Sensitivity',
+      'required' => 1,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'hs_taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_hs',
+        'weight' => '8',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_sensitivity_causes'.
+  $fields['node-message-field_message_sensitivity_causes'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_sensitivity_causes',
+      'foreign keys' => array(
+        'format' => array(
+          'columns' => array(
+            'format' => 'format',
+          ),
+          'table' => 'filter_format',
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'text',
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'translatable' => '0',
+      'type' => 'text',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'text',
+          'settings' => array(),
+          'type' => 'text_default',
+          'weight' => 26,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_sensitivity_causes',
+      'label' => 'Sensitivity Causes',
+      'required' => FALSE,
+      'settings' => array(
+        'text_processing' => 0,
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'text',
+        'settings' => array(
+          'size' => 60,
+        ),
+        'type' => 'text_textfield',
+        'weight' => '11',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_sensitivity_messag'.
+  $fields['node-message-field_message_sensitivity_messag'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_sensitivity_messag',
+      'foreign keys' => array(
+        'format' => array(
+          'columns' => array(
+            'format' => 'format',
+          ),
+          'table' => 'filter_format',
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'text',
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'translatable' => '0',
+      'type' => 'text',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'text',
+          'settings' => array(),
+          'type' => 'text_default',
+          'weight' => 24,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_sensitivity_messag',
+      'label' => 'Warning/Alert message',
+      'required' => FALSE,
+      'settings' => array(
+        'text_processing' => 0,
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'text',
+        'settings' => array(
+          'size' => 60,
+        ),
+        'type' => 'text_textfield',
+        'weight' => '9',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_sensitivity_questi'.
+  $fields['node-message-field_message_sensitivity_questi'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_sensitivity_questi',
+      'foreign keys' => array(
+        'format' => array(
+          'columns' => array(
+            'format' => 'format',
+          ),
+          'table' => 'filter_format',
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'text',
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'translatable' => '0',
+      'type' => 'text',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'text',
+          'settings' => array(),
+          'type' => 'text_default',
+          'weight' => 25,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_sensitivity_questi',
+      'label' => 'Alert questions',
+      'required' => FALSE,
+      'settings' => array(
+        'text_processing' => 0,
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'module' => 'text',
+        'settings' => array(
+          'size' => 60,
+        ),
+        'type' => 'text_textfield',
+        'weight' => '10',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_source'.
+  $fields['node-message-field_message_source'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_source',
       'foreign keys' => array(),
       'indexes' => array(),
       'locked' => '0',
@@ -431,7 +862,6 @@ function message_library_field_default_fields() {
           'url_cutoff' => 80,
         ),
         'enable_tokens' => 1,
-        'profile2_private' => FALSE,
         'title' => 'optional',
         'title_maxlength' => 128,
         'title_value' => '',
@@ -451,7 +881,7 @@ function message_library_field_default_fields() {
           'module' => 'link',
           'settings' => array(),
           'type' => 'link_default',
-          'weight' => 1,
+          'weight' => 27,
         ),
         'ical' => array(
           'label' => 'above',
@@ -467,8 +897,300 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_link',
+      'field_name' => 'field_message_source',
       'label' => 'Source',
+      'required' => FALSE,
+      'settings' => array(
+        'attributes' => array(
+          'class' => '',
+          'rel' => '',
+          'target' => 'default',
+        ),
+        'display' => array(
+          'url_cutoff' => 80,
+        ),
+        'enable_tokens' => 1,
+        'title' => 'optional',
+        'title_maxlength' => 128,
+        'title_value' => '',
+        'url' => 0,
+        'user_register_form' => FALSE,
+        'validate_url' => 1,
+      ),
+      'widget' => array(
+        'module' => 'link',
+        'settings' => array(),
+        'type' => 'link_field',
+        'weight' => '12',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_target_comment'.
+  $fields['node-message-field_message_target_comment'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_target_comment',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(
+        'format' => array(
+          'columns' => array(
+            'format' => 'format',
+          ),
+          'table' => 'filter_format',
+        ),
+      ),
+      'indexes' => array(
+        'format' => array(
+          0 => 'format',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'text',
+      'settings' => array(
+        'max_length' => '255',
+      ),
+      'translatable' => '0',
+      'type' => 'text',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'text',
+          'settings' => array(),
+          'type' => 'text_default',
+          'weight' => 21,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_target_comment',
+      'label' => 'Target audience comment',
+      'required' => 0,
+      'settings' => array(
+        'better_formats' => array(
+          'allowed_formats' => array(
+            'filtered_html' => 'filtered_html',
+            'full_html' => 'full_html',
+            'plain_text' => 'plain_text',
+            'simple' => 'simple',
+          ),
+          'allowed_formats_toggle' => 0,
+          'default_order_toggle' => 0,
+          'default_order_wrapper' => array(
+            'formats' => array(
+              'filtered_html' => array(
+                'weight' => '0',
+              ),
+              'full_html' => array(
+                'weight' => '0',
+              ),
+              'plain_text' => array(
+                'weight' => '10',
+              ),
+              'simple' => array(
+                'weight' => '0',
+              ),
+            ),
+          ),
+        ),
+        'text_processing' => '0',
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'text',
+        'settings' => array(
+          'size' => '60',
+        ),
+        'type' => 'text_textfield',
+        'weight' => '6',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_threat'.
+  $fields['node-message-field_message_threat'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_threat',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(
+        'node' => array(
+          'columns' => array(
+            'target_id' => 'nid',
+          ),
+          'table' => 'node',
+        ),
+      ),
+      'indexes' => array(
+        'target_id' => array(
+          0 => 'target_id',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'entityreference',
+      'settings' => array(
+        'handler' => 'base',
+        'handler_settings' => array(
+          'behaviors' => array(
+            'views-select-list' => array(
+              'status' => 0,
+            ),
+          ),
+          'sort' => array(
+            'direction' => 'ASC',
+            'field' => 'field_asst_contact_email:email',
+            'property' => 'nid',
+            'type' => 'none',
+          ),
+          'target_bundles' => array(
+            'threat' => 'threat',
+          ),
+        ),
+        'handler_submit' => 'Change handler',
+        'target_type' => 'node',
+      ),
+      'translatable' => '0',
+      'type' => 'entityreference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'entityreference',
+          'settings' => array(
+            'link' => FALSE,
+          ),
+          'type' => 'entityreference_label',
+          'weight' => 31,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_threat',
+      'label' => 'Threat',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'options',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'path' => '',
+          'size' => '60',
+        ),
+        'type' => 'options_select',
+        'weight' => 15,
+      ),
+    ),
+  );
+
+  // Exported field: 'node-message-field_message_url'.
+  $fields['node-message-field_message_url'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_message_url',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'locked' => '0',
+      'module' => 'link',
+      'settings' => array(
+        'attributes' => array(
+          'class' => '',
+          'rel' => '',
+          'target' => 'default',
+        ),
+        'display' => array(
+          'url_cutoff' => 80,
+        ),
+        'enable_tokens' => 1,
+        'title' => 'optional',
+        'title_maxlength' => 128,
+        'title_value' => '',
+        'url' => 0,
+      ),
+      'translatable' => '0',
+      'type' => 'link_field',
+    ),
+    'field_instance' => array(
+      'bundle' => 'message',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'link',
+          'settings' => array(),
+          'type' => 'link_default',
+          'weight' => 30,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_message_url',
+      'label' => 'Websites',
       'required' => 0,
       'settings' => array(
         'attributes' => array(
@@ -494,560 +1216,19 @@ function message_library_field_default_fields() {
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_field',
-        'weight' => '11',
+        'weight' => 14,
       ),
     ),
   );
 
-  // Exported field: 'node-message-field_message'.
-  $fields['node-message-field_message'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_message',
-      'foreign keys' => array(
-        'format' => array(
-          'columns' => array(
-            'format' => 'format',
-          ),
-          'table' => 'filter_format',
-        ),
-      ),
-      'indexes' => array(
-        'format' => array(
-          0 => 'format',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'text',
-      'settings' => array(
-        'profile2_private' => FALSE,
-      ),
-      'translatable' => '0',
-      'type' => 'text_long',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'text',
-          'settings' => array(),
-          'type' => 'text_default',
-          'weight' => 11,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_message',
-      'label' => 'Message',
-      'required' => 0,
-      'settings' => array(
-        'text_processing' => '0',
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'text',
-        'settings' => array(
-          'rows' => '5',
-        ),
-        'type' => 'text_textarea',
-        'weight' => '1',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_sensitivity'.
-  $fields['node-message-field_sensitivity'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_sensitivity',
-      'foreign keys' => array(
-        'tid' => array(
-          'columns' => array(
-            'tid' => 'tid',
-          ),
-          'table' => 'taxonomy_term_data',
-        ),
-      ),
-      'indexes' => array(
-        'tid' => array(
-          0 => 'tid',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'taxonomy',
-      'settings' => array(
-        'allowed_values' => array(
-          0 => array(
-            'vocabulary' => 'sensitivity',
-            'parent' => '0',
-          ),
-        ),
-        'profile2_private' => FALSE,
-      ),
-      'translatable' => '0',
-      'type' => 'taxonomy_term_reference',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'taxonomy',
-          'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
-          'weight' => 12,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_sensitivity',
-      'label' => 'Sensitivity',
-      'required' => 1,
-      'settings' => array(
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'options',
-        'settings' => array(),
-        'type' => 'options_select',
-        'weight' => '7',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_sensitivity_cause'.
-  $fields['node-message-field_sensitivity_cause'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_sensitivity_cause',
-      'foreign keys' => array(
-        'format' => array(
-          'columns' => array(
-            'format' => 'format',
-          ),
-          'table' => 'filter_format',
-        ),
-      ),
-      'indexes' => array(
-        'format' => array(
-          0 => 'format',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'text',
-      'settings' => array(
-        'profile2_private' => FALSE,
-      ),
-      'translatable' => '0',
-      'type' => 'text_long',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'text',
-          'settings' => array(),
-          'type' => 'text_default',
-          'weight' => 13,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_sensitivity_cause',
-      'label' => 'Sensitivity Causes',
-      'required' => 0,
-      'settings' => array(
-        'text_processing' => '0',
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'text',
-        'settings' => array(
-          'rows' => '5',
-        ),
-        'type' => 'text_textarea',
-        'weight' => '8',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_ta_comment'.
-  $fields['node-message-field_ta_comment'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_ta_comment',
-      'foreign keys' => array(
-        'format' => array(
-          'columns' => array(
-            'format' => 'format',
-          ),
-          'table' => 'filter_format',
-        ),
-      ),
-      'indexes' => array(
-        'format' => array(
-          0 => 'format',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'text',
-      'settings' => array(
-        'max_length' => '255',
-        'profile2_private' => FALSE,
-      ),
-      'translatable' => '0',
-      'type' => 'text',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'text',
-          'settings' => array(),
-          'type' => 'text_default',
-          'weight' => 3,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_ta_comment',
-      'label' => 'Target audience comment',
-      'required' => 0,
-      'settings' => array(
-        'text_processing' => '0',
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'text',
-        'settings' => array(
-          'size' => '60',
-        ),
-        'type' => 'text_textfield',
-        'weight' => '5',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_target_audience'.
-  $fields['node-message-field_target_audience'] = array(
+  // Exported field: 'node-threat-field_threat_category'.
+  $fields['node-threat-field_threat_category'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_target_audience',
-      'foreign keys' => array(
-        'tid' => array(
-          'columns' => array(
-            'tid' => 'tid',
-          ),
-          'table' => 'taxonomy_term_data',
-        ),
-      ),
-      'indexes' => array(
-        'tid' => array(
-          0 => 'tid',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'taxonomy',
-      'settings' => array(
-        'allowed_values' => array(
-          0 => array(
-            'vocabulary' => 'target_audience',
-            'parent' => '0',
-          ),
-        ),
-        'profile2_private' => FALSE,
-      ),
-      'translatable' => '0',
-      'type' => 'taxonomy_term_reference',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'taxonomy',
-          'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
-          'weight' => 14,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_target_audience',
-      'label' => 'Target audience',
-      'required' => 0,
-      'settings' => array(
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'hs_taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_hs',
-        'weight' => '4',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_threat'.
-  $fields['node-message-field_threat'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_threat',
-      'foreign keys' => array(
-        'node' => array(
-          'columns' => array(
-            'target_id' => 'nid',
-          ),
-          'table' => 'node',
-        ),
-      ),
-      'indexes' => array(
-        'target_id' => array(
-          0 => 'target_id',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'entityreference',
-      'settings' => array(
-        'handler' => 'base',
-        'handler_settings' => array(),
-        'target_type' => 'node',
-      ),
-      'translatable' => '0',
-      'type' => 'entityreference',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'entityreference',
-          'settings' => array(
-            'link' => FALSE,
-          ),
-          'type' => 'entityreference_label',
-          'weight' => 15,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_threat',
-      'label' => 'Threat',
-      'required' => FALSE,
-      'settings' => array(
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'module' => 'entityreference',
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'path' => '',
-          'size' => 60,
-        ),
-        'type' => 'entityreference_autocomplete',
-        'weight' => '31',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-threat-field_hazard'.
-  $fields['node-threat-field_hazard'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '-1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_hazard',
-      'field_permissions' => array(
-        'type' => '0',
-      ),
-      'foreign keys' => array(
-        'tid' => array(
-          'columns' => array(
-            'tid' => 'tid',
-          ),
-          'table' => 'taxonomy_term_data',
-        ),
-      ),
-      'indexes' => array(
-        'tid' => array(
-          0 => 'tid',
-        ),
-      ),
-      'locked' => '0',
-      'module' => 'taxonomy',
-      'settings' => array(
-        'allowed_values' => array(
-          0 => array(
-            'vocabulary' => 'hazard',
-            'parent' => '0',
-          ),
-        ),
-      ),
-      'translatable' => '0',
-      'type' => 'taxonomy_term_reference',
-    ),
-    'field_instance' => array(
-      'bundle' => 'threat',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'taxonomy',
-          'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
-          'weight' => 0,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_hazard',
-      'label' => 'Hazard',
-      'required' => 0,
-      'settings' => array(
-        'user_register_form' => FALSE,
-      ),
-      'widget' => array(
-        'active' => 1,
-        'module' => 'hs_taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_hs',
-        'weight' => '31',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-threat-field_issue'.
-  $fields['node-threat-field_issue'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '-1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_issue',
+      'field_name' => 'field_threat_category',
       'field_permissions' => array(
         'type' => '0',
       ),
@@ -1104,8 +1285,88 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_issue',
+      'field_name' => 'field_threat_category',
       'label' => 'Issue',
+      'required' => 1,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'hs_taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_hs',
+        'weight' => 32,
+      ),
+    ),
+  );
+
+  // Exported field: 'node-threat-field_threat_hazard'.
+  $fields['node-threat-field_threat_hazard'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'field_threat_hazard',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
+      'foreign keys' => array(
+        'tid' => array(
+          'columns' => array(
+            'tid' => 'tid',
+          ),
+          'table' => 'taxonomy_term_data',
+        ),
+      ),
+      'indexes' => array(
+        'tid' => array(
+          0 => 'tid',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'taxonomy',
+      'settings' => array(
+        'allowed_values' => array(
+          0 => array(
+            'vocabulary' => 'hazard',
+            'parent' => '0',
+          ),
+        ),
+      ),
+      'translatable' => '0',
+      'type' => 'taxonomy_term_reference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'threat',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'taxonomy',
+          'settings' => array(),
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 0,
+        ),
+        'ical' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_threat_hazard',
+      'label' => 'Hazard',
       'required' => 0,
       'settings' => array(
         'user_register_form' => FALSE,
@@ -1115,19 +1376,19 @@ function message_library_field_default_fields() {
         'module' => 'hs_taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_hs',
-        'weight' => '32',
+        'weight' => 31,
       ),
     ),
   );
 
-  // Exported field: 'node-threat-field_reference_msg'.
-  $fields['node-threat-field_reference_msg'] = array(
+  // Exported field: 'node-threat-field_threat_message'.
+  $fields['node-threat-field_threat_message'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '1',
+      'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_reference_msg',
+      'field_name' => 'field_threat_message',
       'field_permissions' => array(
         'type' => '0',
       ),
@@ -1183,7 +1444,7 @@ function message_library_field_default_fields() {
             'link' => FALSE,
           ),
           'type' => 'entityreference_label',
-          'weight' => 2,
+          'weight' => 3,
         ),
         'ical' => array(
           'label' => 'above',
@@ -1199,7 +1460,7 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_reference_msg',
+      'field_name' => 'field_threat_message',
       'label' => 'Message',
       'required' => 0,
       'settings' => array(
@@ -1207,22 +1468,26 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'options',
-        'settings' => array(),
-        'type' => 'options_select',
-        'weight' => '33',
+        'module' => 'entityreference',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'path' => '',
+          'size' => '60',
+        ),
+        'type' => 'entityreference_autocomplete',
+        'weight' => 34,
       ),
     ),
   );
 
-  // Exported field: 'node-threat-field_sector'.
-  $fields['node-threat-field_sector'] = array(
+  // Exported field: 'node-threat-field_threat_sector'.
+  $fields['node-threat-field_threat_sector'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
-      'field_name' => 'field_sector',
+      'field_name' => 'field_threat_sector',
       'field_permissions' => array(
         'type' => '0',
       ),
@@ -1244,7 +1509,7 @@ function message_library_field_default_fields() {
       'settings' => array(
         'allowed_values' => array(
           0 => array(
-            'vocabulary' => 'organizations',
+            'vocabulary' => 'sector',
             'parent' => '0',
           ),
         ),
@@ -1263,7 +1528,7 @@ function message_library_field_default_fields() {
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 3,
+          'weight' => 2,
         ),
         'ical' => array(
           'label' => 'above',
@@ -1279,7 +1544,7 @@ function message_library_field_default_fields() {
         ),
       ),
       'entity_type' => 'node',
-      'field_name' => 'field_sector',
+      'field_name' => 'field_threat_sector',
       'label' => 'Sector',
       'required' => 0,
       'settings' => array(
@@ -1290,7 +1555,7 @@ function message_library_field_default_fields() {
         'module' => 'hs_taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_hs',
-        'weight' => '34',
+        'weight' => 33,
       ),
     ),
   );
@@ -1299,7 +1564,6 @@ function message_library_field_default_fields() {
   // Included for use with string extractors like potx.
   t('Alert questions');
   t('At risk group');
-  t('At risk group comment');
   t('Examples of Communication around this issue');
   t('Hazard');
   t('Information Type');
@@ -1312,6 +1576,8 @@ function message_library_field_default_fields() {
   t('Target audience');
   t('Target audience comment');
   t('Threat');
+  t('Warning/Alert message');
+  t('Websites');
 
   return $fields;
 }
