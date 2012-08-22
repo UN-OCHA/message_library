@@ -82,9 +82,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'options',
+        'module' => 'hs_taxonomy',
         'settings' => array(),
-        'type' => 'options_select',
+        'type' => 'taxonomy_hs',
         'weight' => '5',
       ),
     ),
@@ -167,7 +167,7 @@ function message_library_field_default_fields() {
           'progress_indicator' => 'throbber',
         ),
         'type' => 'file_generic',
-        'weight' => 13,
+        'weight' => '13',
       ),
     ),
   );
@@ -414,7 +414,7 @@ function message_library_field_default_fields() {
       ),
       'entity_type' => 'node',
       'field_name' => 'field_message_group_risk_comment',
-      'label' => 'Target audience comment',
+      'label' => 'At risk group comment',
       'required' => 0,
       'settings' => array(
         'better_formats' => array(
@@ -1124,7 +1124,7 @@ function message_library_field_default_fields() {
           'size' => '60',
         ),
         'type' => 'options_select',
-        'weight' => 15,
+        'weight' => '15',
       ),
     ),
   );
@@ -1216,7 +1216,7 @@ function message_library_field_default_fields() {
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_field',
-        'weight' => 14,
+        'weight' => '14',
       ),
     ),
   );
@@ -1564,6 +1564,7 @@ function message_library_field_default_fields() {
   // Included for use with string extractors like potx.
   t('Alert questions');
   t('At risk group');
+  t('At risk group comment');
   t('Examples of Communication around this issue');
   t('Hazard');
   t('Information Type');
