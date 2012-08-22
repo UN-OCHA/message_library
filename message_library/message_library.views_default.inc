@@ -430,7 +430,7 @@ function message_library_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'search_page');
-  $handler->display->display_options['path'] = 'message_library';
+  $handler->display->display_options['path'] = 'message-library';
   $translatables['message_library'] = array(
     t('Master'),
     t('Message Library'),
