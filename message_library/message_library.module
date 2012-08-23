@@ -4,3 +4,19 @@
  * Code for the Message Libarary feature.
  */
 include_once 'message_library.features.inc';
+
+/**
+ * Implementation of hook_form_alter()
+ *
+ * Change the default placeholders for the (-Any-) options on the exposed filter
+ */
+
+function message_library_form_alter(&$form, $form_state, $form_id) {
+  if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
+    // overrides <All> on the dropdown
+    $form['field_message_audience']['#options']['All'] = t('<All target Audience>');
+    $form['field_message_group_risk']['#options']['All'] = t('<All groups>');
+    //$form['issues']['#options']['All'] = t('<All issues>');
+    $form['field_threat_category_1']['#options']['All'] = t('<All threats>');
+  }
+}
