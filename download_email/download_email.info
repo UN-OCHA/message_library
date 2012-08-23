@@ -1,7 +1,5 @@
-; $Id: download_email.info,v 1.0 2011/05/30 08:05:19 Tubaldo Hervé Exp $
 name = Download/Email Links
 description = Display links to Download or Email PDF
-dependencies[] = export2rtf
+package = Message Library
 core = 7.x
-package = Infoasaid
-
+dependencies[] = export2rtf

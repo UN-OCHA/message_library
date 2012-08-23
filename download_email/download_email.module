@@ -1,33 +1,18 @@
 <?php
 
 /**
- * Implements hook_init().().
- */
+ * Implements hook_init(). */
 function download_email_init() {
   drupal_add_js(drupal_get_path('module', 'download_email') . '/js/download_email.js');
   drupal_add_css(drupal_get_path('module', 'download_email') . '/css/download_email.css');
 }
 
 /**
- * Implements hook_menu().().
- */
+ * Implements hook_menu(). */
 function download_email_menu() {
 
   $items = array();
 
-  $items['admin/download_email/download_email_contact'] = array(
-    'title' => 'Download/Email as PDF configuration',
-    'description' => 'Configure the module Download/Email as PDF.',
-    'page callback' => 'drupal_get_form',
-    'file' => 'includes/download_email.admin.inc',
-    'page arguments' => array(
-      'download_email_admin_page_form',
-    ),
-    'access arguments' => array(
-      'edit Download/Email module',
-    ),
-    'type' => MENU_NORMAL_ITEM,
-  );
   $items['downloadaspdf'] = array(
     'title' => 'Download as PDF',
     'page callback' => 'downloadaspdf_generation',
@@ -83,13 +68,11 @@ function download_email_block_view($delta) {
 }
 
 /**
- * Implements hook_block().().
- */
+ * Implements hook_block(). */
 function download_email_block_OLD($op = 'list', $delta = 0, $edit = array()) { }
 
 /**
- * Implements hook_theme()().
- * @param $existing
+ * Implements hook_theme(). * @param $existing
  * @param $type
  * @param $theme
  * @param $path
@@ -140,5 +123,3 @@ function download_email_getRTFEmailUrl($arg0 = "", $arg1 = "") {
   $extUrl = export2rtf_getUrl(arg(0), arg(1));
   return 'mailto:?body=' . t("Download the RTF from the server at the URL : ") . 'http://' . $_SERVER['HTTP_HOST'] . $extUrl;
 }
-
-
