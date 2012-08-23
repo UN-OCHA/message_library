@@ -78,13 +78,13 @@ function message_library_views_default_views() {
   $handler->display->display_options['style_options']['override'] = 1;
   $handler->display->display_options['style_options']['sticky'] = 0;
   $handler->display->display_options['style_options']['empty_table'] = 0;
-  /* Header: Global: Result summary */
-  $handler->display->display_options['header']['result']['id'] = 'result';
-  $handler->display->display_options['header']['result']['table'] = 'views';
-  $handler->display->display_options['header']['result']['field'] = 'result';
-  $handler->display->display_options['header']['result']['empty'] = FALSE;
-  $handler->display->display_options['header']['result']['content'] = '@total records matched criteria.
-';
+  /* Footer: Global: Result summary */
+  $handler->display->display_options['footer']['result']['id'] = 'result';
+  $handler->display->display_options['footer']['result']['table'] = 'views';
+  $handler->display->display_options['footer']['result']['field'] = 'result';
+  $handler->display->display_options['footer']['result']['label'] = 'Search Summary';
+  $handler->display->display_options['footer']['result']['empty'] = FALSE;
+  $handler->display->display_options['footer']['result']['content'] = '<strong>@total</strong> records matched criteria.';
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -460,8 +460,8 @@ function message_library_views_default_views() {
     t('Items per page'),
     t('- All -'),
     t('Offset'),
-    t('@total records matched criteria.
-'),
+    t('Search Summary'),
+    t('<strong>@total</strong> records matched criteria.'),
     t('There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.'),
     t('Threat'),
     t('Threat\'s Node ID'),
