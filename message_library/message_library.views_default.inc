@@ -102,7 +102,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['nid_1']['table'] = 'entity_node';
   $handler->display->display_options['fields']['nid_1']['field'] = 'nid';
   $handler->display->display_options['fields']['nid_1']['relationship'] = 'field_message_threat';
-  $handler->display->display_options['fields']['nid_1']['label'] = '';
+  $handler->display->display_options['fields']['nid_1']['label'] = 'Threat\'s Node ID';
   $handler->display->display_options['fields']['nid_1']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid_1']['alter']['alter_text'] = 0;
   $handler->display->display_options['fields']['nid_1']['alter']['make_link'] = 0;
@@ -117,8 +117,8 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['nid_1']['alter']['strip_tags'] = 0;
   $handler->display->display_options['fields']['nid_1']['alter']['trim'] = 0;
   $handler->display->display_options['fields']['nid_1']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['nid_1']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['nid_1']['element_default_classes'] = 1;
+  $handler->display->display_options['fields']['nid_1']['element_label_colon'] = 0;
+  $handler->display->display_options['fields']['nid_1']['element_default_classes'] = 0;
   $handler->display->display_options['fields']['nid_1']['hide_empty'] = 0;
   $handler->display->display_options['fields']['nid_1']['empty_zero'] = 0;
   $handler->display->display_options['fields']['nid_1']['hide_alter_empty'] = 1;
@@ -464,6 +464,7 @@ function message_library_views_default_views() {
 '),
     t('There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.'),
     t('Threat'),
+    t('Threat\'s Node ID'),
     t('.'),
     t('Threat URL'),
     t(','),

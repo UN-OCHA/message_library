@@ -549,31 +549,24 @@ function message_library_field_default_fields() {
       'field_permissions' => array(
         'type' => '0',
       ),
-      'foreign keys' => array(
-        'tid' => array(
-          'columns' => array(
-            'tid' => 'tid',
-          ),
-          'table' => 'taxonomy_term_data',
-        ),
-      ),
+      'foreign keys' => array(),
       'indexes' => array(
-        'tid' => array(
-          0 => 'tid',
+        'value' => array(
+          0 => 'value',
         ),
       ),
       'locked' => '0',
-      'module' => 'taxonomy',
+      'module' => 'list',
       'settings' => array(
         'allowed_values' => array(
-          0 => array(
-            'vocabulary' => 'sensitivity',
-            'parent' => '0',
-          ),
+          0 => 'Not sensitive',
+          1 => 'Sensitive',
+          2 => 'Very sensitive',
         ),
+        'allowed_values_function' => '',
       ),
       'translatable' => '0',
-      'type' => 'taxonomy_term_reference',
+      'type' => 'list_integer',
     ),
     'field_instance' => array(
       'bundle' => 'message',
@@ -583,10 +576,10 @@ function message_library_field_default_fields() {
       'display' => array(
         'default' => array(
           'label' => 'above',
-          'module' => 'taxonomy',
+          'module' => 'list',
           'settings' => array(),
-          'type' => 'taxonomy_term_reference_link',
-          'weight' => 23,
+          'type' => 'list_default',
+          'weight' => 32,
         ),
         'ical' => array(
           'label' => 'above',
@@ -610,9 +603,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'hs_taxonomy',
+        'module' => 'options',
         'settings' => array(),
-        'type' => 'taxonomy_hs',
+        'type' => 'options_select',
         'weight' => '8',
       ),
     ),

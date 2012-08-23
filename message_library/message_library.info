@@ -15,6 +15,7 @@ dependencies[] = file
 dependencies[] = hs_taxonomy
 dependencies[] = humanitarianresponse_organizations
 dependencies[] = link
+dependencies[] = list
 dependencies[] = options
 dependencies[] = search_api
 dependencies[] = strongarm
