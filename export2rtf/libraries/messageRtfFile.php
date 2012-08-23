@@ -96,9 +96,12 @@ class MessageRtfFile extends RtfFile {
     $this->content .= '\ul Information Type\ulnone : ' . $taxo->name . '\par' . "\n";
   }
 
-  public function addMessageSensitivity($tid = '') {
-    $taxo = taxonomy_term_load($tid);
-    $this->content .= '\ul Sensitivity\ulnone : ' . $taxo->name . '\par' . "\n";
+  public function addMessageSensitivity($value = '') {
+    $field = field_info_field('field_message_sensitivity');
+    $allowed_values = list_allowed_values($field);
+    if (!empty($allowed_values[$value])) {
+      $this->content .= '\ul Sensitivity\ulnone : ' . $allowed_values[$value] . '\par' . "\n";
+    }
   }
 
   public function addMessageSensitivityCauses($content = '') {

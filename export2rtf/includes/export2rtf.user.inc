@@ -15,15 +15,13 @@ function export2rtf_node($nidString) {
     foreach ($node->field_threat_message['und'] as $mid) {
       $message = node_load($mid['target_id']);
       $rtfFile->addMessageTitle($message->title);
-
-      // FIXME: move away from using tid.
-      if (!empty($message->field_message_sensitivity['und'][0]['tid'])) {
-        if ($message->field_message_sensitivity['und'][0]['tid'] > 0 && !empty($message->field_message_sensitivity_messag['und'][0])) {
+      if (!empty($message->field_message_sensitivity['und'][0]['value'])) {
+        if ($message->field_message_sensitivity['und'][0]['value'] == 1 && !empty($message->field_message_sensitivity_messag['und'][0])) {
           $rtfFile->addEmptyLine(1);
           $rtfFile->addMessageSensitivityDescription($message->field_message_sensitivity_messag['und'][0]['value']);
           $rtfFile->addEmptyLine(1);
         }
-        if ($message->field_message_sensitivity['und'][0]['tid'] > 0 && !empty($message->field_message_sensitivity_messag['und'][0])) {
+        if ($message->field_message_sensitivity['und'][0]['value'] == 2 && !empty($message->field_message_sensitivity_messag['und'][0])) {
           $rtfFile->addEmptyLine(1);
           $rtfFile->addMessageSensitivityDescription($message->field_message_sensitivity_messag['und'][0]['value']);
           $rtfFile->addEmptyLine(1);
@@ -41,7 +39,7 @@ function export2rtf_node($nidString) {
         $rtfFile->addMessageTargetAudienceComment($message->field_message_target_comment['und'][0]['value']);
       }
       $rtfFile->addMessageInformationType($message->field_message_info_type['und'][0]['tid']);
-      $rtfFile->addMessageSensitivity($message->field_message_sensitivity['und'][0]['tid']);
+      $rtfFile->addMessageSensitivity($message->field_message_sensitivity['und'][0]['value']);
       if (!empty($message->field_message_sensitivity_causes['und'][0]['value'])) {
         $rtfFile->addMessageSensitivityCauses($message->field_message_sensitivity_causes['und'][0]['value']);
       }
