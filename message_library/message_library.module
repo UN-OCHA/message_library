@@ -10,7 +10,6 @@ include_once 'message_library.features.inc';
  *
  * Change the default placeholders for the (-Any-) options on the exposed filter
  */
-
 function message_library_form_alter(&$form, $form_state, $form_id) {
   if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
     // overrides <All> on the dropdown
