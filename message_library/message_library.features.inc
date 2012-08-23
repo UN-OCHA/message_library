@@ -55,9 +55,9 @@ function message_library_node_info() {
  */
 function message_library_default_search_api_index() {
   $items = array();
-  $items['node_search'] = entity_import('search_api_index', '{
+  $items['message_library_index'] = entity_import('search_api_index', '{
     "name" : "Message Library Index",
-    "machine_name" : "node_search",
+    "machine_name" : "message_library_index",
     "description" : null,
     "server" : "solr_server",
     "item_type" : "node",
@@ -65,7 +65,26 @@ function message_library_default_search_api_index() {
       "index_directly" : 0,
       "cron_limit" : "50",
       "fields" : {
-        "field_humprofile_source" : { "type" : "text" },
+        "nid" : { "type" : "integer" },
+        "vid" : { "type" : "integer" },
+        "is_new" : { "type" : "boolean" },
+        "type" : { "type" : "string" },
+        "title" : { "type" : "text" },
+        "language" : { "type" : "string" },
+        "url" : { "type" : "uri" },
+        "edit_url" : { "type" : "uri" },
+        "status" : { "type" : "boolean" },
+        "promote" : { "type" : "boolean" },
+        "sticky" : { "type" : "boolean" },
+        "created" : { "type" : "date" },
+        "changed" : { "type" : "date" },
+        "author" : { "type" : "integer", "entity_type" : "user" },
+        "source" : { "type" : "integer", "entity_type" : "node" },
+        "log" : { "type" : "text" },
+        "revision" : { "type" : "boolean" },
+        "comment" : { "type" : "integer" },
+        "comment_count" : { "type" : "integer" },
+        "comment_count_new" : { "type" : "integer" },
         "field_message_group_risk" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_group_risk_comment" : { "type" : "text" },
         "field_message_audience" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
@@ -87,7 +106,10 @@ function message_library_default_search_api_index() {
         "search_api_alter_bundle_filter" : {
           "status" : 1,
           "weight" : "-10",
-          "settings" : { "default" : "0", "bundles" : { "message" : "message" } }
+          "settings" : {
+            "default" : "0",
+            "bundles" : { "message" : "message", "threat" : "threat" }
+          }
         },
         "search_api_alter_node_access" : { "status" : 0, "weight" : "0", "settings" : [] },
         "search_api_alter_add_hierarchy" : { "status" : 0, "weight" : "0", "settings" : { "fields" : [] } },
@@ -100,10 +122,14 @@ function message_library_default_search_api_index() {
           "status" : 0,
           "weight" : "0",
           "settings" : { "fields" : {
-              "field_arg_comment" : true,
-              "field_message" : true,
-              "field_sensitivity_cause" : true,
-              "field_ta_comment" : true
+              "title" : true,
+              "log" : true,
+              "field_message_group_risk_comment" : true,
+              "field_message_target_comment" : true,
+              "field_message_sensitivity_messag" : true,
+              "field_message_sensitivity_questi" : true,
+              "field_message_sensitivity_causes" : true,
+              "field_message_group_mess" : true
             }
           }
         },
@@ -112,10 +138,14 @@ function message_library_default_search_api_index() {
           "weight" : "10",
           "settings" : {
             "fields" : {
-              "field_arg_comment" : true,
-              "field_message" : true,
-              "field_sensitivity_cause" : true,
-              "field_ta_comment" : true
+              "title" : true,
+              "log" : true,
+              "field_message_group_risk_comment" : true,
+              "field_message_target_comment" : true,
+              "field_message_sensitivity_messag" : true,
+              "field_message_sensitivity_questi" : true,
+              "field_message_sensitivity_causes" : true,
+              "field_message_group_mess" : true
             },
             "title" : 0,
             "alt" : 1,
@@ -127,10 +157,14 @@ function message_library_default_search_api_index() {
           "weight" : "20",
           "settings" : {
             "fields" : {
-              "field_arg_comment" : true,
-              "field_message" : true,
-              "field_sensitivity_cause" : true,
-              "field_ta_comment" : true
+              "title" : true,
+              "log" : true,
+              "field_message_group_risk_comment" : true,
+              "field_message_target_comment" : true,
+              "field_message_sensitivity_messag" : true,
+              "field_message_sensitivity_questi" : true,
+              "field_message_sensitivity_causes" : true,
+              "field_message_group_mess" : true
             },
             "spaces" : "[^[:alnum:]]",
             "ignorable" : "[\\u0027]"
@@ -141,10 +175,14 @@ function message_library_default_search_api_index() {
           "weight" : "30",
           "settings" : {
             "fields" : {
-              "field_arg_comment" : true,
-              "field_message" : true,
-              "field_sensitivity_cause" : true,
-              "field_ta_comment" : true
+              "title" : true,
+              "log" : true,
+              "field_message_group_risk_comment" : true,
+              "field_message_target_comment" : true,
+              "field_message_sensitivity_messag" : true,
+              "field_message_sensitivity_questi" : true,
+              "field_message_sensitivity_causes" : true,
+              "field_message_group_mess" : true
             },
             "file" : "",
             "stopwords" : "but\\r\\ndid\\r\\nthe this that those\\r\\netc"

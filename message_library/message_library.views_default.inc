@@ -14,7 +14,7 @@ function message_library_views_default_views() {
   $view->name = 'message_library';
   $view->description = '';
   $view->tag = 'default';
-  $view->base_table = 'search_api_index_node_search';
+  $view->base_table = 'search_api_index_message_library_index';
   $view->human_name = 'Message Library';
   $view->core = 7;
   $view->api_version = '3.0';
@@ -95,7 +95,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['empty']['area']['tokenize'] = 0;
   /* Relationship: Indexed Node: Threat */
   $handler->display->display_options['relationships']['field_message_threat']['id'] = 'field_message_threat';
-  $handler->display->display_options['relationships']['field_message_threat']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['relationships']['field_message_threat']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['relationships']['field_message_threat']['field'] = 'field_message_threat';
   /* Field: Node: Node ID */
   $handler->display->display_options['fields']['nid_1']['id'] = 'nid_1';
@@ -154,7 +154,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['url']['link_to_entity'] = 0;
   /* Field: Indexed Node: Node ID */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
-  $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['nid']['field'] = 'nid';
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
@@ -206,7 +206,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_threat_category']['view_mode'] = 'full';
   /* Field: Indexed Node: Threat */
   $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
-  $handler->display->display_options['fields']['field_message_threat']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_threat']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_threat']['field'] = 'field_message_threat';
   $handler->display->display_options['fields']['field_message_threat']['alter']['alter_text'] = 0;
   $handler->display->display_options['fields']['field_message_threat']['alter']['make_link'] = 0;
@@ -230,7 +230,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_threat']['view_mode'] = 'full';
   /* Field: Indexed Node: Title */
   $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
-  $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['title_1']['field'] = 'title';
   $handler->display->display_options['fields']['title_1']['label'] = 'Information requirement';
   $handler->display->display_options['fields']['title_1']['alter']['alter_text'] = 0;
@@ -254,7 +254,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title_1']['link_to_entity'] = 1;
   /* Field: Indexed Node: At risk group */
   $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
-  $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_group_risk']['field'] = 'field_message_group_risk';
   $handler->display->display_options['fields']['field_message_group_risk']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_message_group_risk']['alter']['alter_text'] = 0;
@@ -279,7 +279,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_group_risk']['view_mode'] = 'full';
   /* Field: Indexed Node: Target audience */
   $handler->display->display_options['fields']['field_message_audience']['id'] = 'field_message_audience';
-  $handler->display->display_options['fields']['field_message_audience']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_audience']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_audience']['field'] = 'field_message_audience';
   $handler->display->display_options['fields']['field_message_audience']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_message_audience']['alter']['alter_text'] = 0;
@@ -304,7 +304,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_audience']['view_mode'] = 'full';
   /* Field: Indexed Node: Message */
   $handler->display->display_options['fields']['field_message_group_mess']['id'] = 'field_message_group_mess';
-  $handler->display->display_options['fields']['field_message_group_mess']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_group_mess']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_group_mess']['field'] = 'field_message_group_mess';
   $handler->display->display_options['fields']['field_message_group_mess']['alter']['alter_text'] = 0;
   $handler->display->display_options['fields']['field_message_group_mess']['alter']['make_link'] = 0;
@@ -327,7 +327,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_group_mess']['field_api_classes'] = 0;
   /* Field: Indexed Node: Examples of Communication around this issue */
   $handler->display->display_options['fields']['field_message_example_communic']['id'] = 'field_message_example_communic';
-  $handler->display->display_options['fields']['field_message_example_communic']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_example_communic']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_example_communic']['field'] = 'field_message_example_communic';
   $handler->display->display_options['fields']['field_message_example_communic']['label'] = 'Resources';
   $handler->display->display_options['fields']['field_message_example_communic']['alter']['alter_text'] = 0;
@@ -355,7 +355,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_example_communic']['field_api_classes'] = 0;
   /* Field: Indexed Node: Websites */
   $handler->display->display_options['fields']['field_message_url']['id'] = 'field_message_url';
-  $handler->display->display_options['fields']['field_message_url']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['fields']['field_message_url']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_url']['field'] = 'field_message_url';
   $handler->display->display_options['fields']['field_message_url']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_message_url']['alter']['alter_text'] = 0;
@@ -383,27 +383,25 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_url']['field_api_classes'] = 0;
   /* Filter criterion: Search: Fulltext search */
   $handler->display->display_options['filters']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
-  $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['filters']['search_api_views_fulltext']['field'] = 'search_api_views_fulltext';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['group'] = 1;
   $handler->display->display_options['filters']['search_api_views_fulltext']['exposed'] = TRUE;
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['operator_id'] = 'search_api_views_fulltext_op';
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['label'] = 'Quick Search';
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['operator'] = 'search_api_views_fulltext_op';
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['identifier'] = 'search_api_views_fulltext';
+  $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['remember'] = 1;
   $handler->display->display_options['filters']['search_api_views_fulltext']['fields'] = array(
-    'field_humprofile_source' => 'field_humprofile_source',
-    'field_message_group_risk_comment' => 'field_message_group_risk_comment',
-    'field_message_target_comment' => 'field_message_target_comment',
-    'field_message_sensitivity_messag' => 'field_message_sensitivity_messag',
-    'field_message_sensitivity_questi' => 'field_message_sensitivity_questi',
-    'field_message_sensitivity_causes' => 'field_message_sensitivity_causes',
+    'title' => 'title',
     'field_message_group_mess' => 'field_message_group_mess',
   );
   /* Filter criterion: Indexed Node: Issue */
   $handler->display->display_options['filters']['field_threat_category_1']['id'] = 'field_threat_category_1';
-  $handler->display->display_options['filters']['field_threat_category_1']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_threat_category_1']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['filters']['field_threat_category_1']['field'] = 'field_threat_category';
   $handler->display->display_options['filters']['field_threat_category_1']['value'] = array();
+  $handler->display->display_options['filters']['field_threat_category_1']['group'] = 1;
   $handler->display->display_options['filters']['field_threat_category_1']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_threat_category_1']['expose']['operator_id'] = 'field_threat_category_1_op';
   $handler->display->display_options['filters']['field_threat_category_1']['expose']['label'] = 'Issues';
@@ -412,9 +410,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_threat_category_1']['expose']['reduce'] = 0;
   /* Filter criterion: Indexed Node: At risk group */
   $handler->display->display_options['filters']['field_message_group_risk']['id'] = 'field_message_group_risk';
-  $handler->display->display_options['filters']['field_message_group_risk']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['filters']['field_message_group_risk']['field'] = 'field_message_group_risk';
   $handler->display->display_options['filters']['field_message_group_risk']['value'] = array();
+  $handler->display->display_options['filters']['field_message_group_risk']['group'] = 1;
   $handler->display->display_options['filters']['field_message_group_risk']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_message_group_risk']['expose']['operator_id'] = 'field_message_group_risk_op';
   $handler->display->display_options['filters']['field_message_group_risk']['expose']['label'] = 'At risk group';
@@ -423,9 +422,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_group_risk']['expose']['reduce'] = 0;
   /* Filter criterion: Indexed Node: Target audience */
   $handler->display->display_options['filters']['field_message_audience']['id'] = 'field_message_audience';
-  $handler->display->display_options['filters']['field_message_audience']['table'] = 'search_api_index_node_search';
+  $handler->display->display_options['filters']['field_message_audience']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['filters']['field_message_audience']['field'] = 'field_message_audience';
   $handler->display->display_options['filters']['field_message_audience']['value'] = array();
+  $handler->display->display_options['filters']['field_message_audience']['group'] = 1;
   $handler->display->display_options['filters']['field_message_audience']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_message_audience']['expose']['operator_id'] = 'field_message_audience_op';
   $handler->display->display_options['filters']['field_message_audience']['expose']['label'] = 'Target audience';
