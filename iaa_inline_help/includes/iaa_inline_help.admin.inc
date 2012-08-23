@@ -33,10 +33,7 @@ function iaa_inline_help_get_fields() {
   return $help_fields;
 }
 
-
-
 /**
- *
  * Formulaire d'administration des messages d'aide
  */
 function iaa_inline_help_admin_page_form($form, &$form_state) {
@@ -77,7 +74,6 @@ function iaa_inline_help_admin_page_form($form, &$form_state) {
 }
 
 /**
- *
  * Sauvegarde des messages d'aide
  * @param unknown_type $form
  * @param unknown_type $form_state
@@ -93,7 +89,6 @@ function iaa_inline_help_admin_page_form_submit($form, &$form_state) {
   endforeach;
   drupal_set_message(t('The configuration has been saved.'));
 }
-
 
 /**
  * @todo Please document this function.

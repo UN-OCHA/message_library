@@ -1,6 +1,6 @@
 <?php
 
-define('IAA_INLINE_HELP_EMPTY', "Empty help text");
+define('IAA_INLINE_HELP_EMPTY', 'Empty help text');
 
 /**
  * Implements hook_init().
@@ -9,7 +9,6 @@ function iaa_inline_help_init() {
   drupal_add_js(drupal_get_path('module', 'iaa_inline_help') . '/js/iaa_inline_help.js');
   drupal_add_css(drupal_get_path('module', 'iaa_inline_help') . '/css/iaa_inline_help.css');
 }
-
 
 /**
  * Implements hook_permission().
@@ -57,7 +56,6 @@ function iaa_inline_help_menu() {
 
   return $items;
 }
-
 
 /**
  * Implements hook_theme().
