@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function download_email_init() {
+  drupal_add_js(drupal_get_path('module', 'download_email') . '/js/download_email.js');
+  drupal_add_css(drupal_get_path('module', 'download_email') . '/css/download_email.css');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function download_email_menu() {
+
+  $items = array();
+
+  $items['admin/download_email/download_email_contact'] = array(
+    'title' => 'Download/Email as PDF configuration',
+    'description' => 'Configure the module Download/Email as PDF.',
+    'page callback' => 'drupal_get_form',
+    'file' => 'includes/download_email.admin.inc',
+    'page arguments' => array(
+      'download_email_admin_page_form'
+    ),
+    'access arguments' => array(
+      'edit Download/Email module'
+    ),
+    'type' => MENU_NORMAL_ITEM
+  );
+  $items['downloadaspdf'] = array(
+    'title' => 'Download as PDF',
+    'page callback' => 'downloadaspdf_generation',
+    'file' => 'includes/download_email.user.inc',
+    'access arguments' => array(
+      'access content'
+    ),
+    'type' => MENU_NORMAL_ITEM
+  );
+  $items['emailaspdf'] = array(
+    'title' => 'Email as PDF',
+    'page callback' => 'emailaspdf_generation',
+    'file' => 'includes/download_email.user.inc',
+    'access arguments' => array(
+      'access content'
+    ),
+    'type' => MENU_NORMAL_ITEM
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function download_email_block($op = 'list', $delta = 0, $edit = array()) {
+  if ($op == 'list') {
+    $blocks[0] = array(
+      'info' => t('Download/Email links'),
+      'cache' => BLOCK_NO_CACHE
+    );
+    return $blocks;
+  }
+  else if ($op == 'view') {
+    $block = array();
+    switch ($delta) {
+      case 0 :
+        $block = array(
+          'subject' => t('Download/Email links'),
+          'content' => theme('download_email')
+        );
+        break;
+    }
+    return $block;
+  }
+}
+
+/**
+ * Implements of hook_theme()
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return unknown_type
+ */
+function download_email_theme($existing, $type, $theme, $path) {
+  return array(
+    'download_email' => array(
+      'template' => 'templates/download_email',
+      'arguments' => array()
+    )
+  );
+}
+
+function download_email_getDownloadUrl($arg0 = "", $arg1 = "") {
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    $node = node_load(arg(1));
+    return artools_filecache_url('pdf',$node->nid."/". to_css_identifier($node->title).".pdf");
+  }
+  return url("downloadaspdf");
+}
+
+function download_email_getEmailUrl($arg0 = "", $arg1 = "") {
+  $extUrl = "";
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    $node = node_load(arg(1));
+  	$extUrl = artools_filecache_url('pdf',$node->nid."/". to_css_identifier($node->title).".pdf");
+  }
+  else {
+  	$extUrl = url("downloadaspdf")."?nid=" . arg(1);
+  }
+  return 'mailto:?body='.t("Download the PDF from the server at the URL : ") . 'http://'.$_SERVER['HTTP_HOST'].$extUrl;
+}
+
+function download_email_getRTFEmailUrl($arg0 = "", $arg1 = "") {
+	$extUrl = export2rtf_getUrl(arg(0),arg(1));
+  return 'mailto:?body='.t("Download the RTF from the server at the URL : ") . 'http://'.$_SERVER['HTTP_HOST'].$extUrl;
+}
+
+
