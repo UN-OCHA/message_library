@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * ...
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function message_library_views_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'message_library_views') . '/views',
+  );
+}

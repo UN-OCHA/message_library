@@ -1,0 +1,6 @@
+name =  Export to RTF
+description = Export "Message Library" to RTF
+package = Infoasaid
+core = 7.x
+files[] = libraries/messageRtfFile.php
+files[] = libraries/rtfFile.php

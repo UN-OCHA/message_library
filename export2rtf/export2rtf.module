@@ -1,0 +1,95 @@
+<?php
+
+include_once drupal_get_path('module', 'export2rtf') . '/libraries/messageRtfFile.php';
+
+/**
+ * Implements hook_init().
+ */
+function export2rtf_init() {
+  drupal_add_js(drupal_get_path('module', 'export2rtf') . '/js/export2rtf.js');
+  drupal_add_css(drupal_get_path('module', 'export2rtf') . '/css/export2rtf.css');
+}
+
+/**
+ * Implements hook_menu().
+ */
+function export2rtf_menu() {
+  $items = array();
+  $items['export2rtf/%'] = array(
+    'page callback' => 'export2rtf_node',
+    'access arguments' => array('access content'),
+    'page arguments' => array(1),
+    'file' => 'includes/export2rtf.user.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function export2rtf_block_info() {
+  // TODO Rename block deltas (e.g. delta-0) to readable strings.
+  if (TRUE) {
+    $blocks['delta-0'] = array(
+      'info' => t('Export To RTF link'),
+      'cache' => DRUPAL_CACHE_PER_ROLE,
+    );
+    return $blocks;
+  }
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function export2rtf_block_view($delta) {
+  // TODO Rename block deltas (e.g. delta-0) to readable strings.
+  if (TRUE) {
+    $block = array();
+    switch ($delta) {
+      case 'delta-0':
+        $block = array(
+          'subject' => t('Export To RTF links'),
+          'content' => theme('export2rtf'),
+        );
+        break;
+    }
+    return $block;
+  }
+}
+
+/**
+ * Implements hook_block().
+ */
+function export2rtf_block_OLD($op = 'list', $delta = 0, $edit = array()) { }
+
+
+/**
+ * Implements hook_theme().
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return unknown_type
+ */
+function export2rtf_theme($existing, $type, $theme, $path) {
+  return array(
+    'export2rtf' => array(
+      'template' => 'templates/export2rtf',
+      'variables' => array(),
+    ),
+  );
+}
+
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function export2rtf_getUrl($arg0 = '', $arg1 = '') {
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    return url('export2rtf/') . arg(1);
+  }
+  return url('export2rtf');
+}
