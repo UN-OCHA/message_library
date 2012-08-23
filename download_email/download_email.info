@@ -2,6 +2,6 @@
 name = Download/Email Links
 description = Display links to Download or Email PDF
 dependencies[] = export2rtf
-core = 6.x
+core = 7.x
 package = Infoasaid
 
