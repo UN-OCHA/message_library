@@ -1,0 +1,12 @@
+; $Id: iaa_inline_help.info,v 1.0 2012/01/10 08:05:19 Tubaldo Hervé Exp $
+name = IAA Inline Help
+description = Inline Help script
+core = 6.x
+package = Infoasaid
+
+
+; Information added by drupal.org packaging script on 2011-02-25
+version = "6.x"
+core = "6.x"
+project = "iaa_inline_help"
+datestamp = "1298619977"

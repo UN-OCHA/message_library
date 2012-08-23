@@ -1,0 +1,95 @@
+<?php
+
+define('IAA_INLINE_HELP_EMPTY',"Empty help text");
+
+/**
+ * Implements hook_init().
+ */
+function iaa_inline_help_init() {
+  drupal_add_js(drupal_get_path('module', 'iaa_inline_help') . '/js/iaa_inline_help.js');
+  drupal_add_css(drupal_get_path('module', 'iaa_inline_help') . '/css/iaa_inline_help.css');
+}
+
+
+/**
+ * Implementation of hook_perm().
+ */
+function iaa_inline_help_perm() {
+  return array('administer inline help');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function iaa_inline_help_menu() {
+
+  $items = array();
+
+  $items['admin/settings/iaa_inline_help'] = array(
+    'title' => 'IAA Inline Help Configuration',
+    'description' => 'Configure the module Inline Help.',
+    'page callback' => 'drupal_get_form',
+    'file' => 'includes/iaa_inline_help.admin.inc',
+    'page arguments' => array(
+      'iaa_inline_help_admin_page_form'
+    ),
+    'access arguments' => array(
+      'administer inline help'
+    ),
+    'type' => MENU_NORMAL_ITEM
+  );
+
+  $items['admin/settings/iaa_inline_help/edit'] = array(
+    'title' => 'IAA Inline Help Configuration',
+    'description' => 'Configure the module Inline Help.',
+    'page callback' => 'iaa_inline_help_admin_edit',
+    'file' => 'includes/iaa_inline_help.admin.inc',
+    'access arguments' => array(
+      'administer inline help'
+    ),
+    'type' => MENU_CALLBACK
+  );
+  
+  return $items;
+}
+
+
+/**
+ * Implements of hook_theme()
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return unknown_type
+ */
+function iaa_inline_help_theme($existing, $type, $theme, $path) {
+  return array(
+    'iaa_inline_help_block' => array(
+      'template' => 'templates/iaa_inline_help_block',
+      'arguments' => array(
+  		'help' => array('id'=>'','message'=>''),
+    	'status' => 'show', // "show" or "hide" the message
+    	'icon' => 'both', // "controller", "message" or "both" icon button
+  	  )
+    ),
+    'iaa_inline_help_hide_all' => array(
+      'template' => 'templates/iaa_inline_help_hide_all',
+      'arguments' => array(
+    	'status' => 'show' // "show" or "hide" the message
+  	  )
+    ),
+  );
+}
+
+function iaa_inline_help_generate($message_id='',$icon='both',$status='show') {
+	$help['id'] = $message_id;
+	$help['message'] = variable_get('iaa_inline_help_'.$message_id,'Empty help text');
+	if ($help['message'] == '' && user_access('administer inline help')) {
+		$help['message'] = IAA_INLINE_HELP_EMPTY;
+	}
+	return theme('iaa_inline_help_block',$help,$status,$icon);
+}
+
+function iaa_inline_help_toogle($status='show') {
+	return theme('iaa_inline_help_hide_all',$status);
+}
