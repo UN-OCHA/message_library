@@ -1,6 +1,6 @@
 <?php
 
-define('IAA_INLINE_HELP_EMPTY',"Empty help text");
+define('IAA_INLINE_HELP_EMPTY', "Empty help text");
 
 /**
  * Implements hook_init().
@@ -12,50 +12,55 @@ function iaa_inline_help_init() {
 
 
 /**
- * Implementation of hook_perm().
+ * Implements hook_permission().
  */
-function iaa_inline_help_perm() {
-  return array('administer inline help');
+function iaa_inline_help_permission() {
+  return array(
+    'administer inline help' => array(
+      'title' => t('administer inline help'),
+      'description' => t('TODO Add a description for \'administer inline help\''),
+    ),
+  );
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function iaa_inline_help_menu() {
 
   $items = array();
 
-  $items['admin/settings/iaa_inline_help'] = array(
+  $items['admin/config/iaa_inline_help'] = array(
     'title' => 'IAA Inline Help Configuration',
     'description' => 'Configure the module Inline Help.',
     'page callback' => 'drupal_get_form',
     'file' => 'includes/iaa_inline_help.admin.inc',
     'page arguments' => array(
-      'iaa_inline_help_admin_page_form'
+      'iaa_inline_help_admin_page_form',
     ),
     'access arguments' => array(
-      'administer inline help'
+      'administer inline help',
     ),
-    'type' => MENU_NORMAL_ITEM
+    'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['admin/settings/iaa_inline_help/edit'] = array(
+  $items['admin/config/iaa_inline_help/edit'] = array(
     'title' => 'IAA Inline Help Configuration',
     'description' => 'Configure the module Inline Help.',
     'page callback' => 'iaa_inline_help_admin_edit',
     'file' => 'includes/iaa_inline_help.admin.inc',
     'access arguments' => array(
-      'administer inline help'
+      'administer inline help',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
 
 /**
- * Implements of hook_theme()
+ * Implements hook_theme().
  * @param $existing
  * @param $type
  * @param $theme
@@ -66,30 +71,38 @@ function iaa_inline_help_theme($existing, $type, $theme, $path) {
   return array(
     'iaa_inline_help_block' => array(
       'template' => 'templates/iaa_inline_help_block',
-      'arguments' => array(
-  		'help' => array('id'=>'','message'=>''),
-    	'status' => 'show', // "show" or "hide" the message
-    	'icon' => 'both', // "controller", "message" or "both" icon button
-  	  )
+      'variables' => array(
+        'help' => array('id' => '', 'message' => ''),
+        'status' => 'show', // "show" or "hide" the message
+        'icon' => 'both', // "controller", "message" or "both" icon button
+      ),
     ),
     'iaa_inline_help_hide_all' => array(
       'template' => 'templates/iaa_inline_help_hide_all',
-      'arguments' => array(
-    	'status' => 'show' // "show" or "hide" the message
-  	  )
+      'variables' => array(
+        'status' => 'show', // "show" or "hide" the message
+      ),
     ),
   );
 }
 
-function iaa_inline_help_generate($message_id='',$icon='both',$status='show') {
-	$help['id'] = $message_id;
-	$help['message'] = variable_get('iaa_inline_help_'.$message_id,'Empty help text');
-	if ($help['message'] == '' && user_access('administer inline help')) {
-		$help['message'] = IAA_INLINE_HELP_EMPTY;
-	}
-	return theme('iaa_inline_help_block',$help,$status,$icon);
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function iaa_inline_help_generate($message_id = '', $icon = 'both', $status = 'show') {
+  $help['id'] = $message_id;
+  $help['message'] = variable_get('iaa_inline_help_' . $message_id, 'Empty help text');
+  if ($help['message'] == '' && user_access('administer inline help')) {
+    $help['message'] = IAA_INLINE_HELP_EMPTY;
+  }
+  return theme('iaa_inline_help_block', array('help' => $help, 'status' => $status, 'icon' => $icon));
 }
 
-function iaa_inline_help_toogle($status='show') {
-	return theme('iaa_inline_help_hide_all',$status);
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function iaa_inline_help_toogle($status = 'show') {
+  return theme('iaa_inline_help_hide_all', array('status' => $status));
 }
