@@ -8,33 +8,6 @@ function download_email_init() {
 }
 
 /**
- * Implements hook_menu(). */
-function download_email_menu() {
-
-  $items = array();
-
-  $items['downloadaspdf'] = array(
-    'title' => 'Download as PDF',
-    'page callback' => 'downloadaspdf_generation',
-    'file' => 'includes/download_email.user.inc',
-    'access arguments' => array(
-      'access content',
-    ),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  $items['emailaspdf'] = array(
-    'title' => 'Email as PDF',
-    'page callback' => 'emailaspdf_generation',
-    'file' => 'includes/download_email.user.inc',
-    'access arguments' => array(
-      'access content',
-    ),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  return $items;
-}
-
-/**
  * Implements hook_block_info().
  */
 function download_email_block_info() {
@@ -42,7 +15,7 @@ function download_email_block_info() {
   if (TRUE) {
     $blocks['delta-0'] = array(
       'info' => t('Download/Email links'),
-      'cache' => BLOCK_NO_CACHE,
+      'cache' => DRUPAL_NO_CACHE,
     );
     return $blocks;
   }
@@ -85,34 +58,6 @@ function download_email_theme($existing, $type, $theme, $path) {
       'variables' => array(),
     ),
   );
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function download_email_getDownloadUrl($arg0 = "", $arg1 = "") {
-  if (arg(0) == 'node' && is_numeric(arg(1))) {
-    $node = node_load(arg(1));
-    return artools_filecache_url('pdf', $node->nid . "/" . to_css_identifier($node->title) . ".pdf");
-  }
-  return url("downloadaspdf");
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function download_email_getEmailUrl($arg0 = "", $arg1 = "") {
-  $extUrl = "";
-  if (arg(0) == 'node' && is_numeric(arg(1))) {
-    $node = node_load(arg(1));
-    $extUrl = artools_filecache_url('pdf', $node->nid . "/" . to_css_identifier($node->title) . ".pdf");
-  }
-  else {
-    $extUrl = url("downloadaspdf") . "?nid=" . arg(1);
-  }
-  return 'mailto:?body=' . t("Download the PDF from the server at the URL : ") . 'http://' . $_SERVER['HTTP_HOST'] . $extUrl;
 }
 
 /**
