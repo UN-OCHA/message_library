@@ -1,0 +1,4 @@
+name = IAA Inline Help
+description = Inline Help script
+package = Message Library
+core = 7.x
