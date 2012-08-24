@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
 'help' => array('id'=>'','message'=>''),
 'status' => 'show', // "show" or "hide" message
@@ -27,7 +27,7 @@
          <div class="<?php if (user_access('administer inline help')) echo '_iaa_inline_help_wrapper_message'; ?>"><?php echo t($help['message']); ?></div>
          <?php if (user_access('administer inline help')) : ?>
          <div style="display: none;" class="_iaa_inline_help_wrapper_form">
-             <form method="POST" action="<?php echo url('admin/settings/iaa_inline_help/edit'); ?>" class="_iaa_inline_help_form">
+             <form method="POST" action="<?php echo url('admin/config/iaa_inline_help/edit'); ?>" class="_iaa_inline_help_form">
                  <input type="hidden" value="<?php echo $help['id']; ?>" name="id" class="_iaa_inline_help_form_id" />
                  <textarea name="message" id="iaa_inline_help_message_<?php echo $help['id']; ?>" rows="5" cols="70" class="_iaa_inline_help_form_message"><?php echo $help['message']; ?></textarea>
                  <button class="_iaa_inline_help_form_cancel"><?php echo t("Cancel"); ?></button>

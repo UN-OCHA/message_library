@@ -1,8 +1,7 @@
 (function ($) {
 
-	Drupal.iaainlinehelp = Drupal.iaainlinehelp || {};
-
-	Drupal.behaviors.iaainlinehelp = function(context) {
+	Drupal.behaviors.iaainlinehelp = {
+		attach: function(context, settings) {
 
 		$('._iaa_inline_help_wrapper').hide();
 		$('._iaa_inline_help_button_hide').removeClass('_iaa_inline_help_button_hide').addClass('_iaa_inline_help_button_show').children('._iaa_inline_help_button_message').html(Drupal.t("show")).parents('._iaa_inline_help_button_wrapper').removeClass('iaa_inline_help_button_wrapper_hide').addClass('iaa_inline_help_button_wrapper_show');
@@ -25,9 +24,6 @@
 			return false;
 		});
 		
-		
-		
-		
 		$('._iaa_inline_help_form').submit(function(){
 			var form = this;
 			// on sauve en ajax
@@ -45,58 +41,59 @@
 				}
 			});	
 			
-			
 			return false;
 		});
-		
+	
+		}
 	};
+
+	function hideAllHelpEvent() {
+		$('._iaa_inline_help_hideall').unbind('click').click(function(){
+			$('._iaa_inline_help_wrapper').hide();
+			$('._iaa_inline_help_button_hide').removeClass('_iaa_inline_help_button_hide').addClass('_iaa_inline_help_button_show').children('._iaa_inline_help_button_message').html(Drupal.t("show")).parents('._iaa_inline_help_button_wrapper').removeClass('iaa_inline_help_button_wrapper_hide').addClass('iaa_inline_help_button_wrapper_show');
+			initShowHelpEvent();
+			$(this).removeClass('_iaa_inline_help_hideall').addClass('_iaa_inline_help_showall').html(Drupal.t("Display help"));
+			showAllHelpEvent();
+			return false;
+		});
+	}
+
+	function showAllHelpEvent() {
+		$('._iaa_inline_help_showall').unbind('click').click(function(){
+			$('._iaa_inline_help_wrapper').show();
+			$('._iaa_inline_help_button_show').removeClass('_iaa_inline_help_button_show').addClass('_iaa_inline_help_button_hide').children('._iaa_inline_help_button_message').html(Drupal.t("hide")).parents('._iaa_inline_help_button_wrapper').removeClass('iaa_inline_help_button_wrapper_show').addClass('iaa_inline_help_button_wrapper_hide');
+			initHideHelpEvent();
+			$(this).removeClass('_iaa_inline_help_showall').addClass('_iaa_inline_help_hideall').html(Drupal.t("Hide all help"));
+			hideAllHelpEvent();
+			return false;
+		});
+	}
+
+	function initHideHelpEvent() {
+		$('._iaa_inline_help_button_hide').click(function(){
+			//return false;
+		});
+		$('.iaa_inline_help_button_wrapper_hide').unbind('click').click(function(){
+			$($(this).children('a').attr("href")).hide();
+			$(this).find('._iaa_inline_help_button_message').html(Drupal.t("show")).parents('._iaa_inline_help_button_hide').removeClass('_iaa_inline_help_button_hide').addClass('_iaa_inline_help_button_show');
+			$(this).removeClass('iaa_inline_help_button_wrapper_hide').addClass('iaa_inline_help_button_wrapper_show');
+			initShowHelpEvent();
+			return false;
+		});
+	}
+
+	function initShowHelpEvent() {
+		$('._iaa_inline_help_button_show').click(function(){
+			//return false;
+		});
+		$('.iaa_inline_help_button_wrapper_show').unbind('click').click(function(){
+			$($(this).children('a').attr("href")).show();
+			$(this).find('._iaa_inline_help_button_message').html(Drupal.t("hide")).parents('._iaa_inline_help_button_show').removeClass('_iaa_inline_help_button_show').addClass('_iaa_inline_help_button_hide');
+			$(this).removeClass('iaa_inline_help_button_wrapper_show').addClass('iaa_inline_help_button_wrapper_hide');
+			initHideHelpEvent();
+			return false;
+		});
+	}
+
 // END jQuery
 })(jQuery);
-
-function hideAllHelpEvent() {
-	$('._iaa_inline_help_hideall').unbind('click').click(function(){
-		$('._iaa_inline_help_wrapper').hide();
-		$('._iaa_inline_help_button_hide').removeClass('_iaa_inline_help_button_hide').addClass('_iaa_inline_help_button_show').children('._iaa_inline_help_button_message').html(Drupal.t("show")).parents('._iaa_inline_help_button_wrapper').removeClass('iaa_inline_help_button_wrapper_hide').addClass('iaa_inline_help_button_wrapper_show');
-		initShowHelpEvent();
-		$(this).removeClass('_iaa_inline_help_hideall').addClass('_iaa_inline_help_showall').html(Drupal.t("Display help"));
-		showAllHelpEvent();
-		return false;
-	});
-}
-
-function showAllHelpEvent() {
-	$('._iaa_inline_help_showall').unbind('click').click(function(){
-		$('._iaa_inline_help_wrapper').show();
-		$('._iaa_inline_help_button_show').removeClass('_iaa_inline_help_button_show').addClass('_iaa_inline_help_button_hide').children('._iaa_inline_help_button_message').html(Drupal.t("hide")).parents('._iaa_inline_help_button_wrapper').removeClass('iaa_inline_help_button_wrapper_show').addClass('iaa_inline_help_button_wrapper_hide');
-		initHideHelpEvent();
-		$(this).removeClass('_iaa_inline_help_showall').addClass('_iaa_inline_help_hideall').html(Drupal.t("Hide all help"));
-		hideAllHelpEvent();
-		return false;
-	});
-}
-
-function initHideHelpEvent() {
-	$('._iaa_inline_help_button_hide').click(function(){
-		//return false;
-	});
-	$('.iaa_inline_help_button_wrapper_hide').unbind('click').click(function(){
-		$($(this).children('a').attr("href")).hide();
-		$(this).find('._iaa_inline_help_button_message').html(Drupal.t("show")).parents('._iaa_inline_help_button_hide').removeClass('_iaa_inline_help_button_hide').addClass('_iaa_inline_help_button_show');
-		$(this).removeClass('iaa_inline_help_button_wrapper_hide').addClass('iaa_inline_help_button_wrapper_show');
-		initShowHelpEvent();
-		return false;
-	});
-}
-
-function initShowHelpEvent() {
-	$('._iaa_inline_help_button_show').click(function(){
-		//return false;
-	});
-	$('.iaa_inline_help_button_wrapper_show').unbind('click').click(function(){
-		$($(this).children('a').attr("href")).show();
-		$(this).find('._iaa_inline_help_button_message').html(Drupal.t("hide")).parents('._iaa_inline_help_button_show').removeClass('_iaa_inline_help_button_show').addClass('_iaa_inline_help_button_hide');
-		$(this).removeClass('iaa_inline_help_button_wrapper_show').addClass('iaa_inline_help_button_wrapper_hide');
-		initHideHelpEvent();
-		return false;
-	});
-}
