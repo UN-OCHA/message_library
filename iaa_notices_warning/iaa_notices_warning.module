@@ -1,7 +1,7 @@
 <?php
+// FIXME
 define('ML_CGI_NID', 6709);
 //define('ML_CGI_NID',6532);
-
 
 /**
  * Implements hook_init().
@@ -15,7 +15,6 @@ function iaa_notices_warning_init() {
   drupal_add_css(drupal_get_path('module', 'iaa_notices_warning') . '/css/iaa_notices_warning.css');
 }
 
-
 /**
  * Implements hook_permission().
  */
@@ -27,9 +26,6 @@ function iaa_notices_warning_permission() {
     ),
   );
 }
-
-
-
 
 /**
  * Implements hook_menu().
@@ -111,7 +107,6 @@ function iaa_notices_warning_menu() {
   return $items;
 }
 
-
 /**
  * Implements hook_theme().
  * @param $existing
@@ -156,7 +151,6 @@ function iaa_notices_warning_theme($existing, $type, $theme, $path) {
   );
 }
 
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
@@ -177,9 +171,7 @@ function iaa_notices_warning_login_block() {
  * @see http://drupal.org/node/1354
  */
 function iaa_notices_warning_login_block_submit($form, &$form_state) {
-
 }
-
 
 /**
  * @todo Please document this function.
@@ -219,7 +211,6 @@ function iaa_notices_warning_node_load($node, $types) {
  */
 function iaa_notices_warning_nodeapi_OLD(&$node, $op, $a3 = NULL, $a4 = NULL) { }
 
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
@@ -229,7 +220,6 @@ function iaa_notices_warning_preprocess_page(&$variables) {
     drupal_goto('cgi-message-library', array('query' => array('destination' => '\' . urlencode($_SERVER[\'REQUEST_URI\'])')));
   }
 }
-
 
 /**
  * @todo Please document this function.
@@ -251,8 +241,6 @@ function iaa_notices_warning_header($node) {
   }
   return $output;
 }
-
-
 
 /****** Warning messages  ****/
 /**
@@ -293,7 +281,6 @@ function iaa_notices_warning_get_warning($nid) {
   return $show;
 }
 
-
 /****** CGI Message  ****/
 /**
  * @todo Please document this function.
@@ -332,5 +319,3 @@ function iaa_notices_warning_get_cgi() {
   }
   return $show;
 }
-
-

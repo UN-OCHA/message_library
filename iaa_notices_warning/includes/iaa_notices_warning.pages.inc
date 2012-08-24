@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
@@ -12,7 +11,6 @@ function iaa_notices_warning_get_message() {
   echo $node->field_message_group_mess[0]['value'];
 }
 
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
@@ -21,7 +19,6 @@ function iaa_notices_warning_form_login() {
   $nid = $_POST['nid'];
   echo theme('iaa_notices_warning_form_login', array('nid' => $nid));
 }
-
 
 /**
  * @todo Please document this function.
@@ -45,10 +42,6 @@ function iaa_notices_warning_login() {
   }
 }
 
-
-
-
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
@@ -58,7 +51,6 @@ function iaa_notices_warning_cgi() {
   drupal_set_title($node->title);
   return theme('iaa_notices_warning_cgi', array('node' => $node));
 }
-
 
 /**
  * @todo Please document this function.
@@ -70,9 +62,6 @@ function iaa_notices_warning_cgi_accepted() {
   }
   //drupal_goto($_POST['destination']);
 }
-
-
-
 
 /**
  * @todo Please document this function.
