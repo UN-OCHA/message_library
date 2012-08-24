@@ -1,5 +1,5 @@
 <?php
-define('ML_CGI_NID',6709);
+define('ML_CGI_NID', 6709);
 //define('ML_CGI_NID',6532);
 
 
@@ -8,8 +8,8 @@ define('ML_CGI_NID',6709);
  */
 function iaa_notices_warning_init() {
   if (!module_exists('colorbox')) {
-  	drupal_add_css(drupal_get_path('module', 'iaa_notices_warning') . '/css/colorbox_default_style.css');
-  	drupal_add_js(drupal_get_path('module', 'iaa_notices_warning') . '/js/jquery.colorbox.js');
+    drupal_add_css(drupal_get_path('module', 'iaa_notices_warning') . '/css/colorbox_default_style.css');
+    drupal_add_js(drupal_get_path('module', 'iaa_notices_warning') . '/js/jquery.colorbox.js');
   }
   drupal_add_js(drupal_get_path('module', 'iaa_notices_warning') . '/js/iaa_notices_warning.js');
   drupal_add_css(drupal_get_path('module', 'iaa_notices_warning') . '/css/iaa_notices_warning.css');
@@ -17,17 +17,22 @@ function iaa_notices_warning_init() {
 
 
 /**
- * Implementation of hook_perm().
+ * Implements hook_permission().
  */
-function iaa_notices_warning_perm() {
-  return array('administer notices warning');
+function iaa_notices_warning_permission() {
+  return array(
+    'administer notices warning' => array(
+      'title' => t('administer notices warning'),
+      'description' => t('TODO Add a description for \'administer notices warning\''),
+    ),
+  );
 }
 
 
 
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function iaa_notices_warning_menu() {
 
@@ -38,9 +43,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_get_message',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['iaa_notices_warning/formlogin'] = array(
@@ -48,9 +53,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_form_login',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['iaa_notices_warning/login'] = array(
@@ -58,9 +63,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_login',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['cgi-message-library'] = array(
@@ -68,9 +73,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_cgi',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['cgi-message-library/accepted'] = array(
@@ -78,9 +83,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_cgi_accepted',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['cgi-message-library/formlogin'] = array(
@@ -88,9 +93,9 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_cgi_form_login',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['cgi-message-library/login'] = array(
@@ -98,17 +103,17 @@ function iaa_notices_warning_menu() {
     'page callback' => 'iaa_notices_warning_cgi_login',
     'file' => 'includes/iaa_notices_warning.pages.inc',
     'access arguments' => array(
-      'access content'
+      'access content',
     ),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
 
 /**
- * Implements of hook_theme()
+ * Implements hook_theme().
  * @param $existing
  * @param $type
  * @param $theme
@@ -119,158 +124,213 @@ function iaa_notices_warning_theme($existing, $type, $theme, $path) {
   return array(
     'iaa_notices_warning_questions' => array(
       'template' => 'templates/iaa_notices_warning_questions',
-      'arguments' => array(
-  		'nid' => '',
-  		'message' => '',
-  		'questions' => array()
-  	  )
+      'variables' => array(
+        'nid' => '',
+        'message' => '',
+        'questions' => array(),
+      ),
     ),
     'iaa_notices_warning_sensitive' => array(
       'template' => 'templates/iaa_notices_warning_sensitive',
-      'arguments' => array(
-  		'message' => '',
-  	  )
+      'variables' => array(
+        'message' => '',
+      ),
     ),
     'iaa_notices_warning_form_login' => array(
       'template' => 'templates/iaa_notices_warning_form_login',
-      'arguments' => array(
-  		'nid' => '',
-  	  )
+      'variables' => array(
+        'nid' => '',
+      ),
     ),
     'iaa_notices_warning_cgi' => array(
       'template' => 'templates/iaa_notices_warning_cgi',
-      'arguments' => array(
-  		'node' => null,
-  	  )
+      'variables' => array(
+        'node' => null,
+      ),
     ),
     'iaa_notices_warning_cgi_form_login' => array(
       'template' => 'templates/iaa_notices_warning_cgi_form_login',
-      'arguments' => array(
-  	  )
-    )
+      'variables' => array(
+      ),
+    ),
   );
 }
 
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_login_block() {
-	$form = user_login_block();
-	$form['nid'] = array(
-		'#type' => 'hidden',
-	    '#title' => t('NID'),
-	    '#value' => $_POST['nid']
-    );
-	//$form['#id'] = 'iaa_notices_warning_login';
-	return $form;
+  $form = user_login_block();
+  $form['nid'] = array(
+    '#type' => 'hidden',
+    '#title' => t('NID'),
+    '#value' => $_POST['nid'],
+  );
+  //$form['#id'] = 'iaa_notices_warning_login';
+  return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_login_block_submit($form, &$form_state) {
-	
+
 }
 
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_form_alter(&$form, &$form_state, $form_id) {
-	if ($form_id == 'iaa_notices_warning_login_block'){
-		$form['#action'] = $_SERVER['HTTP_REFERER'];
-	    $form["#submit"][]="iaa_notices_warning_user_form_submit";
-	}
-}
-
-
-function iaa_notices_warning_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  switch ($op) {
-    case 'load':
-    	if ($node->type == 'message' && $node->field_message_sensitivity[0]['value'] != 56 && arg(0) == 'node' && arg(2) == '') {
-			if ($node->field_message_sensitivity[0]['value'] == 57) { // sensitive
-				//$node->body = theme('iaa_notices_warning_sensitive',$node->field_message_sensitivity_messag[0]['value']);
-//				unset($node->field_message_sensitivity_messag);
-			}
-			else if ($node->field_message_sensitivity[0]['value'] == 58) { // very sensitive
-                if (!iaa_notices_warning_get_warning($node->nid)) {
-				    //$node->body = theme('iaa_notices_warning_questions',$node->nid,$node->field_message_sensitivity_messag[0]['value'],$node->field_message_sensitivity_questi);
-//				    unset($node->field_message_sensitivity_messag);
-//				    unset($node->field_message_sensitivity_questi);
-				    unset($node->field_message_group_mess);
-                }
-			}
-    	}
-    	break;
+  if ($form_id == 'iaa_notices_warning_login_block') {
+    $form['#action'] = $_SERVER['HTTP_REFERER'];
+    $form["#submit"][] = "iaa_notices_warning_user_form_submit";
   }
 }
 
 
-function iaa_notices_warning_preprocess_page(&$variables) {
-	if (arg(2) != 'edit' && arg(1) != ML_CGI_NID && substr($_SERVER['REQUEST_URI'],0,16) == '/message-library' && !(iaa_notices_warning_get_cgi())) {
-		drupal_goto('cgi-message-library','destination='.urlencode($_SERVER['REQUEST_URI']));
-	}
-}
-  
-  
-function iaa_notices_warning_header($node) {
-	$output = '';
-    if ($node->type == 'message' && $node->field_message_sensitivity[0]['value'] != 56 && arg(0) == 'node' && arg(2) == '') {
-        if ($node->field_message_sensitivity[0]['value'] == 57) { // sensitive
-        	if (trim($node->field_message_sensitivity_messag[0]['value']) != '') {
-            	$output = theme('iaa_notices_warning_sensitive',$node->field_message_sensitivity_messag[0]['value']);
-        	}
-        }
-        else if ($node->field_message_sensitivity[0]['value'] == 58) { // very sensitive
-            if (!iaa_notices_warning_get_warning($node->nid) && trim($node->field_message_sensitivity_messag[0]['value']) != '') {
-                $output = theme('iaa_notices_warning_questions',$node->nid,$node->field_message_sensitivity_messag[0]['value'],$node->field_message_sensitivity_questi);
-            }
-        }
+/**
+ * Implements hook_node_load().
+ */
+function iaa_notices_warning_node_load($node, $types) {
+  if ($node->type == 'message' && $node->field_message_sensitivity[0]['value'] != 56 && arg(0) == 'node' && arg(2) == '') {
+    if ($node->field_message_sensitivity[0]['value'] == 57) { // sensitive
+      //$node->body = theme('iaa_notices_warning_sensitive',$node->field_message_sensitivity_messag[0]['value']);
+      //				unset($node->field_message_sensitivity_messag);
     }
-    return $output;
+    else if ($node->field_message_sensitivity[0]['value'] == 58) { // very sensitive
+      if (!iaa_notices_warning_get_warning($node->nid)) {
+        //$node->body = theme('iaa_notices_warning_questions',$node->nid,$node->field_message_sensitivity_messag[0]['value'],$node->field_message_sensitivity_questi);
+        //				    unset($node->field_message_sensitivity_messag);
+        //				    unset($node->field_message_sensitivity_questi);
+        unset($node->field_message_group_mess);
+      }
+    }
+  }
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function iaa_notices_warning_nodeapi_OLD(&$node, $op, $a3 = NULL, $a4 = NULL) { }
+
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function iaa_notices_warning_preprocess_page(&$variables) {
+  if (arg(2) != 'edit' && arg(1) != ML_CGI_NID && substr($_SERVER['REQUEST_URI'], 0, 16) == '/message-library' && !(iaa_notices_warning_get_cgi())) {
+    drupal_goto('cgi-message-library', array('query' => array('destination' => '\' . urlencode($_SERVER[\'REQUEST_URI\'])')));
+  }
+}
+
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function iaa_notices_warning_header($node) {
+  $output = '';
+  if ($node->type == 'message' && $node->field_message_sensitivity[0]['value'] != 56 && arg(0) == 'node' && arg(2) == '') {
+    if ($node->field_message_sensitivity[0]['value'] == 57) { // sensitive
+      if (trim($node->field_message_sensitivity_messag[0]['value']) != '') {
+        $output = theme('iaa_notices_warning_sensitive', array('message' => $node->field_message_sensitivity_messag[0]['value']));
+      }
+    }
+    else if ($node->field_message_sensitivity[0]['value'] == 58) { // very sensitive
+      if (!iaa_notices_warning_get_warning($node->nid) && trim($node->field_message_sensitivity_messag[0]['value']) != '') {
+        $output = theme('iaa_notices_warning_questions', array('nid' => $node->nid, 'message' => $node->field_message_sensitivity_messag[0]['value'], 'questions' => $node->field_message_sensitivity_questi));
+      }
+    }
+  }
+  return $output;
 }
 
 
 
 /****** Warning messages  ****/
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_save_warning($nid) {
-	global $user;
-	if (isset($user->uid) && $user->uid) {
-        db_query("INSERT INTO {iaa_notices_warning} (messageid,uid) VALUES (%d,%d);",$nid,$user->uid);
-	}
-	else {
-		$_SESSION['iaa_notices_warning'][$nid] = TRUE;
-	}
+  global $user;
+  if (isset($user->uid) && $user->uid) {
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query("INSERT INTO {iaa_notices_warning} (messageid,uid) VALUES (%d,%d);", $nid, $user->uid) */
+    $id = db_insert('iaa_notices_warning')
+  ->fields(array(
+    'messageid' => $nid,
+    'uid' => $user->uid,
+  ))
+  ->execute();
+  }
+  else {
+    $_SESSION['iaa_notices_warning'][$nid] = TRUE;
+  }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_get_warning($nid) {
-	// TODO : remove in prod
-	unset($_SESSION['iaa_notices_warning'][$nid]);
-    global $user;
-    if (isset($user->uid) && $user->uid) {
-        $show = db_result(db_query("SELECT id FROM {iaa_notices_warning} WHERE messageid=%d AND uid=%d;",$nid,$user->uid));
-    }
-    else {
-    	$show = isset($_SESSION['iaa_notices_warning'][$nid]) && $_SESSION['iaa_notices_warning'][$nid];
-    }
-    return $show;
+  // TODO : remove in prod
+  unset($_SESSION['iaa_notices_warning'][$nid]);
+  global $user;
+  if (isset($user->uid) && $user->uid) {
+    $show = db_query("SELECT id FROM {iaa_notices_warning} WHERE messageid = :messageid AND uid = :uid;", array(':messageid' => $nid, ':uid' => $user->uid))->fetchField();
+  }
+  else {
+    $show = isset($_SESSION['iaa_notices_warning'][$nid]) && $_SESSION['iaa_notices_warning'][$nid];
+  }
+  return $show;
 }
 
 
 /****** CGI Message  ****/
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_save_cgi() {
-	global $user;
-	if (isset($user->uid) && $user->uid) {
-        db_query("INSERT INTO {iaa_notices_warning_cgi} (accepted,uid) VALUES (1,%d);",$user->uid);
-	}
-	else {
-		$_SESSION['iaa_notices_warning_cgi'] = TRUE;
-	}
+  global $user;
+  if (isset($user->uid) && $user->uid) {
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query("INSERT INTO {iaa_notices_warning_cgi} (accepted,uid) VALUES (1,%d);", $user->uid) */
+    $id = db_insert('iaa_notices_warning_cgi')
+  ->fields(array(
+    'accepted' => 1,
+    'uid' => $user->uid,
+  ))
+  ->execute();
+  }
+  else {
+    $_SESSION['iaa_notices_warning_cgi'] = TRUE;
+  }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function iaa_notices_warning_get_cgi() {
-	// TODO : remove in prod
-	//unset($_SESSION['iaa_notices_warning_cgi']);
-    global $user;
-    if (isset($user->uid) && $user->uid) {
-        $show = db_result(db_query("SELECT id FROM {iaa_notices_warning_cgi} WHERE accepted=1 AND uid=%d;",$user->uid));
-    }
-    else {
-    	$show = isset($_SESSION['iaa_notices_warning_cgi']) && $_SESSION['iaa_notices_warning_cgi'];
-    }
-    return $show;
+  // TODO : remove in prod
+  //unset($_SESSION['iaa_notices_warning_cgi']);
+  global $user;
+  if (isset($user->uid) && $user->uid) {
+    $show = db_query("SELECT id FROM {iaa_notices_warning_cgi} WHERE accepted = :accepted AND uid = :uid;", array(':accepted' => 1, ':uid' => $user->uid))->fetchField();
+  }
+  else {
+    $show = isset($_SESSION['iaa_notices_warning_cgi']) && $_SESSION['iaa_notices_warning_cgi'];
+  }
+  return $show;
 }
 
 
