@@ -1,0 +1,70 @@
+<?php
+// $Id: iaa_notices_warning.install,v 1 2011/09/07 Tubaldo Exp $
+function iaa_notices_warning_install() {
+  $result = array();
+
+  drupal_install_schema('iaa_notices_warning');
+
+  if (count($result) == count(array_filter($result))) {
+    drupal_set_message(t('The iaa_notices_warning module has successfully added its tables to the database.'));
+  }
+  else {
+    drupal_set_message(t('Drupal encountered some errors while attempting to install the database tables for the iaa_notices_warning module.'), 'error');
+  }
+}
+
+function iaa_notices_warning_enable() {
+	//iaa_notices_warning_install();
+}
+
+function iaa_notices_warning_disable() {
+	//iaa_notices_warning_uninstall();
+}
+
+function iaa_notices_warning_uninstall(){
+  	drupal_uninstall_schema('iaa_notices_warning');
+  	cache_clear_all();
+}
+
+function iaa_notices_warning_schema() {
+      $schema['iaa_notices_warning'] = array(
+        'description' => 'tables used for displaying or not messages in threat',
+        'fields' => array(
+          'id' => array(
+            'type'=>'serial',
+            'not null' => TRUE,
+            'unsigned' => TRUE),
+          'uid' => array(
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE),
+          'messageid' => array(
+            'type' => 'int',
+            'not null' => TRUE,
+            'unsigned' => TRUE),
+        ),
+        'primary key' => array('id'));
+      $schema['iaa_notices_warning_cgi'] = array(
+        'description' => 'tables used for displaying or not general message in message library',
+        'fields' => array(
+          'id' => array(
+            'type'=>'serial',
+            'not null' => TRUE,
+            'unsigned' => TRUE),
+          'uid' => array(
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE),
+          'accepted' => array(
+            'type' => 'int',
+            'not null' => TRUE,
+            'unsigned' => TRUE),
+        ),
+        'primary key' => array('id'));
+
+   return ($schema);
+
+
+
+
+}

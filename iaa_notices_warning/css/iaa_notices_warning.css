@@ -1,0 +1,14 @@
+#iaa_notices_warning_cgi_submit {
+    float: left;
+    height: 30px;
+    margin-left: 30px;
+    margin-top: 5px;
+}
+
+.iaa_notices_warning_cgi_button {
+    float: left;	
+}
+
+.iaa_notices_warning_cgi_text {
+    margin-bottom: 30px;	
+}
