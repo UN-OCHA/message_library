@@ -1,0 +1,6 @@
+; $Id: views_exposedfilters_facets.info,v 1.0 2011/05/20 Tubaldo Hervé $
+name =  Views' exposed filters to facets
+description = Shows views' exposed filters as facets
+package = Views
+version = VERSION
+core = 7.x

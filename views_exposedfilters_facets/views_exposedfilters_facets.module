@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Implements hook_theme()
+ */
+function views_exposedfilters_facets_theme($existing, $type, $theme, $path) {
+  return array(
+    'current_selected_criteria' => array(
+      'template' => 'templates/views_exposedfilters_facets_current_selected_criteria',
+    )
+  );
+}
+
+/**
+ * Implements hook_views_pre_render()
+ */
+function views_exposedfilters_facets_views_pre_render(&$views) {
+  // This will prepend a 'Currently Selected Criteria' section to the views
+  // Message Library's result
+  if ($views->name != 'message_library') return;
+  if (empty($views->exposed_input)) return;
+
+  $vars = array();
+
+  foreach($views->exposed_input as $key => $val) {
+    switch ($key) {
+      // 1. Text field, as assign it is
+      case 'search_api_views_fulltext':
+        $vars[$key] = !empty($val) ? $val : '';
+        break;
+      // 2. For vocabularies, load and assign term name
+      case 'issues':
+      case 'group_risk':
+      case 'audience':
+        if ((int) $val) { // option 'All' will be cast to 0 and ignored
+          $term = taxonomy_term_load($val);
+          $vars[$key] = $term->name;
+        }
+        else {
+          $vars[$key] = '';
+        }
+        break;
+      // 3. For content, load and assign node name
+      case 'threat_title':
+        $vars[$key] = $val;
+        break;
+    }
+  }
+
+  $views->attachment_before .= theme('current_selected_criteria', $vars);
+}
+
+/**
+ * Implements hook_preprocess_THEMENAME()
+ */
+function views_exposedfilters_facets_preprocess_current_selected_criteria(&$vars) {
+  // Check if there isn't any search criteria specified
+  $vars['has_criteria'] = FALSE;
+
+  $check_keys = array(
+    'search_api_views_fulltext',
+    'issues',
+    'group_risk',
+    'audience',
+    'threat_title'
+  );
+
+  foreach($check_keys as $key) {
+    if (!empty($vars[$key])) {
+      $vars['has_criteria'] = TRUE;
+      break;
+    }
+  }
+}
