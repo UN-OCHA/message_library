@@ -1,1 +1,3 @@
-a.pointer {  cursor: pointer;}.graytext {  color: #888;}
+#crt_selected a.pointer {
+  cursor: pointer;
+}

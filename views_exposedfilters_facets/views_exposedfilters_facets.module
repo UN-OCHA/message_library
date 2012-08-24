@@ -72,3 +72,20 @@ function views_exposedfilters_facets_preprocess_current_selected_criteria(&$vars
     }
   }
 }
+
+/**
+ * Implements hook_form_alter()
+ */
+function views_exposedfilters_facets_form_views_exposed_form_alter(&$form, &$form_state) {
+  // For the search field in the exposed widget for views 'message_library',
+  // implement the HTML 5 input placehodler feature.
+  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
+    $form['search_api_views_fulltext']['#attributes']['placeholder'] = t('enter search terms');
+  }
+
+  // Add necessary js and css files
+  $path = drupal_get_path('module', 'views_exposedfilters_facets');
+  $form['#attached']['js'][]  = $path . '/js/views_exposedfilters_facets.js';
+  $form['#attached']['css'][] = $path . '/css/views_exposedfilters_facets.css';
+
+}

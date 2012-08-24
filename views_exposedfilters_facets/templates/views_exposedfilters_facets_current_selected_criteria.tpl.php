@@ -1,4 +1,5 @@
 <?php if ($has_criteria): ?>
+<div id="crt_selected">
   <h4>Currently Selected Criteria</h4>
 
   <?php if (!empty($search_api_views_fulltext)): ?>
@@ -6,7 +7,7 @@
   <div class="exposedfilterscontainer">
     <label>Search Text:</label>
     <em><?php print $search_api_views_fulltext; ?></em>
-    <a class="_vef_facets pointer" id="vef_edit-text">(remove)</a>
+    <a class="_vef_facets pointer" id="vef_edit-search-api-views-fulltext">(remove)</a>
   </div>
   <?php endif; ?>
 
@@ -54,6 +55,5 @@
     <a href="/message-library">(remove)</a>
   </div>
   <?php endif; ?>
-
-  <input type="reset" class="form-reset" value="Reset Search" id="edit-reset2" />
+</div>
 <?php endif; ?>
