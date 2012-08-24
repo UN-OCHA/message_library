@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * ...
+ */
+
+/**
+ * Preprocess variables for page.tpl.php
+ */
+function message_library_theme_preprocess_page(&$variables) {
+//   var_dump(array_keys($variables));
+
+  if (empty($variables['title_suffix'])) {
+    $variables['title_suffix'] = array();
+  }
+
+  $variables['title_suffix']['message_library_theme'] = array();
+
+  // Inline helps.
+  if (module_exists('iaa_inline_help')) {
+    // Only on a certain view.
+    $view = views_get_page_view();
+    if (!empty($view) && $view->name == 'message_library') {
+      $variables['title_suffix']['message_library_theme']['inline_help_toogle'] = array('#markup' => iaa_inline_help_toogle('show'));
+      $variables['title_suffix']['message_library_theme']['inline_help'] = array('#markup' => iaa_inline_help_generate('ml_view_view','both'));
+    }
+  }
+}
