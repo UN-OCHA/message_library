@@ -30,17 +30,17 @@ function message_library_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'download_email-delta-0' => array(
-          'module' => 'download_email',
-          'delta' => 'delta-0',
-          'region' => 'content',
-          'weight' => '-10',
-        ),
         'export2rtf-delta-0' => array(
           'module' => 'export2rtf',
           'delta' => 'delta-0',
           'region' => 'content',
-          'weight' => '-10',
+          'weight' => '8',
+        ),
+        'download_email-delta-0' => array(
+          'module' => 'download_email',
+          'delta' => 'delta-0',
+          'region' => 'content',
+          'weight' => '9',
         ),
       ),
     ),
@@ -67,7 +67,24 @@ function message_library_context_default_contexts() {
       ),
     ),
   );
-  $context->reactions = array();
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'download_email-delta-0' => array(
+          'module' => 'download_email',
+          'delta' => 'delta-0',
+          'region' => 'content',
+          'weight' => '9',
+        ),
+        'export2rtf-delta-0' => array(
+          'module' => 'export2rtf',
+          'delta' => 'delta-0',
+          'region' => 'content',
+          'weight' => '8',
+        ),
+      ),
+    ),
+  );
   $context->condition_mode = 0;
 
   // Translatables
