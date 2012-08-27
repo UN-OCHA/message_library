@@ -78,6 +78,13 @@ function message_library_views_default_views() {
   $handler->display->display_options['style_options']['override'] = 1;
   $handler->display->display_options['style_options']['sticky'] = 0;
   $handler->display->display_options['style_options']['empty_table'] = 0;
+  /* Header: Global: Result summary */
+  $handler->display->display_options['header']['result']['id'] = 'result';
+  $handler->display->display_options['header']['result']['table'] = 'views';
+  $handler->display->display_options['header']['result']['field'] = 'result';
+  $handler->display->display_options['header']['result']['label'] = 'Search Summary';
+  $handler->display->display_options['header']['result']['empty'] = FALSE;
+  $handler->display->display_options['header']['result']['content'] = '<strong>@total</strong> records matched criteria.';
   /* Footer: Global: Result summary */
   $handler->display->display_options['footer']['result']['id'] = 'result';
   $handler->display->display_options['footer']['result']['table'] = 'views';
@@ -85,6 +92,11 @@ function message_library_views_default_views() {
   $handler->display->display_options['footer']['result']['label'] = 'Search Summary';
   $handler->display->display_options['footer']['result']['empty'] = FALSE;
   $handler->display->display_options['footer']['result']['content'] = '<strong>@total</strong> records matched criteria.';
+  /* Footer: Message Library: Hidden search results */
+  $handler->display->display_options['footer']['hidden_result']['id'] = 'hidden_result';
+  $handler->display->display_options['footer']['hidden_result']['table'] = 'message_library';
+  $handler->display->display_options['footer']['hidden_result']['field'] = 'hidden_result';
+  $handler->display->display_options['footer']['hidden_result']['empty'] = FALSE;
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -442,7 +454,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat']['expose']['operator_id'] = 'field_message_threat_op';
   $handler->display->display_options['filters']['field_message_threat']['expose']['label'] = 'Threat';
   $handler->display->display_options['filters']['field_message_threat']['expose']['operator'] = 'field_message_threat_op';
-  $handler->display->display_options['filters']['field_message_threat']['expose']['identifier'] = 'title';
+  $handler->display->display_options['filters']['field_message_threat']['expose']['identifier'] = 'threat_title';
   $handler->display->display_options['filters']['field_message_threat']['expose']['remember'] = 1;
 
   /* Display: Search Page */

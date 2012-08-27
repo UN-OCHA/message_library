@@ -4,44 +4,33 @@
  * Install, update and uninstall functions for the iaa_notices_warning module.
  */
 
+
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_install()
  */
 function iaa_notices_warning_install() {
-  // TODO The drupal_(un)install_schema functions are called automatically in D7.
-  // drupal_install_schema('iaa_notices_warning')
+  // Create a page for the message shown 'Message Library'
+  $path = drupal_get_path('module','iaa_notices_warning').'/resources/message-library-terms-of-use.html';
+  $body_text = file_get_contents($path);
+  $node = new stdClass();
+  $node->type = 'page';
+  node_object_prepare($node);
+
+  $node->title = 'Message Library Terms of Use';
+  $node->language = LANGUAGE_NONE;
+
+  $node->body[$node->language][0]['value']   = $body_text;
+  $node->body[$node->language][0]['summary'] = text_summary($body_text);
+  $node->body[$node->language][0]['format']  = 'simple_markdown';
+  $node->path = array('alias' => 'faq');
+
+  // @todo: Add a pdf attachment
+  node_save($node);
+
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function iaa_notices_warning_enable() {
-  //iaa_notices_warning_install();
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function iaa_notices_warning_disable() {
-  //iaa_notices_warning_uninstall();
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function iaa_notices_warning_uninstall() {
-  // TODO The drupal_(un)install_schema functions are called automatically in D7.
-  // drupal_uninstall_schema('iaa_notices_warning')
-  cache_clear_all();
-}
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_schema()
  */
 function iaa_notices_warning_schema() {
   $schema['iaa_notices_warning'] = array(
@@ -89,3 +78,4 @@ function iaa_notices_warning_schema() {
 
   return ($schema);
 }
+
