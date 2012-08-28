@@ -14,3 +14,41 @@ function message_library_views_views_api() {
     'path' => drupal_get_path('module', 'message_library_views') . '/views',
   );
 }
+
+/**
+ * Helper functions.
+ */
+
+/**
+ * Get all threat nodes from a search (view).
+ */
+function message_library_views_search_all_threat($cache_id, $query) {
+  if ($current_search = search_api_current_search($cache_id)) {
+    return $current_search[1];
+  }
+
+  // [Legacy code].
+  $arrayThreat = array();
+
+  $api_query = clone $query->getSearchApiQuery();
+  $api_query->range(NULL, NULL);
+  $result = $api_query->execute();
+  if (!empty($result['results'])) {
+    // Load all the entities.
+    // @see EntityFieldHandlerHelper::pre_render().
+    $entities = entity_load($query->getIndex()->item_type, array_keys($result['results']));
+    foreach ($entities as $node) {
+      if (!empty($node->field_message_threat['und'][0]['target_id'])) {
+        $arrayThreat[] = $node->field_message_threat['und'][0]['target_id'];
+      }
+    }
+
+    // [Legacy code].
+    $arrayThreat = array_unique($arrayThreat);
+
+    // Cache.
+    search_api_current_search($cache_id, $api_query, $arrayThreat);
+  }
+
+  return $arrayThreat;
+}

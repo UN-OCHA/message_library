@@ -5,10 +5,10 @@ include_once drupal_get_path('module', 'export2rtf') . '/libraries/messageRtfFil
 /**
  * Implements hook_init().
  */
-function export2rtf_init() {
-  drupal_add_js(drupal_get_path('module', 'export2rtf') . '/js/export2rtf.js');
-  drupal_add_css(drupal_get_path('module', 'export2rtf') . '/css/export2rtf.css');
-}
+// function export2rtf_init() {
+//   drupal_add_js(drupal_get_path('module', 'export2rtf') . '/js/export2rtf.js');
+//   drupal_add_css(drupal_get_path('module', 'export2rtf') . '/css/export2rtf.css');
+// }
 
 /**
  * Implements hook_menu().

@@ -2,10 +2,10 @@
 
 /**
  * Implements hook_init(). */
-function download_email_init() {
-  drupal_add_js(drupal_get_path('module', 'download_email') . '/js/download_email.js');
-  drupal_add_css(drupal_get_path('module', 'download_email') . '/css/download_email.css');
-}
+// function download_email_init() {
+//   drupal_add_js(drupal_get_path('module', 'download_email') . '/js/download_email.js');
+//   drupal_add_css(drupal_get_path('module', 'download_email') . '/css/download_email.css');
+// }
 
 /**
  * Implements hook_block_info().
