@@ -1,7 +1,14 @@
-; Fatal error: Class EntityReference_SelectionHandler_Views 
-; http://drupal.org/node/1608358
-http://drupal.org/files/1608358-selectionhandler-views-broken.patch
+## This is a collection of all the patches the 'Message Library' needed to work
+properly.
 
+### Entity reference
+- Version: 7.x-1.0-rc3
+- Error: Fatal error: Class EntityReference_SelectionHandler_Views
+- Issue url:  http://drupal.org/node/1608358
+- Patch url:  http://drupal.org/files/1608358-selectionhandler-views-broken.patch
+
+## Core
 ; Use vocabulary machine name for permissions
 ; http://drupal.org/node/995156
 http://drupal.org/files/995156-31_portable_taxonomy_permissions-D7-15.patch
+

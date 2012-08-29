@@ -1,0 +1,4 @@
+name = Message Library TOU
+description = Provide a 'Term of Use' for the Message Library.
+package = Message Library
+core = 7.x

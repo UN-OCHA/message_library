@@ -1,4 +1,0 @@
-name = IAA Notices Warning
-description = Notices Warning management for messages
-package = Message Library
-core = 7.x

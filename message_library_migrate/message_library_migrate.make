@@ -1,7 +1,10 @@
+; These modules can be downloaded in place using drush make command:
+; cd DRUPAL_ROOT
+; drush make --no-core PATH_TO_THIS_FILE .
 api  = 2
 core = 7.x
 
-; Migrate
+; Migrates
 projects[migrate][type]    = module
 projects[migrate][version] = 2.x-dev
 
