@@ -26,7 +26,6 @@
     print $q;
   ?>
 <?php endif; ?>
-<?php dpm($widgets); ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
     <!-- Simple search -->

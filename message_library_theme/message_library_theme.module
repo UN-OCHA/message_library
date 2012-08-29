@@ -62,8 +62,6 @@ function message_library_theme_form_alter(&$form, &$form_state, $form_id) {
  * Implements MODULENAME_preprocess_hook()
  */
 function message_library_theme_preprocess_views_exposed_form(&$vars) {
-  dpm($vars);
-
   // If there are values set in the 'Advanced search', then don't set the
   // default collapsed status
   $vars['advanced_search_collapsed'] = TRUE;
