@@ -2,7 +2,7 @@
 
 /**
  * @file
- * ...
+ * A collection of the theming to the Message Library
  */
 
 /**
@@ -24,6 +24,66 @@ function message_library_theme_preprocess_page(&$variables) {
     if (!empty($view) && $view->name == 'message_library') {
       $variables['title_suffix']['message_library_theme']['inline_help_toogle'] = array('#markup' => iaa_inline_help_toogle('show'));
       $variables['title_suffix']['message_library_theme']['inline_help'] = array('#markup' => iaa_inline_help_generate('ml_view_view','both'));
+    }
+  }
+}
+
+
+/**
+ * Implements hook_views_api()
+ */
+function message_library_theme_views_api() {
+  $path = drupal_get_path('module', 'message_library_theme');
+  return array(
+    'api' => 3,
+    'path' => $path,
+    'template path' => $path. '/templates',
+  );
+}
+
+
+/**
+ * Implements hook_form_alter()
+ */
+function message_library_theme_form_alter(&$form, &$form_state, $form_id) {
+  $path = drupal_get_path('module', 'message_library_theme');
+
+  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
+    $form['#attached']['js'][]  = $path . '/message_library_theme.js';
+    $form['#attached']['css'][] = $path . '/message_library_theme.css';
+    // Note: use `dpm(drupal_get_library('system'));` to check what libraries
+    // are available.
+    $form['#attached']['library'][]  = array('system', 'drupal.collapse');
+  }
+}
+
+
+/**
+ * Implements MODULENAME_preprocess_hook()
+ */
+function message_library_theme_preprocess_views_exposed_form(&$vars) {
+  dpm($vars);
+
+  // If there are values set in the 'Advanced search', then don't set the
+  // default collapsed status
+  $vars['advanced_search_collapsed'] = TRUE;
+  $form = $vars['form'];
+  $advanced_widgets = array(
+    'issues',
+    'group_risk',
+    'audience',
+    'issues',
+    'threat_title'
+  );
+
+  foreach ($advanced_widgets as $widget_name) {
+    $value = $form[$widget_name]['#value'];
+    $type = $form[$widget_name]['#type'];
+
+    if (($type == 'select' && strtolower($value) !== 'all') ||
+        ($type == 'text' && !empty($value))) {
+      $vars['advanced_search_collapsed'] = FALSE;
+      continue;
     }
   }
 }
