@@ -67,27 +67,6 @@ function message_library_tou_uninstall() {
  * Implements hook_schema()
  */
 function message_library_tou_schema() {
-  $schema['message_library_tou'] = array(
-    'description' => 'tables used for displaying or not messages in threat',
-    'fields' => array(
-      'id' => array(
-        'type' => 'serial',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-      ),
-      'uid' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'messageid' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-      ),
-    ),
-    'primary key' => array('id'),
-  );
   $schema['message_library_tou_cgi'] = array(
     'description' => 'tables used for displaying or not general message in message library',
     'fields' => array(
@@ -112,4 +91,3 @@ function message_library_tou_schema() {
 
   return ($schema);
 }
-

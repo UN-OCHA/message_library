@@ -1,35 +1,5 @@
 <?php
 
-/**
- *
- */
-function iaa_notices_warning_cgi() {
-  $nid = variable_get('message_library_tou_nid');
-  if (!$nid) {
-    // Go to 'Message Library', if the TOU can work
-    $destination = drupal_get_destination();
-    drupal_goto($destination['destination']);
-  }
-
-  $node = node_load($nid);
-  drupal_set_title($node->title);
-  return theme('iaa_notices_warning_cgi', array('node' => $node));
-}
-
-
-
-/**
- * Callback
- */
-function iaa_notices_warning_cgi_accepted() {
-  if (!iaa_notices_warning_get_cgi()) {
-    iaa_notices_warning_save_cgi();
-  }
-
-  $destination = drupal_get_destination();
-  drupal_goto($destination['destination']);
-}
-
 
 /**
  * Message Library TOU form
@@ -37,10 +7,10 @@ function iaa_notices_warning_cgi_accepted() {
 function message_library_tou_cgi_form($form, &$form_state) {
   $form['tou_text'] = array();
 
-  $destination = drupal_get_destination();
+  $params = drupal_get_query_parameters();
   $form['cgi_destination'] = array(
     '#type' => 'hidden',
-    '#value' => $destination['destination']
+    '#value' => !empty($params['cgi-destination']) ? $params['cgi-destination'] : '',
   );
 
   // The TOU text
@@ -79,6 +49,8 @@ function message_library_tou_cgi_form($form, &$form_state) {
     '#id' => 'iaa_notices_warning_cgi_submit'
   );
 
+  $form['#submit'] = array('message_library_tou_cgi_form_submit');
+
   return $form;
 }
 
@@ -101,8 +73,13 @@ function message_library_tou_cgi_form_validate($form, &$form_state) {
 function message_library_tou_cgi_form_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  // The guest uesr hates the TOU, so he decides to register
+  // For guest user who decide to login/register
   if (!user_is_logged_in() && !empty($values['cgi_login'])) {
+    //$form_state['redirect'] = 'user/login';
+    $form_state['redirect'] = array('user/login',
+        array('query' => array(
+          'destination' => $values['cgi_destination'])
+        ));
     // @todo: Display a login form in a modal window
     return;
   }
@@ -111,34 +88,6 @@ function message_library_tou_cgi_form_submit($form, &$form_state) {
   // For the authenticated user, store in the database, this TOU will only be
   // displayed this time
   message_library_tou_save_cgi_access();
-  $detination = drupal_get_destination();
-  drupal_goto($detination['destination']);
-}
 
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function iaa_notices_warning_cgi_form_login() {
-  echo theme('iaa_notices_warning_cgi_form_login');
-}
-
-
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function iaa_notices_warning_cgi_login() {
-  // TODO : logguer l'utilisateur avec les données en POST
-  $name = $_POST['name']; // TODO Set these variables;
-  $password = $_POST['pass'];
-  $user = user_authenticate($name, $password);
-  // puis enregister les données en base
-  if ($user->uid) {
-    echo drupal_json_output(array('login' => TRUE));
-  }
-  else {
-    echo drupal_json_output(array('login' => FALSE, 'message' => t('Login attempt failed.')));
-  }
+  $form_state['redirect'] = $values['cgi_destination'];
 }
