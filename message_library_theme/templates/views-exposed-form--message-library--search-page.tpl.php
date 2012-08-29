@@ -31,6 +31,10 @@
     <!-- Simple search -->
     <div class="views-exposed-widget ml-title-text fulltext-search clearfix">
       <h2>Quick Search</h2>
+        <?php
+          echo iaa_inline_help_generate('ml_view_quick_search','both');
+        ?>
+        <div class="clearfix"></div>
         <?php $text_widget = $widgets['filter-search_api_views_fulltext']; ?>
         <?php if (!empty($text_widget)): ?>
           <?php if (!empty($widget->label)): ?>
@@ -108,6 +112,7 @@
         <?php print $offset; ?>
       </div>
     <?php endif; ?>
+
 
   </div>
 </div>
