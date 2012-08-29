@@ -92,11 +92,16 @@ function message_library_views_default_views() {
   $handler->display->display_options['footer']['result']['label'] = 'Search Summary';
   $handler->display->display_options['footer']['result']['empty'] = FALSE;
   $handler->display->display_options['footer']['result']['content'] = '<strong>@total</strong> records matched criteria.';
-  /* Footer: Message Library: Hidden search results */
-  $handler->display->display_options['footer']['hidden_result']['id'] = 'hidden_result';
-  $handler->display->display_options['footer']['hidden_result']['table'] = 'message_library';
-  $handler->display->display_options['footer']['hidden_result']['field'] = 'hidden_result';
-  $handler->display->display_options['footer']['hidden_result']['empty'] = FALSE;
+  /* Footer: Message Library: Link to download rtf */
+  $handler->display->display_options['footer']['link_rtf']['id'] = 'link_rtf';
+  $handler->display->display_options['footer']['link_rtf']['table'] = 'message_library';
+  $handler->display->display_options['footer']['link_rtf']['field'] = 'link_rtf';
+  $handler->display->display_options['footer']['link_rtf']['empty'] = FALSE;
+  /* Footer: Message Library: Link to email rtf */
+  $handler->display->display_options['footer']['link_email_rtf']['id'] = 'link_email_rtf';
+  $handler->display->display_options['footer']['link_email_rtf']['table'] = 'message_library';
+  $handler->display->display_options['footer']['link_email_rtf']['field'] = 'link_email_rtf';
+  $handler->display->display_options['footer']['link_email_rtf']['empty'] = FALSE;
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';

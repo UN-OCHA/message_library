@@ -23,5 +23,21 @@ function message_library_views_views_data() {
     ),
   );
 
+  $data['message_library']['link_rtf'] = array(
+    'title' => t('Link to download rtf'),
+    'help' => t('.'),
+    'area' => array(
+      'handler' => 'message_library_views_handler_area_link_rtf',
+    ),
+  );
+
+  $data['message_library']['link_email_rtf'] = array(
+    'title' => t('Link to email rtf'),
+    'help' => t('.'),
+    'area' => array(
+      'handler' => 'message_library_views_handler_area_link_email_rtf',
+    ),
+  );
+
   return $data;
 }

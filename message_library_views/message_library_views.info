@@ -8,3 +8,5 @@ project = message_library_views
 
 files[] = views/message_library_views.views.inc
 files[] = views/message_library_views_handler_area_hidden_result.inc
+files[] = views/message_library_views_handler_area_link_email_rtf.inc
+files[] = views/message_library_views_handler_area_link_rtf.inc
