@@ -18,7 +18,7 @@ function message_library_tou_menu() {
   $items = array();
 
   $items['message-library-cgi'] = array(
-    'title' => 'Message Library CGI',
+    'title' => 'Message Library Terms of Use',
     'description' => 'Display a TOU page for Message Library.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('message_library_tou_cgi_form'),
