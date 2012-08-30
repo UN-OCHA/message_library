@@ -62,26 +62,34 @@ function message_library_theme_form_alter(&$form, &$form_state, $form_id) {
  * Implements MODULENAME_preprocess_hook()
  */
 function message_library_theme_preprocess_views_exposed_form(&$vars) {
-  // If there are values set in the 'Advanced search', then don't set the
-  // default collapsed status
-  $vars['advanced_search_collapsed'] = TRUE;
   $form = $vars['form'];
-  $advanced_widgets = array(
-    'issues',
-    'group_risk',
-    'audience',
-    'issues',
-    'threat_title'
-  );
+  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
+    // If there are values set in the 'Advanced search', then don't set the
+    // default collapsed status
+    $vars['advanced_search_collapsed'] = TRUE;
 
-  foreach ($advanced_widgets as $widget_name) {
-    $value = $form[$widget_name]['#value'];
-    $type = $form[$widget_name]['#type'];
+    $advanced_widgets = array(
+      'issues',
+      'group_risk',
+      'audience',
+      'issues',
+      'threat_title'
+    );
 
-    if (($type == 'select' && strtolower($value) !== 'all') ||
-        ($type == 'text' && !empty($value))) {
-      $vars['advanced_search_collapsed'] = FALSE;
-      continue;
+    foreach ($advanced_widgets as $widget_name) {
+      $value = $form[$widget_name]['#value'];
+      $type = $form[$widget_name]['#type'];
+
+      if (($type == 'select' && strtolower($value) !== 'all') ||
+          ($type == 'text' && !empty($value))) {
+        $vars['advanced_search_collapsed'] = FALSE;
+        continue;
+      }
+    }
+
+    // Add the help message block for simple seach
+    if (module_exists('iaa_inline_help')) {
+      $vars['simple_search_help'] = iaa_inline_help_generate('ml_view_quick_search','both');
     }
   }
 }
