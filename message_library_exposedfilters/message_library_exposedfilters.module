@@ -54,7 +54,7 @@ function message_library_exposedfilters_views_pre_render(&$views) {
 
   // Add the inline help for the search criteria
   if (module_exists('iaa_inline_help')) {
-    $vars['search_criteria_help'] = iaa_inline_help_generate('ml_view_counter','controller');
+    $vars['search_criteria_help'] = iaa_inline_help_generate('ml_view_counter');
   }
 
   $views->attachment_before .= theme('current_selected_criteria', $vars);
