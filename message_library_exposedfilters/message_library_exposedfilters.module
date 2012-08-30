@@ -3,10 +3,10 @@
 /**
  * Implements hook_theme()
  */
-function views_exposedfilters_facets_theme($existing, $type, $theme, $path) {
+function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
   return array(
     'current_selected_criteria' => array(
-      'template' => 'templates/views_exposedfilters_facets_current_selected_criteria',
+      'template' => 'templates/message_library_exposedfilters_current_selected_criteria',
     )
   );
 }
@@ -14,7 +14,7 @@ function views_exposedfilters_facets_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_views_pre_render()
  */
-function views_exposedfilters_facets_views_pre_render(&$views) {
+function message_library_exposedfilters_views_pre_render(&$views) {
   // This will prepend a 'Currently Selected Criteria' section to the views
   // Message Library's result
   if ($views->name != 'message_library') return;
@@ -47,13 +47,23 @@ function views_exposedfilters_facets_views_pre_render(&$views) {
     }
   }
 
+  $vars['total_rows'] = !empty($views->total_rows) ? $views->total_rows : 0;
+  $vars['total_rows_text'] = t('<strong>@count</strong> records matched criteria.',
+      array('@count' => $vars['total_rows']));
+
+
+  // Add the inline help for the search criteria
+  if (module_exists('iaa_inline_help')) {
+    $vars['search_criteria_help'] = iaa_inline_help_generate('ml_view_counter','controller');
+  }
+
   $views->attachment_before .= theme('current_selected_criteria', $vars);
 }
 
 /**
  * Implements hook_preprocess_THEMENAME()
  */
-function views_exposedfilters_facets_preprocess_current_selected_criteria(&$vars) {
+function message_library_exposedfilters_preprocess_current_selected_criteria(&$vars) {
   // Check if there isn't any search criteria specified
   $vars['has_criteria'] = FALSE;
 
@@ -76,7 +86,7 @@ function views_exposedfilters_facets_preprocess_current_selected_criteria(&$vars
 /**
  * Implements hook_form_alter()
  */
-function views_exposedfilters_facets_form_views_exposed_form_alter(&$form, &$form_state) {
+function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
   // For the search field in the exposed widget for views 'message_library',
   // implement the HTML 5 input placehodler feature.
   if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
@@ -84,8 +94,8 @@ function views_exposedfilters_facets_form_views_exposed_form_alter(&$form, &$for
   }
 
   // Add necessary js and css files
-  $path = drupal_get_path('module', 'views_exposedfilters_facets');
-  $form['#attached']['js'][]  = $path . '/js/views_exposedfilters_facets.js';
-  $form['#attached']['css'][] = $path . '/css/views_exposedfilters_facets.css';
+  $path = drupal_get_path('module', 'message_library_exposedfilters');
+  $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
+  $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
 
 }

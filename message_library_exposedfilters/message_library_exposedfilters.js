@@ -1,5 +1,5 @@
 (function ($) {
-  Drupal.behaviors.messageLibraryExposedFilter = {
+  Drupal.behaviors.messageLibraryExposedFilters = {
     attach: function (context, settings) {
       // Handle 'Reset Search' buttons
 
