@@ -1,0 +1,6 @@
+name =  Message Library Subscription
+description = Allow to show the Message Library Subscription Block in a sidebar
+dependencies[] = search_api_saved_searches
+package = Message Library
+version = 7.x-1.0-dev
+core = 7.x
