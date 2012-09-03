@@ -7,6 +7,9 @@ function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
   return array(
     'current_selected_criteria' => array(
       'template' => 'templates/message_library_exposedfilters_current_selected_criteria',
+    ),
+    'issues_options_display_mode_switcher' => array(
+      'template' =>  'templates/issues_options_display_mode_switcher',
     )
   );
 }
@@ -90,7 +93,6 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
  * Implements hook_form_alter()
  */
 function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
-  dpm(func_get_args());
   // For the search field in the exposed widget for views 'message_library',
   // implement the HTML 5 input placehodler feature.
   if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
@@ -109,15 +111,17 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   // asort() is good because the index(tid) will be preserved.
   asort($alpha_list_terms);
 
-  _term_nested_list();
-  _term_alpha_list();
+  $nested_issue_terms = _term_issues_nested_list('issues');
 
   // Prepare two set of select options, for the exposed filter of 'Issues'
   // - 'Sectors' : A nested list
-  $form['edit-issues-tree'] = array(
+  $form['issues']['#prefix'] = theme('issues_options_display_mode_switcher');
+
+  $form['edit-issues-nested'] = array(
     '#type' => 'select',
-    '#id' => array('edit-issues-alpha'),
-    '#options' => $alpha_list_terms,
+    '#id' => array('edit-issues-nested'),
+    '#options' => $nested_issue_terms,
+    '#attributes' => array('style' => 'display:none'),
   );
 
   // - 'Alphabetically' : A flat list, in alphabetical order
@@ -125,12 +129,11 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
     '#type' => 'select',
     '#id' => array('edit-issues-alpha'),
     '#options' => $alpha_list_terms,
+    '#attributes' => array('style' => 'display:none'),
   );
 
-
-
-
 }
+
 
 /*----------------- HELPER FUNCTIONS
  *----------------------------------------------------------------------------*/
@@ -183,28 +186,25 @@ function _recursive_append_children($arr, $children){
 /**
  * Prepare a array that can be processed by theme_select()
  */
-function _term_nested_list($v_machina_name) {
-  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_machine_name);
+function _term_issues_nested_list($v_name) {
+  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_name);
   if (empty($vocab_obj->vid)) return;
 
-  if ($v_machina_name == 'issues') {
-
-    $tree = taxonomy_get_tree($vocab_obj->vid);
-  }
-  else {
-    $tree = taxonomy_get_tree($vocab_obj->vid);
-  }
+  // We want to display only the terms in 2nd and 3rd levels
+  $parent_tid = _get_issues_top_level_tid($v_name);
+  $tree = taxonomy_get_tree($vocab_obj->vid, $parent_tid);
 
   $options = array();
 
   if ($tree) {
     foreach ($tree as $term) {
       $entity = taxonomy_term_load($term->tid);
-      $choice = new stdClass();
-      $choice->option = array($term->tid => str_repeat('-', $term->depth) . entity_label('taxonomy_term', $entity));
-      $options[] = $choice;
+      $options[$term->tid] = str_repeat('-', $term->depth) . ' ' . $term->name;
     }
   }
+  // This can append element and maintain index at the same time
+  $options = array('All' => '<All issues>') + $options;
+  return $options;
 }
 
 
@@ -217,6 +217,7 @@ function _term_alpha_list($v_machine_name) {
   $alpha_list_terms = _get_outter_elements($nested_terms);
   // asort() is good because the index(tid) will be preserved.
   asort($alpha_list_terms);
+
 }
 
 
@@ -234,11 +235,23 @@ function _get_outter_elements($arr) {
       $elements[$child['id']] = $child['name'];
     }
   }
+
+  $elements = array('All' => '<All issues>') + $elements;
   return $elements;
 }
 
 
 /**
- * Get the top parent terms's tid
+ * Get the top terms' tids
  */
+function _get_issues_top_level_tid($v_name) {
+  $query = db_select('taxonomy_term_data', 'td');
+  $query->addField('td', 'tid');
+  $query->innerJoin('taxonomy_vocabulary', 'tv', 'tv.vid = td.vid');
+  $query->innerJoin('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
+  $query->condition('tv.machine_name', $v_name, '=');
+  $query->condition('th.parent', 0, '=');
+  $result = $query->execute()->fetchCol();
+  return reset($result);
+}
 
