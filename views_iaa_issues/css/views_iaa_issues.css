@@ -1,0 +1,13 @@
+
+.views_iaa_alpha_link {
+  font-size: 0.8em;
+  margin-top: -1em;
+  background-color: inherit;
+  color: #BF1E2E;
+  cursor: pointer;
+  background: url("../img/ml-fleche-down.png") right no-repeat;
+}
+
+  .views_iaa_alpha_link a:hover, .views_iaa_alpha_link a:visited {
+    text-decoration: underline;
+  }

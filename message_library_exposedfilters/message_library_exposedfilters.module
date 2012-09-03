@@ -14,15 +14,15 @@ function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_views_pre_render()
  */
-function message_library_exposedfilters_views_pre_render(&$views) {
+function message_library_exposedfilters_views_pre_render(&$view) {
   // This will prepend a 'Currently Selected Criteria' section to the views
   // Message Library's result
-  if ($views->name != 'message_library') return;
-  if (empty($views->exposed_input)) return;
+  if ($view->name != 'message_library') return;
+  if (empty($view->exposed_input)) return;
 
   $vars = array();
 
-  foreach($views->exposed_input as $key => $val) {
+  foreach($view->exposed_input as $key => $val) {
     switch ($key) {
       // 1. Text field, as assign it is
       case 'search_api_views_fulltext':
@@ -47,7 +47,9 @@ function message_library_exposedfilters_views_pre_render(&$views) {
     }
   }
 
-  $vars['total_rows'] = !empty($views->total_rows) ? $views->total_rows : 0;
+  // Add a summary text like '800 records matched criteria.', just as the one
+  // displayed in the footer
+  $vars['total_rows'] = !empty($view->total_rows) ? $view->total_rows : 0;
   $vars['total_rows_text'] = t('<strong>@count</strong> records matched criteria.',
       array('@count' => $vars['total_rows']));
 
@@ -57,7 +59,8 @@ function message_library_exposedfilters_views_pre_render(&$views) {
     $vars['search_criteria_help'] = iaa_inline_help_generate('ml_view_counter');
   }
 
-  $views->attachment_before .= theme('current_selected_criteria', $vars);
+  $view->attachment_before .= theme('current_selected_criteria', $vars);
+
 }
 
 /**
@@ -87,6 +90,7 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
  * Implements hook_form_alter()
  */
 function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
+  dpm(func_get_args());
   // For the search field in the exposed widget for views 'message_library',
   // implement the HTML 5 input placehodler feature.
   if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
@@ -98,4 +102,143 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
   $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
 
+  $nested_terms = _taxonomy_get_nested_terms('issues');
+
+  // Get all the outter terms and sort alphabetically
+  $alpha_list_terms = _get_outter_elements($nested_terms);
+  // asort() is good because the index(tid) will be preserved.
+  asort($alpha_list_terms);
+
+  _term_nested_list();
+  _term_alpha_list();
+
+  // Prepare two set of select options, for the exposed filter of 'Issues'
+  // - 'Sectors' : A nested list
+  $form['edit-issues-tree'] = array(
+    '#type' => 'select',
+    '#id' => array('edit-issues-alpha'),
+    '#options' => $alpha_list_terms,
+  );
+
+  // - 'Alphabetically' : A flat list, in alphabetical order
+  $form['edit-issues-alpha'] = array(
+    '#type' => 'select',
+    '#id' => array('edit-issues-alpha'),
+    '#options' => $alpha_list_terms,
+  );
+
+
+
+
 }
+
+/*----------------- HELPER FUNCTIONS
+ *----------------------------------------------------------------------------*/
+
+/**
+ * Get all the terms arranged in the order of depth.s
+ */
+function _taxonomy_get_nested_terms($v_machine_name) {
+  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_machine_name);
+  if (empty($vocab_obj->vid)) return;
+
+  $terms = taxonomy_get_tree($vocab_obj->vid);
+
+  // Adapted from an answer on stackoverflow
+  // @see: http://stackoverflow.com/questions/7046364/php-building-recursive-array-from-list
+  $children = $nested_terms = array();
+  foreach($terms as $term){
+    foreach ($term->parents as $parent) {
+      $children[$parent] = !isset($children[$parent]) ? array() : $children[$parent];
+      $children[$parent][$term->tid] = array('id' => $term->tid,'name' => $term->name);
+    }
+  }
+  $nested_terms = _recursive_append_children($children[0], $children);
+
+  return $nested_terms;
+}
+
+
+/**
+ * Callback, sort by term's depth.
+ */
+function _term_depth_sort($a, $b) {
+  return $a->depth - $b->depth;
+}
+
+
+/**
+ * Callback, to organize the array into a hierachical structure.
+ */
+function _recursive_append_children($arr, $children){
+  foreach($arr as $key => $item) {
+    if(isset($children[$key])) {
+      $arr[$key]['children'] = _recursive_append_children($children[$key], $children);
+    }
+  }
+  return $arr;
+}
+
+
+/**
+ * Prepare a array that can be processed by theme_select()
+ */
+function _term_nested_list($v_machina_name) {
+  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_machine_name);
+  if (empty($vocab_obj->vid)) return;
+
+  if ($v_machina_name == 'issues') {
+
+    $tree = taxonomy_get_tree($vocab_obj->vid);
+  }
+  else {
+    $tree = taxonomy_get_tree($vocab_obj->vid);
+  }
+
+  $options = array();
+
+  if ($tree) {
+    foreach ($tree as $term) {
+      $entity = taxonomy_term_load($term->tid);
+      $choice = new stdClass();
+      $choice->option = array($term->tid => str_repeat('-', $term->depth) . entity_label('taxonomy_term', $entity));
+      $options[] = $choice;
+    }
+  }
+}
+
+
+/**
+ * Prepare a array that can be processed by theme_select()
+ */
+function _term_alpha_list($v_machine_name) {
+  $nested_terms = _taxonomy_get_nested_terms($v_machine_name);
+  // Get all the outter terms and sort alphabetically
+  $alpha_list_terms = _get_outter_elements($nested_terms);
+  // asort() is good because the index(tid) will be preserved.
+  asort($alpha_list_terms);
+}
+
+
+/**
+ * Get the inner most terms, which has no parent
+ */
+function _get_outter_elements($arr) {
+  $elements = array();
+
+  foreach($arr as $key => $child) {
+    if(isset($child['children']) && !empty($child['children'])) {
+      $elements += _get_outter_elements($child['children']);
+    }
+    else {
+      $elements[$child['id']] = $child['name'];
+    }
+  }
+  return $elements;
+}
+
+
+/**
+ * Get the top parent terms's tid
+ */
+

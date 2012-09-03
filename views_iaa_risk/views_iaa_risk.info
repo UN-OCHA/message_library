@@ -1,0 +1,6 @@
+name =  VIEWS IAA Risk
+description = Shows risk taxonomy in 3 ways
+package = Infoasaid
+version = VERSION
+core = 7.x
+verison = 7.x-1.0

@@ -1,0 +1,5 @@
+name =  VIEWS IAA Issues
+description = Shows issues taxonomy in 3 ways
+package = Infoasaid
+core = 7.x
+version = 7.x-1.0

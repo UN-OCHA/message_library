@@ -1,0 +1,96 @@
+<?php
+
+define('VID_ISSUES', 12);
+
+/**
+ * Implements hook_init(). */
+function views_iaa_issues_init() {
+  drupal_add_css(drupal_get_path('module', 'views_iaa_issues') . '/css/views_iaa_issues.css');
+  if (drupal_is_front_page()) {
+    drupal_add_js(drupal_get_path('module', 'views_iaa_issues') . '/js/views_iaa_issues.js.php?page=home&');
+    drupal_add_js(drupal_get_path('module', 'views_iaa_issues') . '/js/views_iaa_issues.js');
+  }
+}
+
+
+/**
+ * Implements hook_form_FORMID_alter() for views_exposed_form. */
+function views_iaa_issues_form_views_exposed_form_alter(&$form, &$form_state) {
+  views_iaa_issues_get_terms();
+
+  // Evaluate visibility.
+  // Form views_hacks???
+  $enabled_views = variable_get('views_filters_autosubmit', array());
+  if (empty($enabled_views[$form_state['view']->name])) {
+    return;
+  }
+
+  drupal_add_js(drupal_get_path('module', 'views_iaa_issues') . '/js/views_iaa_issues.js.php');
+  drupal_add_js(drupal_get_path('module', 'views_iaa_issues') . '/js/views_iaa_issues.js');
+}
+
+/**
+ *
+ */
+function views_iaa_issues_get_terms() {
+  $vocab = taxonomy_vocabulary_machine_name_load('issues');
+  if (empty($vocab)) return;
+
+  // taxonomy_get_nested_tree
+  return;
+  $terms_depth2 = array();
+  // The original just extract the terms at depth 2
+  foreach ($terms as $term) {
+    if ($term->depth == '2') {
+      $terms_depth2[$term->tid] = $term->name;
+    }
+  }
+  sort($terms_depth2);
+  dpm($terms_depth2);
+}
+
+/**
+ * Implements hook_views_filters_autosubmit_exceptions(). */
+function views_iaa_issues_views_filters_autosubmit_exceptions($form, $view) {
+  $exceptions = array('_views_iaa_issues_niveau1');
+
+  return $exceptions;
+}
+
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function views_iaa_issues_search_bootstrap() {
+  $drupal_path = "../../../";
+  if (!file_exists($drupal_path . "/includes/bootstrap.inc")) {
+    $bootstrapFileFound = false;
+    $drupal_path = "../..";
+    do {
+      $drupal_path .= "/..";
+      $depth = substr_count($drupal_path, "..");
+    } while (!($bootstrapFileFound = file_exists($drupal_path . "/includes/bootstrap.inc")) && $depth < 10);
+  }
+  return array("drupalPath" => $drupal_path, "bootstrapFileFound" => $bootstrapFileFound);
+}
+
+
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function views_iaa_issues_get_taxo() {
+  $taxo = array();
+  $bootstrap = views_iaa_issues_search_bootstrap();
+  if (isset($bootstrap['bootstrapFileFound']) && $bootstrap['bootstrapFileFound']) {
+    // bootstrap initialization
+    $fck_cwd = getcwd();
+    chdir($bootstrap['drupalPath']);
+    require_once DRUPAL_ROOT . '/' . "./includes/bootstrap.inc";
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    $taxo = taxonomy_get_tree(VID_ISSUES);
+  }
+  return $taxo;
+}
