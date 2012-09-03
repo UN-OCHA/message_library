@@ -36,10 +36,12 @@
         displayNestedList('alpha');
       }
 
-      switcherLink.toggle(function() {
-        displayNestedList('nested');
-      }, function() {
-        displayNestedList('alpha');
+      switcherLink.click(function() {
+        if ($.cookie('exposed_issues_display_mode') == 'alpha') {
+          displayNestedList('nested');
+        } else {
+          displayNestedList('alpha');
+        }
       });
 
       /**
