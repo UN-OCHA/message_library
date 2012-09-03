@@ -70,7 +70,6 @@
           return $(this).val() == selectedOptionVal;
         }).attr('selected', true);
 
-
         // Maintain the mode, prevent from being reset after the page refreshes
         $.cookie('exposed_issues_display_mode', mode);
         return;
