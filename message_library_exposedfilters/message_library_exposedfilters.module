@@ -107,11 +107,11 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $nested_terms = _taxonomy_get_nested_terms('issues');
 
   // Get all the outter terms and sort alphabetically
-  $alpha_list_terms = _get_outter_elements($nested_terms);
+  $alpha_list_terms = _get_issues_outter_terms($nested_terms);
   // asort() is good because the index(tid) will be preserved.
   asort($alpha_list_terms);
 
-  $nested_issue_terms = _term_issues_nested_list('issues');
+  $nested_issue_terms = _get_issues_nested_terms('issues');
 
   // Prepare two set of select options, for the exposed filter of 'Issues'
   // - 'Sectors' : A nested list
@@ -186,7 +186,7 @@ function _recursive_append_children($arr, $children){
 /**
  * Prepare a array that can be processed by theme_select()
  */
-function _term_issues_nested_list($v_name) {
+function _get_issues_nested_terms($v_name) {
   $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_name);
   if (empty($vocab_obj->vid)) return;
 
@@ -209,27 +209,15 @@ function _term_issues_nested_list($v_name) {
 
 
 /**
- * Prepare a array that can be processed by theme_select()
+ * Get the outter most terms, which has no parent
+ * This list can be directly used by 'theme_select'
  */
-function _term_alpha_list($v_machine_name) {
-  $nested_terms = _taxonomy_get_nested_terms($v_machine_name);
-  // Get all the outter terms and sort alphabetically
-  $alpha_list_terms = _get_outter_elements($nested_terms);
-  // asort() is good because the index(tid) will be preserved.
-  asort($alpha_list_terms);
-
-}
-
-
-/**
- * Get the inner most terms, which has no parent
- */
-function _get_outter_elements($arr) {
+function _get_issues_outter_terms($arr) {
   $elements = array();
 
   foreach($arr as $key => $child) {
     if(isset($child['children']) && !empty($child['children'])) {
-      $elements += _get_outter_elements($child['children']);
+      $elements += _get_issues_outter_terms($child['children']);
     }
     else {
       $elements[$child['id']] = $child['name'];
@@ -242,7 +230,9 @@ function _get_outter_elements($arr) {
 
 
 /**
- * Get the top terms' tids
+ * Get the tid of the top term in vocabulary 'Issues', for the moment there is
+ * only one top term 'Sectors', this is used to help specify the parent tid for
+ * function 'taxonomy_get_tree'
  */
 function _get_issues_top_level_tid($v_name) {
   $query = db_select('taxonomy_term_data', 'td');
