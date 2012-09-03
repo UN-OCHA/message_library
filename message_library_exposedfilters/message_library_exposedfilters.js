@@ -28,8 +28,13 @@
       var viewsForm = $('#views-exposed-form-message-library-search-page');
       var switcherLink = $('#issues-options-dispaly-mode-switcher a.mode-link', viewsForm);
 
-      // Default displayed in alphabetic order
-      displayNestedList('alpha');
+      // Restore the mode from cookie, or diplay in alphabetic order by default
+      var savedMode = $.cookie('exposed_issues_display_mode');
+      if ($.inArray(savedMode, ['alpha', 'nested'])) {
+        displayNestedList(savedMode);
+      } else {
+        displayNestedList('alpha');
+      }
 
       switcherLink.toggle(function() {
         displayNestedList('nested');
@@ -43,18 +48,14 @@
        * #3 Get the preprocessed options in the hidden nested/alphabetic list
        * #4 Replace the options in #2
        */
-      function displayNestedList(model) {
-        if (typeof model == undefined || !$.inArray(model, ['alpha', 'nested'])) {
-          model = 'alpha';
-        }
-
+      function displayNestedList(mode) {
         var issueSelectEl = $('select#edit-issues', viewsForm);
         var selectedOptionVal = issueSelectEl.find(':selected').val();
 
         var alphaListOptions  = $('#edit-issues-alpha option').clone();
         var nestedListOptions = $('#edit-issues-nested option').clone();
 
-        if (model == 'alpha') {
+        if (mode == 'alpha') {
           switcherLink.html(Drupal.t('Alphabetically'));
           issueSelectEl.empty().append(alphaListOptions);
         } else {
@@ -67,6 +68,9 @@
           return $(this).val() == selectedOptionVal;
         }).attr('selected', true);
 
+
+        // Maintain the mode, prevent from being reset after the page refreshes
+        $.cookie('exposed_issues_display_mode', mode);
         return;
       }
     }
