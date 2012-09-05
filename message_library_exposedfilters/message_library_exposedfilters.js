@@ -36,7 +36,8 @@
         displayNestedList('alpha');
       }
 
-      switcherLink.click(function() {
+      switcherLink.click(function(e) {
+        e.preventDefault();
         if ($.cookie('exposed_issues_display_mode') == 'alpha') {
           displayNestedList('nested');
         } else {

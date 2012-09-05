@@ -1,0 +1,218 @@
+<?php
+/**
+ * @file
+ *
+ * This module does the following:
+ * #1. Provides a block allow the registered user to save & managed the search
+ * #2. Subscription related features
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function message_library_subscription_menu() {
+  $items = array();
+  $items['mls_viewssavedsearches/delete/%/confirm'] = array(
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('access content'),
+    'page arguments' => array(
+        'message_library_subscription_remove_savedsearches_confirm', 2),
+    'type' => MENU_CALLBACK,
+  );
+  $items['mls_viewssavedsearches/delete/%'] = array(
+    'page callback' => 'message_library_subscription_remove_savedsearches',
+    'access arguments' => array('access content'),
+    'page arguments' => array(2),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+function message_library_subscription_block_info() {
+  $blocks = array();
+  $blocks['ml_subscription_saved_search'] = array(
+    'info' => t('Message Library Subscription'),
+  );
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function message_library_subscription_block_view($delta) {
+  $block = array();
+  if ($delta == 'ml_subscription_saved_search') {
+    $settings = search_api_saved_searches_settings_load_multiple();
+
+    $block = array(
+      'subject' => t('My saved searches'),
+      'content' => theme('ml_subscription_saved_search'),
+    );
+  }
+  return $block;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function message_library_subscription_theme($existing, $type, $theme, $path) {
+  $items = array();
+  $items['ml_subscription_saved_search'] = array(
+    'template' => 'templates/ml_subscription_saved_search',
+    'variables' => array('items' => array()),
+  );
+  return $items;
+}
+
+
+/**
+ * Implements template_preprocess_HOOK()
+ */
+function template_preprocess_ml_subscription_saved_search(&$vars) {
+  // A list of the previously saved searches
+  global $user;
+
+  $vars['saved_list'] = message_library_subscription_simple_listing($user->uid);
+  $params = _prepare_params_simple_listing();
+  if (!empty($params)) {
+    list($settings, $query) = $params;
+  }
+
+
+  $module = 'message_library_subscription';
+  form_load_include($form_state, 'inc', $module, "{$module}.pages");
+  $form = drupal_get_form(
+    'message_library_subscription_save_search_simple_form', $settings, $query);
+  $vars['save_form'] = $form;
+}
+
+
+/**
+ * This is a simplified version of the `search_api_saved_searches_user_listing`
+ * @see search_api_saved_searches_user_listing()
+ */
+function message_library_subscription_simple_listing($uid) {
+  $searches = search_api_saved_search_load_multiple(FALSE, array('uid' => $uid));
+  if (empty($searches)) return;
+
+  $base_path = 'search-api/saved-search/';
+
+  // Table header
+  $header = array(
+    t('Name'),
+    array(
+      'data' => t('Operations'),
+      'colspan' => 2,
+    ),
+  );
+
+  // Table body
+  $rows = array();
+  foreach ($searches as $search) {
+    // Prepare the search name column
+    $name = !empty($search->options['page']) ?
+      $search->l($search->name) : check_plain($search->name);
+
+    $path = $base_path . $search->id;
+    $rows[] = array(
+      $name,
+      l(t('delete'), $path . '/delete'),
+      l(t('edit'), $path . '/delete'),
+    );
+  }
+
+  // Generate renderable array
+  $list = theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+  ));
+
+  return $list;
+}
+
+
+/* Helper functions
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Prepare some params for the search save form
+ * $settings - This is an instance of class SearchApiSavedSearchesSettings
+ * $query    - This is an instance of class SearchApiQueryInterface
+ */
+function _prepare_params_simple_listing() {
+  // Only embed the save search form when there is active search and user has
+  // permission to use it
+  $searches = search_api_current_search();
+  if (empty($searches) || !user_access('use search_api_saved_searches')) return;
+
+  $setting = search_api_saved_searches_settings_load('message_library_index');
+  if (empty($setting) || !search_api_saved_search_create_access($setting)) return;
+
+  // This represents the IDs selected in 'Miscellaneous' -> 'Search IDs' section
+  // combined with the option 'Display for searches'('default_true'), it decides
+  // which searches are enabled.
+  $ids_list = drupal_map_assoc($setting->options['ids_list']);
+
+  // The structure of the $search_ids, it's the same as processed $id_list:
+  // array('message_library_index' => array(
+  //   'search_api_views:message_library:search_page' => 'search_api_views:message_library:search_page',
+  //   'search_api_views:message_library:search_page-1' => 'search_api_views:message_library:search_page-1',
+  //   'message_library_views' => 'message_library_views'
+  // ));
+  $search_ids = variable_get('search_api_saved_searches_search_ids', array());
+
+  foreach ($searches as $id => $data) {
+    if ($data[0]->getIndex()->machine_name !== $setting->index_id) continue;
+
+    // Check non-captured id under the current search index?
+    if (!isset($search_ids[$setting->index_id][$id])) {
+      $search_ids[$setting->index_id][] = array($id => $id);
+      $search_ids_updated = TRUE;
+    }
+
+    // The 'default_true' is for the configuration 'Display for searches'
+    // Check whether the current index is enabled for the 'Save Search' feature
+    // ignore it if not enabled
+    if ($setting->options['default_true'] == TRUE) {
+      // TRUE = Only for the selected
+      if (!in_array($id, $ids_list)) continue;
+    }
+    else {
+      // FALSE = For all except the selected IDs
+      if (in_array($id, $ids_list)) continue;
+    }
+
+    if (!isset($query)) {
+      list($query, $results) = $data;
+    }
+    else {
+      watchdog(
+        'search_api_saved_searches',
+        'Two matching searches on index %index for saved search block.',
+        array('%index' => $setting->index()->name),
+        WATCHDOG_WARNING,
+        l(t('view page'), $_GET['q'], array('query' => drupal_get_query_parameters()))
+      );
+    }
+  }
+
+  if (!empty($search_ids_updated)) {
+    variable_set('search_api_saved_searches_search_ids', $search_ids);
+  }
+
+  // type: SearchApiQuery
+  if (empty($query)) {
+    return;
+  }
+
+  if (!($setting instanceof  SearchApiSavedSearchesSettings) ||
+      !($query instanceof SearchApiQueryInterface)) return;
+
+  return array($setting, $query);
+}
