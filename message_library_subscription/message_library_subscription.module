@@ -1,4 +1,7 @@
 <?php
+
+include_once 'message_libarary_subscription.features.inc';
+
 /**
  * @file
  *
