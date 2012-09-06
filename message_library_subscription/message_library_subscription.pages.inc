@@ -14,18 +14,23 @@ function message_library_subscription_save_search_simple_form(
   if (!isset($form_state['query']) && isset($query)) {
     $options = $query->getOptions();
     unset($options['offset'], $options['limit']);
-    // delta -> message_library_index
+
     $options['search id'] = $settings->delta . ':' . 'saved-search';
     $form_state['query'] = array(
-      'index_id' => $query->getIndex()->machine_name,
-      'keys' => $query->getKeys(),
+      'index_id'      => $query->getIndex()->machine_name,
+      'keys'          => $query->getKeys(),
       'original_keys' => $query->getOriginalKeys(),
-      'fields' => $query->getFields(),
-      'filters' => $query->getFilter()->getFilters(),
-      'options' => $options,
+      'fields'        => $query->getFields(),
+      'filters'       => $query->getFilter()->getFilters(),
+      'options'       => $options,
     );
   }
   $form_state['settings'] = $settings;
+
+  $form['title'] = array(
+    '#type' => 'item',
+    '#title' => t('Save new search'),
+  );
 
   $form['name'] = array(
     '#type' => 'textfield',
@@ -111,7 +116,18 @@ function message_library_subscription_save_search_simple_form(
  * Handle validation, for #message_library_subscription_save_search_simple_form
  */
 function message_library_subscription_save_search_simple_form_validate($form, &$form_state) {
-  // Nothing to put here yet.
+  $values = $form_state['values'];
+
+  // Ensure that a valid email is provided if the user want to subscribe
+  if (!empty($values['subscription_enabled'])) {
+    if (empty($values['mail'])) {
+      form_set_error('mail', t('The email can\'t be empty.'));
+    }
+
+    if ($msg = user_validate_mail($values['mail'])) {
+      form_set_error('mail', $msg);
+    }
+  }
 }
 
 
@@ -124,73 +140,29 @@ function message_library_subscription_save_search_simple_form_submit($form, &$fo
   $values   = $form_state['values'];
   $settings = $form_state['settings'];
 
-  if (empty($form_state['query'])) {
-    $fields = $values['query']['fields'];
-    $query = array(
-      'keys' => isset($fields['search_api_saved_searches_fulltext']) ? $fields['search_api_saved_searches_fulltext'] : NULL,
-      'fields' => NULL,
-      'filters' => array(),
-      'options' => array(
-        'search id' => $settings->delta . ':' . 'saved-search',
-      ),
-    );
-    unset($fields['search_api_saved_searches_fulltext']);
-    foreach ($fields as $field => $value) {
-      if ($value || is_numeric($value)) {
-        $query['filters'][] = array($field, $value, '=');
-      }
-      else {
-        unset($fields[$field]);
-      }
-    }
+  $query = array_intersect_key($form_state['query'],
+    drupal_map_assoc(array('keys', 'fields', 'filters', 'options'))
+  );
 
-    if (empty($values['name'])) {
-      $query['original_keys'] = $query['keys'];
-      $values['name'] = _search_api_saved_searches_create_name($query);
-      unset($query['original_keys']);
-    }
 
-    if (empty($form_state['page']) && !empty($settings->options['manual']['page']['path'])) {
-      $page_options = $settings->options['manual']['page'];
-      $form_state['page'] = array(
-        'path' => $page_options['path'],
-        'query' => array(),
-      );
-      if (isset($query['keys'])) {
-        if (empty($page_options['fulltext'])) {
-          $form_state['page']['path'] .= '/' . $query['keys'];
-        }
-        else {
-          $form_state['page']['query'][$page_options['fulltext']] = $query['keys'];
-        }
-      }
-      foreach ($fields as $field => $value) {
-        if (empty($page_options['direct_filter_params'])) {
-          $form_state['page']['query']['filter'][$field][] = '"' . $value . '"';
-        }
-        else {
-          $form_state['page']['query'][$field] = $value;
-        }
-      }
-    }
-  }
-  else {
-    $query = array_intersect_key($form_state['query'], drupal_map_assoc(array('keys', 'fields', 'filters', 'options')));
-  }
+  // If the user don't want to subscribe, then set the interval as -1, which
+  // stands for never notify.
+  $interval = !empty($values['subscription_enabled']) ?
+      $values['subscription_enabled'] : -1;
 
   $search = entity_create('search_api_saved_search', array(
-    // The users.uid that created this saved search.
+    // The users that created this saved search
     'uid' => $user->uid,
-    // The search_api_saved_searches_settings.delta this saved search uses.
+    // The search index this saved search uses
     'settings_id' => $settings->delta,
     'enabled' => (!empty($user->mail) && $user->mail == $values['mail']) || user_access('administer search_api_saved_searches'),
-    // The displayed name for this saved search.
+    // The displayed name for this saved search
     'name' => $values['name'],
     'mail' => $values['mail'],
     'created' => REQUEST_TIME,
     'last_execute' => REQUEST_TIME,
     // The interval in which this saved search will be checked for new results, in seconds.
-    'notify_interval' => 90000000,
+    'notify_interval' => $interval,
     // The actual search query to be executed.
     'query' => $query,
     // Additional options for this saved search.
@@ -227,7 +199,6 @@ function message_library_subscription_save_search_simple_form_submit($form, &$fo
     return TRUE;
   }
 }
-
 
 
 /** Ajax callbacks

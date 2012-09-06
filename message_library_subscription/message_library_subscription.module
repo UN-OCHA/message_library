@@ -106,10 +106,7 @@ function message_library_subscription_simple_listing($uid) {
   // Table header
   $header = array(
     t('Name'),
-    array(
-      'data' => t('Operations'),
-      'colspan' => 2,
-    ),
+    t('Operations'),
   );
 
   // Table body
@@ -123,7 +120,6 @@ function message_library_subscription_simple_listing($uid) {
     $rows[] = array(
       $name,
       l(t('delete'), $path . '/delete'),
-      l(t('edit'), $path . '/delete'),
     );
   }
 
@@ -131,8 +127,8 @@ function message_library_subscription_simple_listing($uid) {
   $list = theme('table', array(
     'header' => $header,
     'rows' => $rows,
+    'empty' => t('You haven\'t saved any search.'),
   ));
-
   return $list;
 }
 
