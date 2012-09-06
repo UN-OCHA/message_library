@@ -87,9 +87,13 @@ function template_preprocess_ml_subscription_saved_search(&$vars) {
     list($settings, $query) = $params;
   }
 
-
   $module = 'message_library_subscription';
   form_load_include($form_state, 'inc', $module, "{$module}.pages");
+
+  // TODO: Make sure the not running of Solr doesn't issue an error like:
+  // Recoverable fatal error: Argument 3 passed to
+  // message_library_subscription_save_search_simple_form() must be an instance
+  // of SearchApiSavedSearchesSettings, null given in.....
   $form = drupal_get_form(
     'message_library_subscription_save_search_simple_form', $settings, $query);
   $vars['save_form'] = $form;

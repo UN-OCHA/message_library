@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Implements hook_schema()
+ */
+function message_library_notices_schema() {
+  $schema['message_library_notices_warning'] = array(
+    'description' => 'tables used for displaying or not messages in threat',
+    'fields' => array(
+      'id' => array(
+        'type'=>'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'messageid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('id')
+  );
+
+  return $schema;
+}
+

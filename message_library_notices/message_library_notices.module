@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * Implementation of hook_perm().
+ */
+function message_library_notices_permission() {
+  return array('administer message library notices' => array(
+    'title' => t('Administer Message Librart notices'),
+    'description' => t('Perform administration tasks for the notices'),
+  ));
+}
+
+
+/**
+ * Implements hook_node_load()
+ */
+function message_library_node_load($nodes, $types) {
+  message_library_notices_save_warning(1000);
+  message_library_notices_get_warning(1000);
+}
+
+
+/**
+ * Implements hook_theme()
+ */
+function message_library_notices_theme($existing, $type, $theme, $path) {
+  return array(
+    'message_library_notices_sensitivity_warning' => array(
+      'arguments' => array(),
+    ),
+    'message_library_notices_sensitivity_questions' => array(
+      'template' => 'template/message_library_notices_sensitivity_questions',
+      'arguments' => array(),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_preprcess_node()
+ */
+function message_library_notices_preprocess_node(&$vars) {
+  if ($vars['type'] == 'message') {
+    $items =  field_get_items('node', $vars['node'], 'field_message_sensitivity');
+    $sensitivity = (int) $items['0']['value'];
+
+    // For the message which is of type 'Sensitive' or 'Very sensitive'
+    if (in_array($sensitivity, array(1, 2))) {
+      // Get the content of 'Warning/Alert message'
+      $msg_items = field_get_items('node', $vars['node'], 'field_message_sensitivity_messag');
+      $msg = $msg_items['0']['safe_value'];
+
+      $vars['ml_sensitivity_warning'] =
+        theme('message_library_notices_sensitivity_warning', array('message' => $msg));
+
+      // Very sensitive messages probably have quesitions
+      if ($sensitivity == 2) {
+        $question_items = field_get_items('node', $vars['node'], 'field_message_sensitivity_questi');
+        dpm($question_items);
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements theme_hook()
+ */
+function theme_message_library_notices_sensitivity_warning($vars) {
+  $output = '';
+  $form['temp_el'] = array(
+    '#prefix' => '<div class="iaa_notices_warning_sensitive">',
+    '#markup' => !empty($vars['message']) ? $vars['message'] : '',
+    '#suffix' => '</div>',
+  );
+  $output .= drupal_render($form);
+  return $output;
+}
+
+
+/* CRUD functions
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Set a warning
+ */
+function message_library_notices_save_warning($nid) {
+  if (user_is_logged_in()) {
+    db_insert('message_library_notices_warning')
+      ->fields(array('messageid' => $nid,'uid' => $GLOBALS['user']->uid))
+      ->execute();
+  }
+  else {
+    $_SESSION['iaa_notices_warning'][$nid] = TRUE;
+  }
+}
+
+
+/**
+ * Get a warning
+ */
+function message_library_notices_get_warning($nid) {
+  if (user_is_logged_in()) {
+    global $user;
+    $result = db_select('message_library_notices_warning', 'w')
+      ->fields('w', array('id'))
+      ->condition('messageid', $nid)
+      ->condition('uid', $user->uid)
+      ->range(0, 1)
+      ->execute()
+      ->fetchCol();
+  }
+  else {
+    $result = !empty($_SESSION['message_library_notices_warning'][$nid]) ?
+      $_SESSION['message_library_notices_warning'][$nid] : FALSE;
+  }
+  return !empty($result) ? TRUE : FALSE;
+}

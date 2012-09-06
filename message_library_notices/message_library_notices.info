@@ -1,0 +1,5 @@
+name = Message Library Notices
+description = Notices/Warning management for messages
+core = 7.x
+version = 7.x-1.0-dev
+package = Message Library
