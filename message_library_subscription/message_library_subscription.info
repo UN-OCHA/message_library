@@ -1,7 +1,8 @@
-name =  Message Library Subscription
+name = Message Library Subscription
 description = Allow to show the Message Library Subscription Block in a sidebar
 core = 7.x
 package = Message Library
+php = 5.2.4
 version = 7.x-1.0-dev
 project = message_libarary_subscription
 dependencies[] = entity
