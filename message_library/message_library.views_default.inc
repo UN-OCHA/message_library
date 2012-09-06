@@ -23,7 +23,7 @@ function message_library_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Message Library';
-  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -39,20 +39,43 @@ function message_library_views_default_views() {
   $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = 0;
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
-    'nid' => 'nid',
-    'title' => 'title',
-    'title_1' => 'title_1',
     'nid_1' => 'nid_1',
-    'field_threat' => 'field_threat',
+    'url' => 'url',
+    'nid' => 'nid',
+    'field_threat_category' => 'field_threat_category',
+    'field_message_threat' => 'field_message_threat',
+    'title_1' => 'title_1',
+    'field_message_group_risk' => 'field_message_group_risk',
+    'field_message_audience' => 'field_message_audience',
+    'field_message_group_mess' => 'field_message_group_mess',
+    'field_message_example_communic' => 'field_message_example_communic',
+    'field_message_url' => 'field_message_url',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
-    'nid' => array(
+    'nid_1' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
-    'title' => array(
+    'url' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'nid' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_threat_category' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_message_threat' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -62,29 +85,35 @@ function message_library_views_default_views() {
       'separator' => '',
       'empty_column' => 0,
     ),
-    'nid_1' => array(
+    'field_message_group_risk' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
-    'field_threat' => array(
-      'sortable' => 0,
-      'default_sort_order' => 'asc',
+    'field_message_audience' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_message_group_mess' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_message_example_communic' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_message_url' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
   );
   $handler->display->display_options['style_options']['override'] = 1;
-  $handler->display->display_options['style_options']['sticky'] = 0;
+  $handler->display->display_options['style_options']['sticky'] = 1;
   $handler->display->display_options['style_options']['empty_table'] = 0;
-  /* Header: Global: Result summary */
-  $handler->display->display_options['header']['result']['id'] = 'result';
-  $handler->display->display_options['header']['result']['table'] = 'views';
-  $handler->display->display_options['header']['result']['field'] = 'result';
-  $handler->display->display_options['header']['result']['label'] = 'Search Summary';
-  $handler->display->display_options['header']['result']['empty'] = FALSE;
-  $handler->display->display_options['header']['result']['content'] = '<strong>@total</strong> records matched criteria.';
   /* Footer: Global: Result summary */
   $handler->display->display_options['footer']['result']['id'] = 'result';
   $handler->display->display_options['footer']['result']['table'] = 'views';
@@ -470,10 +499,6 @@ function message_library_views_default_views() {
   $handler = $view->new_display('page', 'Edit Page', 'edit_page');
   $handler->display->display_options['path'] = 'edit-message-library';
 
-  /* Display: Bundle Page */
-  $handler = $view->new_display('page', 'Bundle Page', 'bundle_page');
-  $handler->display->display_options['path'] = 'message-library-bundle';
-
   /* Display: Feed */
   $handler = $view->new_display('page', 'Feed', 'feed');
   $handler->display->display_options['path'] = 'message-library/export';
@@ -508,7 +533,6 @@ function message_library_views_default_views() {
     t('Issues'),
     t('Search Page'),
     t('Edit Page'),
-    t('Bundle Page'),
     t('Feed'),
   );
   $export['message_library'] = $view;

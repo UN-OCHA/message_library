@@ -693,6 +693,9 @@ function message_library_field_default_fields() {
       'deleted' => '0',
       'entity_types' => array(),
       'field_name' => 'field_message_sensitivity_messag',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
         'format' => array(
           'columns' => array(
@@ -708,11 +711,9 @@ function message_library_field_default_fields() {
       ),
       'locked' => '0',
       'module' => 'text',
-      'settings' => array(
-        'max_length' => 255,
-      ),
+      'settings' => array(),
       'translatable' => '0',
-      'type' => 'text',
+      'type' => 'text_long',
     ),
     'field_instance' => array(
       'bundle' => 'message',
@@ -725,7 +726,7 @@ function message_library_field_default_fields() {
           'module' => 'text',
           'settings' => array(),
           'type' => 'text_default',
-          'weight' => 24,
+          'weight' => 33,
         ),
         'ical' => array(
           'label' => 'above',
@@ -743,17 +744,44 @@ function message_library_field_default_fields() {
       'entity_type' => 'node',
       'field_name' => 'field_message_sensitivity_messag',
       'label' => 'Warning/Alert message',
-      'required' => FALSE,
+      'required' => 0,
       'settings' => array(
-        'text_processing' => 0,
+        'better_formats' => array(
+          'allowed_formats' => array(
+            'filtered_html' => 'filtered_html',
+            'full_html' => 'full_html',
+            'plain_text' => 'plain_text',
+            'simple' => 'simple',
+          ),
+          'allowed_formats_toggle' => 0,
+          'default_order_toggle' => 0,
+          'default_order_wrapper' => array(
+            'formats' => array(
+              'filtered_html' => array(
+                'weight' => '0',
+              ),
+              'full_html' => array(
+                'weight' => '0',
+              ),
+              'plain_text' => array(
+                'weight' => '10',
+              ),
+              'simple' => array(
+                'weight' => '0',
+              ),
+            ),
+          ),
+        ),
+        'text_processing' => '0',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
+        'active' => 1,
         'module' => 'text',
         'settings' => array(
-          'size' => 60,
+          'rows' => '5',
         ),
-        'type' => 'text_textfield',
+        'type' => 'text_textarea',
         'weight' => '9',
       ),
     ),
@@ -763,7 +791,7 @@ function message_library_field_default_fields() {
   $fields['node-message-field_message_sensitivity_questi'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '1',
+      'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
       'field_name' => 'field_message_sensitivity_questi',
@@ -867,10 +895,13 @@ function message_library_field_default_fields() {
   $fields['node-message-field_message_source'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '1',
+      'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
       'field_name' => 'field_message_source',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(),
       'indexes' => array(),
       'locked' => '0',
@@ -922,25 +953,28 @@ function message_library_field_default_fields() {
       'entity_type' => 'node',
       'field_name' => 'field_message_source',
       'label' => 'Source',
-      'required' => FALSE,
+      'required' => 0,
       'settings' => array(
         'attributes' => array(
           'class' => '',
+          'configurable_title' => 0,
           'rel' => '',
           'target' => 'default',
+          'title' => '',
         ),
         'display' => array(
-          'url_cutoff' => 80,
+          'url_cutoff' => '80',
         ),
         'enable_tokens' => 1,
         'title' => 'optional',
-        'title_maxlength' => 128,
+        'title_maxlength' => '128',
         'title_value' => '',
         'url' => 0,
         'user_register_form' => FALSE,
         'validate_url' => 1,
       ),
       'widget' => array(
+        'active' => 0,
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_field',

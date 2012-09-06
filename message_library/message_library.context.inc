@@ -62,7 +62,6 @@ function message_library_context_default_contexts() {
   $context->conditions = array(
     'views' => array(
       'values' => array(
-        'message_library:bundle_page' => 'message_library:bundle_page',
         'message_library:search_page' => 'message_library:search_page',
       ),
     ),
