@@ -11,14 +11,6 @@ function message_library_notices_permission() {
 }
 
 
-/**
- * Implements hook_node_load()
- */
-function message_library_node_load($nodes, $types) {
-  message_library_notices_save_warning(1000);
-  message_library_notices_get_warning(1000);
-}
-
 
 /**
  * Implements hook_theme()
@@ -29,8 +21,8 @@ function message_library_notices_theme($existing, $type, $theme, $path) {
       'arguments' => array(),
     ),
     'message_library_notices_sensitivity_questions' => array(
-      'template' => 'template/message_library_notices_sensitivity_questions',
-      'arguments' => array(),
+      'template' => 'templates/message_library_notices_sensitivity_warning',
+      'arguments' => array('node' => NULL),
     ),
   );
 }
@@ -41,22 +33,21 @@ function message_library_notices_theme($existing, $type, $theme, $path) {
  */
 function message_library_notices_preprocess_node(&$vars) {
   if ($vars['type'] == 'message') {
-    $items =  field_get_items('node', $vars['node'], 'field_message_sensitivity');
+    $items =  field_get_items('node', $vars['node'],'field_message_sensitivity');
     $sensitivity = (int) $items['0']['value'];
 
     // For the message which is of type 'Sensitive' or 'Very sensitive'
     if (in_array($sensitivity, array(1, 2))) {
       // Get the content of 'Warning/Alert message'
-      $msg_items = field_get_items('node', $vars['node'], 'field_message_sensitivity_messag');
+      $msg_items = field_get_items('node', $vars['node'],'field_message_sensitivity_messag');
       $msg = $msg_items['0']['safe_value'];
 
       $vars['ml_sensitivity_warning'] =
-        theme('message_library_notices_sensitivity_warning', array('message' => $msg));
+        theme('message_library_notices_sensitivity_warning',array('message' => $msg));
 
       // Very sensitive messages probably have quesitions
       if ($sensitivity == 2) {
-        $question_items = field_get_items('node', $vars['node'], 'field_message_sensitivity_questi');
-        dpm($question_items);
+       $vars['ml_sensitivity_questions'] = theme('message_library_notices_sensitivity_questions',array('node' => $vars['node']));
       }
     }
   }
@@ -78,11 +69,87 @@ function theme_message_library_notices_sensitivity_warning($vars) {
 }
 
 
+/**
+ * Form
+ */
+function message_library_notices_question_form($form, $form_stat, $node) {
+  $form['questions_uid'] = array(
+    '#type' => 'value',
+    '#value' => $node->uid,
+  );
+
+  $form['questions_nid'] = array(
+    '#type' => 'value',
+    '#value' => $node->nid,
+  );
+
+  // Questions
+  $question_items = field_get_items('node', $node,'field_message_sensitivity_questi');
+  $questions = array();
+  foreach ((array)$question_items as $key => $item) {
+    // prevent from element with key 0 being as an option
+    $questions['item_' . $key] = $item['safe_value'];
+  }
+
+  $form['sensitivity_questions'] = array(
+    '#type' => 'checkboxes',
+    '#options' => $questions,
+  );
+
+  $form['sensitivity_understood'] = array(
+    '#type' => 'submit',
+    '#value' => t('I understand'),
+  );
+
+  return $form;
+}
+
+
+/**
+ * Validation handler for for #message_library_notices_question_form
+ */
+function message_library_notices_question_form_validate($form, &$form_state) {
+  $values = $form_state['values'];
+
+  // Annoy the user, by letting him/her choose all the questions.
+  if (!empty($values['sensitivity_questions'])) {
+    if (array_search('0', $values['sensitivity_questions']) !== FALSE) {
+      form_set_error('sensitivity_questions',t('You have to check all the fields.'));
+    }
+  }
+}
+
+/**
+ * Submission handler for form #message_library_notices_question_form
+ */
+function message_library_notices_question_form_submit($form, &$form_state) {
+
+}
+
+
+/**
+ * Implements template_preprocess_hook()
+ */
+function template_preprocess_message_library_notices_sensitivity_questions(&$vars) {
+  // Get the content of 'Warning/Alert message'
+  $msg_items = field_get_items('node', $vars['node'],
+                               'field_message_sensitivity_messag');
+  $msg = $msg_items['0']['safe_value'];
+  $vars['sensitivity_message'] = theme(
+      'message_library_notices_sensitivity_warning',
+      array('message' => $msg));
+
+  // Prepare questions for the template
+  $vars['question_form'] = drupal_get_form(
+      'message_library_notices_question_form', $vars['node']);
+}
+
+
 /* CRUD functions
  * -------------------------------------------------------------------------- */
 
 /**
- * Set a warning
+ * Setter for a warning
  */
 function message_library_notices_save_warning($nid) {
   if (user_is_logged_in()) {
@@ -97,7 +164,7 @@ function message_library_notices_save_warning($nid) {
 
 
 /**
- * Get a warning
+ * Getter for a warning
  */
 function message_library_notices_get_warning($nid) {
   if (user_is_logged_in()) {
@@ -116,3 +183,31 @@ function message_library_notices_get_warning($nid) {
   }
   return !empty($result) ? TRUE : FALSE;
 }
+
+
+/**
+ * Enable the node template discovered by Drupal.
+ * @see: http://www.metachunk.com/blog/adding-module-path-drupal-7-theme-registry
+ */
+function message_library_notices_theme_registry_alter(&$theme_registry) {
+  $module_path = drupal_get_path('module', 'message_library_notices');
+  $theme_registry_copy = $theme_registry;       // munge on a copy
+  _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'pow', $module_path);
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+  $hooks = array('node');
+  foreach ($hooks as $hook) {
+    _mymodule_insert_after_first_element($theme_registry[$hook]['theme paths'], $module_path);
+  }
+}
+
+
+/**
+ * Helper function for re-ordering arrays (needed by theme_registry_alter)
+ */
+function _mymodule_insert_after_first_element(&$a, $element) {
+  if(is_array($a)) {
+    $first_element = array_shift($a);
+    array_unshift($a, $first_element, $element);
+  }
+}
+
