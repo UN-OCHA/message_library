@@ -179,8 +179,9 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['url']['label'] = 'Threat URL';
   $handler->display->display_options['fields']['url']['exclude'] = TRUE;
   $handler->display->display_options['fields']['url']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['url']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['url']['alter']['absolute'] = 0;
+  $handler->display->display_options['fields']['url']['alter']['make_link'] = 1;
+  $handler->display->display_options['fields']['url']['alter']['path'] = '[url]';
+  $handler->display->display_options['fields']['url']['alter']['absolute'] = 1;
   $handler->display->display_options['fields']['url']['alter']['external'] = 0;
   $handler->display->display_options['fields']['url']['alter']['replace_spaces'] = 0;
   $handler->display->display_options['fields']['url']['alter']['trim_whitespace'] = 0;
@@ -222,6 +223,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['nid']['hide_empty'] = 0;
   $handler->display->display_options['fields']['nid']['empty_zero'] = 0;
   $handler->display->display_options['fields']['nid']['hide_alter_empty'] = 1;
+  $handler->display->display_options['fields']['nid']['separator'] = '';
   $handler->display->display_options['fields']['nid']['format_plural'] = 0;
   $handler->display->display_options['fields']['nid']['link_to_entity'] = 0;
   /* Field: Node: Issue */
@@ -280,7 +282,8 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title_1']['field'] = 'title';
   $handler->display->display_options['fields']['title_1']['label'] = 'Information requirement';
   $handler->display->display_options['fields']['title_1']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title_1']['alter']['make_link'] = 0;
+  $handler->display->display_options['fields']['title_1']['alter']['make_link'] = 1;
+  $handler->display->display_options['fields']['title_1']['alter']['path'] = '[url]#[nid]';
   $handler->display->display_options['fields']['title_1']['alter']['absolute'] = 0;
   $handler->display->display_options['fields']['title_1']['alter']['external'] = 0;
   $handler->display->display_options['fields']['title_1']['alter']['replace_spaces'] = 0;
@@ -297,7 +300,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['title_1']['hide_empty'] = 0;
   $handler->display->display_options['fields']['title_1']['empty_zero'] = 0;
   $handler->display->display_options['fields']['title_1']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 0;
   /* Field: Indexed Node: At risk group */
   $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
   $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
@@ -521,9 +524,10 @@ function message_library_views_default_views() {
     t('Threat\'s Node ID'),
     t('.'),
     t('Threat URL'),
-    t(','),
+    t('[url]'),
     t('Issue'),
     t('Information requirement'),
+    t('[url]#[nid]'),
     t('At risk group'),
     t('Target audience'),
     t('Message'),
