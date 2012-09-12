@@ -65,6 +65,6 @@ function download_email_theme($existing, $type, $theme, $path) {
  * @see http://drupal.org/node/1354
  */
 function download_email_getRTFEmailUrl($arg0 = "", $arg1 = "") {
-  $extUrl = export2rtf_getUrl(arg(0), arg(1));
+  $extUrl = export2rtf_get_url(arg(0), arg(1));
   return 'mailto:?body=' . t("Download the RTF from the server at the URL : ") . 'http://' . $_SERVER['HTTP_HOST'] . $extUrl;
 }

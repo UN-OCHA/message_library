@@ -4,10 +4,12 @@
  * Custom theme implementation to display a node of type - 'Message'
  *
  * The origial template has:
- * - An anchor with node id
- * - A class 'message_highlight' on the outter div to mark this message as a
- *   search highlighted message
- * - Provide a edit link if the user has access for it
+ * - An anchor with the message node nid, so it can't quickly located under a
+ *   threat.
+ * - A class 'message_highlight' on the outter div, so that any hightlighting
+ *   css style can be easily applied
+ * - Provide a edit link if the user has access for it, this seems not necessary
+ *   in D7
  * - Sensitivity warning block
  * - Search highlight links
  */
@@ -22,7 +24,7 @@
     <div class="clearfix">
       <?php print $user_picture; ?>
 
-      <?php if ($ml_sensitivity_questions): ?>
+      <?php if (!empty($ml_sensitivity_questions)): ?>
         <?php print $ml_sensitivity_questions; ?>
       <?php endif; ?>
 
@@ -33,10 +35,6 @@
           print render($content);
         ?>
       </div>
-
     </div>
-
-    <?php print render($content['links']); ?>
-
   <?php endif; ?>
 </div>

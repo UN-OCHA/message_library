@@ -19,3 +19,23 @@ function message_library_form_alter(&$form, $form_state, $form_id) {
     $form['title']['#options']['All'] = t('<All threats>');
   }
 }
+
+
+/**
+ * Implements hook_menu().
+ *
+ * Creates a 'Message Library' section on the administration page
+ */
+function message_library_menu() {
+  $items['admin/config/message_library'] = array(
+      'title' => 'Message Library',
+      'description' => 'Settings for the Message Library.',
+      'position' => 'right',
+      'weight' => -10,
+      'page callback' => 'system_admin_menu_block_page',
+      'access arguments' => array('administer site configuration'),
+      'file' => 'system.admin.inc',
+      'file path' => drupal_get_path('module', 'system'),
+  );
+  return $items;
+}

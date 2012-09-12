@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ *
  */
 function export2rtf_node($nidString) {
   $nids = explode(',', $nidString);
@@ -29,7 +28,7 @@ function export2rtf_node($nidString) {
           $rtfFile->addEmptyLine(1);
         }
       }
-      $rtfFile->addMessageDescription(export2rtf_formatTextarea($message->field_message_group_mess['und'][0]['value']));
+      $rtfFile->addMessageDescription(export2rtf_format_textarea($message->field_message_group_mess['und'][0]['value']));
       $rtfFile->addMessageRiskGroup($message->field_message_group_risk['und']);
       if (!empty($message->field_message_group_risk_comment['und'][0]['value'])) {
         $rtfFile->addMessageRiskGroupComment($message->field_message_group_risk_comment['und'][0]['value']);
@@ -62,29 +61,33 @@ function export2rtf_node($nidString) {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ *
  */
-function export2rtf_formatTextarea($content) {
+function export2rtf_format_textarea($content) {
   return export2rtf_br2par(strip_tags($content, "<br>"));
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ *
  */
-function export2rtf_br2par($string) {
-  $return = eregi_replace('<br[[:space:]]*/?' .
-    	'[[:space:]]*>', '\par' . "\n", $string);
-  return $return;
+function export2rtf_br2par($str) {
+  // $return = eregi_replace('<br[[:space:]]*/?' .
+  //    '[[:space:]]*>', '\par' . "\n", $string);
+
+  // eregi_replace() is deprecated, user PCRE preg_replace() instead.
+  $str = preg_replace('/<br[[:space:]]*/?[[:space:]]*>/i', '\par', $str);
+  return $str;
 }
 
+
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ *
  */
-function export2rtf_br2nl($string) {
-  $return = eregi_replace('<br[[:space:]]*/?' .
-    	'[[:space:]]*>', chr(13) . chr(10), $string);
-  return $return;
+function export2rtf_br2nl($str) {
+  // $return = eregi_replace('<br[[:space:]]*/?' .
+  //    '[[:space:]]*>', chr(13) . chr(10), $string);
+
+  // eregi_replace() is deprecated, user PCRE preg_replace() instead.
+  $str = preg_replace('/<br[[:space:]]*/?[[:space:]]*>/i', "\r\n", $str);
+  return $str;
 }

@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function message_library_help_init() {
+  drupal_add_js(drupal_get_path('module', 'message_library_help') . '/js/message_library_help.js');
+  drupal_add_css(drupal_get_path('module', 'message_library_help') . '/css/message_library_help.css');
+}
+
+/**
+ * Implements hook_permission().
+ */
+function message_library_help_permission() {
+  return array(
+    'administer message library help' => array(
+      'title' => t('Administer Message Library Help'),
+      'description' => t('Manage the help messages for the Message Library.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function message_library_help_menu() {
+  $items = array();
+
+  $items['admin/config/message_library/edit_help'] = array(
+    'title' => 'Inline help',
+    'description' => 'Manage all the inline help messages.',
+    'page callback' => 'drupal_get_form',
+    'file' => 'includes/message_library_help.admin.inc',
+    'page arguments' => array('message_library_help_admin_page_form'),
+    'access arguments' => array('administer inline help'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function message_library_help_theme($existing, $type, $theme, $path) {
+  return array(
+    'message_library_help_block' => array(
+      'template' => 'templates/message_library_help_block',
+      'variables' => array(
+        'help' => array('id' => '',
+                        'message' => ''),
+        'status' => 'show', // "show" or "hide" the message
+        'icon' => 'both',   // "controller", "message" or "both" icon button
+      ),
+    ),
+    'message_library_help_hide_all' => array(
+      'template' => 'templates/message_library_help_hide_all',
+      'variables' => array(
+        'status' => 'show', // "show" or "hide" the message
+      ),
+    ),
+  );
+}
+
+/**
+ */
+function message_library_help_generate($message_id = '', $icon = 'both', $status = 'show') {
+  $help['id'] = $message_id;
+  $help['message'] = variable_get('message_library_help_' . $message_id, 'Empty help text');
+  if ($help['message'] == '' && user_access('administer inline help')) {
+    // Is it necessary to hide the help message to users?
+    $help['message'] = message_library_help_EMPTY;
+  }
+  return theme('message_library_help_block', array('help' => $help, 'status' => $status, 'icon' => $icon));
+}
+
+/**
+ *
+ */
+function message_library_help_toggle($status = 'show') {
+  return theme('message_library_help_hide_all', array('status' => $status));
+}
