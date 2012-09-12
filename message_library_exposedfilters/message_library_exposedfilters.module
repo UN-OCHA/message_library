@@ -58,7 +58,7 @@ function message_library_exposedfilters_views_pre_render(&$view) {
 
 
   // Add the inline help for the search criteria
-  if (module_exists('iaa_inline_help')) {
+  if (module_exists('message_library_help')) {
     $vars['search_criteria_help'] = message_library_help_generate('ml_view_counter');
   }
 
