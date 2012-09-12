@@ -33,10 +33,13 @@ class message_library_views_handler_area_link_rtf extends views_handler_area {
     if (!empty($total)) {
       $query = $this->query;
       if (!empty($query) && ($query instanceof SearchApiViewsQuery)) {
-        $arrayThreat = message_library_views_search_all_threat($cache_id, $query);
+        $array_threat = message_library_views_search_all_threat($cache_id, $query);
 
-        if (!empty($arrayThreat)) {
-          $output .= '<div class="export2rtf_box">' . l(t('Download as an RTF Document'), export2rtf_get_url() . '/' . implode(',', $arrayThreat)) . '</div>';
+        if (!empty($array_threat)) {
+          $nid_list = implode(',', $array_threat);
+          $output .= '<div class="export2rtf_box">' .
+            l(t('Download as an RTF Document'), 'export2rtf/' . $nid_list) .
+          '</div>';
         }
       }
     }

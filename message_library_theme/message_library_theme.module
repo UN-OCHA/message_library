@@ -20,8 +20,10 @@ function message_library_theme_preprocess_page(&$variables) {
     // Only on a certain view.
     $view = views_get_page_view();
     if (!empty($view) && $view->name == 'message_library') {
-      $variables['title_suffix']['message_library_theme']['inline_help_toogle'] = array('#markup' => message_library_help_toggle('show'));
-      $variables['title_suffix']['message_library_theme']['inline_help'] = array('#markup' => message_library_help_generate('ml_view_view','both'));
+      $variables['title_suffix']['message_library_theme']['inline_help_toogle']
+        = array('#markup' => message_library_help_toggle('show'));
+      $variables['title_suffix']['message_library_theme']['inline_help']
+        = array('#markup' => message_library_help_generate('ml_view_view','both'));
     }
   }
 }
@@ -87,7 +89,8 @@ function message_library_theme_preprocess_views_exposed_form(&$vars) {
 
     // Add the help message block for simple seach
     if (module_exists('message_library_help')) {
-      $vars['simple_search_help'] = message_library_help_generate('ml_view_quick_search','both');
+      $vars['simple_search_help']
+        = message_library_help_generate('ml_view_quick_search','both');
     }
   }
 }
