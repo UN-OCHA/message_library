@@ -1,0 +1,67 @@
+<?php
+
+
+/**
+ * @file
+ * The (un)install and update code
+ */
+
+
+/**
+ * Implement hook_uninstall()
+ */
+function message_library_prev_next_uninstall() {
+  db_delete('variable')
+    ->condition('name', 'message_library_prev_next', 'LIKE')
+    ->execute();
+}
+
+/**
+ * Implement hook_enable()
+ *
+ * Perform necessary actions after module is enabled
+ */
+function message_library_prev_next_enable() {
+  $max_nid = db_query('SELECT MAX(nid) FROM {node}')->fetchField();
+  variable_set('message_library_prev_next_index_nid', $max_nid);
+  if ($max_nid) {
+    drupal_set_message(t('Prev/Next IAA will index from node %nid downward.', array('%nid' => $max_nid)));
+  }
+}
+
+/**
+ * Implement hook_schema()
+ */
+function message_library_prev_next_schema() {
+  $schema['message_library_prev_next_node'] = array(
+    'description' => 'Message Library prev/next node',
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'prev_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'next_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('nid'),
+    'indexes' => array(
+      'prev_nid' => array('prev_nid'),
+      'next_nid' => array('next_nid'),
+    ),
+  );
+  return $schema;
+}

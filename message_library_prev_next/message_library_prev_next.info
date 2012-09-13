@@ -1,0 +1,4 @@
+name = Message Library Prev/Next
+description = Provide a high performance API for previous/next nodes for a given node
+core = 7.x
+package = Message Library
