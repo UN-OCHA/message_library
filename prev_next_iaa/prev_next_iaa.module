@@ -1,0 +1,689 @@
+<?php
+
+define('PREV_NEXT_BATCH_SIZE_DEFAULT', 200);
+define('PREV_NEXT_INDEXING_CRITERIA_DEFAULT', 'nid');
+define('PREV_NEXT_NODE_TYPE', 'prev_next_iaa_node_type_');
+define('PREV_NEXT_NUM_BLOCKS_DEFAULT', 1);
+define('PREV_NEXT_DISPLAY_DEFAULT', 1);
+define('PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT', '[title] »');
+define('PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT', '« [title]');
+
+/**
+ * Implements hook_menu(). */
+function prev_next_iaa_menu() {
+  $items['admin/config/prev_next_iaa'] = array(
+    'title' => 'Prev/Next',
+    'description' => 'Prev/Next API for nodes',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prev_next_iaa_admin'),
+    'access arguments' => array('access administration pages'),
+  );
+  $items['admin/config/prev_next_iaa/general'] = array(
+    'title' => 'General',
+    'weight' => 0,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['admin/config/prev_next_iaa/re-index'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => 'Prev/Next reset',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prev_next_iaa_reindex_confirm'),
+    'access arguments' => array('access administration pages'),
+  );
+
+  return $items;
+}
+
+/**
+ * Menu callback argument. Creates the prev_next_iaa administration form.
+ */
+function prev_next_iaa_admin($form, &$form_state) {
+  $form['status'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Indexing status'),
+  );
+
+  $max_nid = variable_get('prev_next_iaa_index_nid', 0);
+  $cond =  _prev_next_iaa_node_types_sql();
+
+  // TODO Please convert this statement to the D7 database API syntax.
+  $total = db_query("SELECT COUNT(nid) FROM {node} WHERE status = 1 $cond")->fetchField();
+  $completed = db_query("SELECT COUNT(nid) FROM {prev_next_iaa_node}")->fetchField();
+  $remaining = max(0, $total - $completed);
+
+  $percentage = ((int) min(100, 100 * ($total - $remaining) / max(1, $total))) . '%';
+  $status = t('<p>%percentage of nodes have been indexed. There are %remaining items left to index, out of a total of %total.</p>',
+    array(
+    '%percentage' => $percentage,
+    '%remaining' => $remaining,
+    '%total' => $total,
+  ));
+  $status .= ($max_nid) ? t('<p>Max node ID for indexing on the next cron run: @max.</p>', array('@max' => $max_nid)) : t('<p>Existing nodes have finished prev/next indexing.</p>');
+
+  $form['status']['status'] = array(
+    '#value' => $status,
+  );
+
+  $form['status']['reindex'] = array(
+    '#type' => 'submit',
+    '#value' => t('Re-index'),
+  );
+
+  $form['prev_next_iaa_batch_size'] = array(
+    '#title' => t('Batch size'),
+    '#description' => t('Number of nodes to index during each cron run.'),
+    '#type' => 'textfield',
+    '#size' => 6,
+    '#maxlength' => 7,
+    '#default_value' => variable_get('prev_next_iaa_batch_size', PREV_NEXT_BATCH_SIZE_DEFAULT),
+    '#required' => TRUE,
+  );
+
+  $form['prev_next_iaa_num_blocks'] = array(
+    '#title' => t('Blocks'),
+    '#description' => t('Number of blocks available.'),
+    '#type' => 'textfield',
+    '#size' => 2,
+    '#maxlength' => 3,
+    '#default_value' => variable_get('prev_next_iaa_num_blocks', PREV_NEXT_NUM_BLOCKS_DEFAULT),
+    '#required' => TRUE,
+  );
+
+  $form['node_types'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Content types'),
+    '#description' => t('Define settings for each content type. If none of them is included, then all of them will be.'),
+  );
+
+  foreach (node_type_get_types() as $type => $name) {
+
+    $form['node_types'][$type] = array(
+      '#type' => 'fieldset',
+      '#description' => t('Note: changing one of these values will reset the entire Prev/Next index.'),
+      '#title' => node_type_get_name($type),
+      '#collapsible' => TRUE,
+      '#collapsed' => !variable_get(PREV_NEXT_NODE_TYPE . $type, 0),
+    );
+
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Include'),
+      '#default_value' => variable_get(PREV_NEXT_NODE_TYPE . $type, 0),
+    );
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type . '_current'] = array(
+      '#type' => 'hidden',
+      '#default_value' => variable_get(PREV_NEXT_NODE_TYPE . $type, 0),
+    );
+
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria'] = array(
+      '#title' => t('Indexing criteria'),
+      '#type' => 'select',
+      '#options' => array(
+        'nid' => t('Node ID'),
+        'created' => t('Post date'),
+        'changed' => t('Updated date'),
+        'title' => t('Title'),
+      ),
+      '#default_value' => variable_get(PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria', PREV_NEXT_INDEXING_CRITERIA_DEFAULT),
+    );
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria_current'] = array(
+      '#type' => 'hidden',
+      '#value' => variable_get(PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria', PREV_NEXT_INDEXING_CRITERIA_DEFAULT),
+    );
+
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type . '_same_type'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Only nodes with same content type'),
+      '#default_value' => variable_get(PREV_NEXT_NODE_TYPE . $type . '_same_type', 0),
+    );
+    $form['node_types'][$type][PREV_NEXT_NODE_TYPE . $type . '_same_type_current'] = array(
+      '#type' => 'hidden',
+      '#default_value' => variable_get(PREV_NEXT_NODE_TYPE . $type . '_same_type', 0),
+    );
+
+  }
+
+  $form['#submit'][] = 'prev_next_iaa_admin_submit';
+
+  return system_settings_form($form);
+}
+
+/**
+ * Validate callback.
+ */
+function prev_next_iaa_admin_validate($form, &$form_state) {
+  if ($form_state['values']['op'] == t('Re-index')) {
+    drupal_goto('admin/config/prev_next_iaa/re-index');
+  }
+
+  // Max_nid is just a markup field and should not cause a variable to be set.
+  unset($form_state['values']['max_nid']);
+
+  // The variables must be non-negative and numeric.
+  if (!is_numeric($form_state['values']['prev_next_iaa_batch_size']) || $form_state['values']['prev_next_iaa_batch_size'] <= 0) {
+    form_set_error('prev_next_iaa_batch_size', t('The batch size must be a number and greater than zero.'));
+  }
+}
+
+/**
+ * Submit callback.
+ */
+function prev_next_iaa_admin_submit($form, &$form_state) {
+  $rebuild = FALSE;
+
+  // Test sensitive values.
+  foreach (node_type_get_types() as $type => $name) {
+    if ($form_state['values'][PREV_NEXT_NODE_TYPE . $type . '_current'] != $form_state['values'][PREV_NEXT_NODE_TYPE . $type]
+       || $form_state['values'][PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria_current'] != $form_state['values'][PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria']
+       || $form_state['values'][PREV_NEXT_NODE_TYPE . $type . '_same_type_current'] != $form_state['values'][PREV_NEXT_NODE_TYPE . $type . '_same_type']
+    ) {
+      $rebuild = TRUE;
+    }
+  }
+
+  // If the search criterias has been changed, re-index.
+  if ($rebuild) {
+    prev_next_iaa_reindex();
+    drupal_set_message(t('The Prev/Next index will be rebuilt.'));
+  }
+  $form_state['redirect'] = 'admin/config/prev_next_iaa';
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_reindex_confirm($form, &$form_state) {
+  return confirm_form(array(), t('Are you sure you want to re-index Prev/Next?'),
+    'admin/config/prev_next_iaa', t('The entire Prev/Next index will be reset and rebuilt incrementally as cron runs. action cannot be undone.'), t('Re-index'), t('Cancel'));
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_reindex_confirm_submit(&$form, &$form_state) {
+  if ($form['confirm']) {
+    prev_next_iaa_reindex();
+    drupal_set_message(t('The Prev/Next index will be rebuilt.'));
+    $form_state['redirect'] = 'admin/config/prev_next_iaa';
+  }
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_reindex() {
+  // Wipe the table clean
+  db_query('TRUNCATE {prev_next_iaa_node}');
+  // Get the highest nid
+  $max_nid = db_query('SELECT MAX(nid) FROM {node}')->fetchField();
+  // Set the variable to that
+  variable_set('prev_next_iaa_index_nid', $max_nid);
+  if ($max_nid) {
+    drupal_set_message(t('Prev/Next will index from node %nid downward.', array('%nid' => $max_nid)));
+  }
+}
+
+/**
+ * Implements hook_cron().().
+ */
+function prev_next_iaa_cron() {
+  $max_nid = variable_get('prev_next_iaa_index_nid', 0);
+  if ($max_nid) {
+    $batch_size = variable_get('prev_next_iaa_batch_size', PREV_NEXT_BATCH_SIZE_DEFAULT);
+    $last_nid = FALSE;
+    $cond = _prev_next_iaa_node_types_sql();
+
+    timer_start('prev_next_iaa_cron');
+    // TODO Please convert this statement to the D7 database API syntax.
+    $result = db_query("SELECT nid FROM {node} WHERE nid <= %d AND status = 1 $cond ORDER BY nid DESC LIMIT %d", $max_nid, $batch_size);
+    $count = 0;
+
+    while ($row = db_fetch_object($result)) {
+      // Remove existing data for this node.
+      // TODO Please review the conversion of this statement to the D7 database API syntax.
+      /* db_query("DELETE FROM {prev_next_iaa_node} WHERE nid = %d", $row->nid) */
+      db_delete('prev_next_iaa_node')
+  ->condition('nid', $row->nid)
+  ->execute();
+
+      _prev_next_iaa_add($row->nid);
+      // Note that we have indexed at least one node.
+      $last_nid = $row->nid;
+
+      $count++;
+    }
+
+    $time = timer_read('prev_next_iaa_cron');
+
+    if ($last_nid !== FALSE) {
+      // Prepare a starting point for the next run.
+      variable_set('prev_next_iaa_index_nid', $last_nid - 1);
+    }
+    else {
+      // If all nodes have been indexed, set to zero to skip future cron runs.
+      variable_set('prev_next_iaa_index_nid', 0);
+    }
+    watchdog('prev_next_iaa', 'Indexed %count nodes in %time milliseconds.', array('%count' => $count, '%time' => $time));
+
+    // TODO Please convert this statement to the D7 database API syntax.
+    $total = db_query("SELECT COUNT(nid) FROM {node} WHERE status = 1 $cond")->fetchField();
+    $completed = db_query("SELECT COUNT(nid) FROM {prev_next_iaa_node}")->fetchField();
+    $remaining = max(0, $total - $completed);
+    drupal_set_message(t('Indexed %count nodes for the Prev/Next index. There are %remaining items left to index.', array(
+      '%count' => $count,
+      '%remaining' => $remaining,
+    )));
+
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function prev_next_iaa_block_info() {
+  $num_blocks = variable_get('prev_next_iaa_num_blocks', PREV_NEXT_NUM_BLOCKS_DEFAULT);
+  for ($b = 0; $b < $num_blocks; $b++) {
+    $blocks[$b] = array(
+      'info' => t('Prev/Next links !blocknum', array('!blocknum' => 1 + $b)),
+      'status' => 0,
+      'cache' => BLOCK_CACHE_PER_PAGE,
+    );
+  }
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function prev_next_iaa_block_configure($delta) {
+  $description = (module_exists('token')) ? 'Use the available tokens (see below) to customize the link text.' : 'The [title] token will be replaced by the actual node title.';
+
+  $form['previous'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Previous Node'),
+    '#collapsible' => TRUE,
+  );
+  $form['previous']['prev_next_iaa_display_prev' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display'),
+    '#default_value' => variable_get('prev_next_iaa_display_prev' . $delta, PREV_NEXT_DISPLAY_DEFAULT),
+  );
+  $form['previous']['prev_next_iaa_display_text_prev' . $delta] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link text'),
+    '#description' => $description,
+    '#default_value' => variable_get('prev_next_iaa_display_text_prev' . $delta, PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT),
+  );
+  if (module_exists('token')) {
+    $form['previous']['token_help'] = array(
+      '#title' => t('Replacement patterns'),
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    // TODO Please change this theme call to use an associative array for the $variables parameter.
+    $form['previous']['token_help']['help'] = array(
+      '#value' => theme('token_help', 'node'),
+    );
+  }
+
+  $form['next'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Next Node'),
+    '#collapsible' => TRUE,
+  );
+  $form['next']['prev_next_iaa_display_next' . $delta] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display'),
+    '#default_value' => variable_get('prev_next_iaa_display_next' . $delta, PREV_NEXT_DISPLAY_DEFAULT),
+  );
+  $form['next']['prev_next_iaa_display_text_next' . $delta] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link text'),
+    '#description' => $description,
+    '#default_value' => variable_get('prev_next_iaa_display_text_next' . $delta, PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT),
+  );
+  if (module_exists('token')) {
+    $form['next']['token_help'] = array(
+      '#title' => t('Replacement patterns'),
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    // TODO Please change this theme call to use an associative array for the $variables parameter.
+    $form['next']['token_help']['help'] = array(
+      '#value' => theme('token_help', 'node'),
+    );
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function prev_next_iaa_block_save($delta, $edit) {
+  variable_set('prev_next_iaa_display_prev' . $delta, $edit['prev_next_iaa_display_prev' . $delta]);
+  variable_set('prev_next_iaa_display_next' . $delta, $edit['prev_next_iaa_display_next' . $delta]);
+  variable_set('prev_next_iaa_display_text_prev' . $delta, $edit['prev_next_iaa_display_text_prev' . $delta]);
+  variable_set('prev_next_iaa_display_text_next' . $delta, $edit['prev_next_iaa_display_text_next' . $delta]);
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function prev_next_iaa_block_view($delta) {
+  $content = '';
+  $next_display = variable_get('prev_next_iaa_display_next' . $delta, PREV_NEXT_DISPLAY_DEFAULT);
+  $next_text = variable_get('prev_next_iaa_display_text_next' . $delta, PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT);
+  $prev_display = variable_get('prev_next_iaa_display_prev' . $delta, PREV_NEXT_DISPLAY_DEFAULT);
+  $prev_text = variable_get('prev_next_iaa_display_text_prev' . $delta, PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT);
+
+  if (arg(0) == 'node' && is_numeric(arg(1)) && !arg(2) ) {
+    $node = node_load(arg(1));
+    $n_nid = prev_next_iaa_nid($node->nid, 'next');
+    $p_nid = prev_next_iaa_nid($node->nid, 'prev');
+    if ((isset($_SESSION['prev_next_iaa_views_object']) && $_SESSION['prev_next_iaa_views_object'] != "") || $n_nid || $p_nid) {
+
+      if (isset($_SESSION['prev_next_iaa_views_object'])) {
+        $options = array('html' => TRUE);
+        $view = unserialize($_SESSION['prev_next_iaa_views_object']);
+        //echo "<pre>";print_r($view->display_handler->options['path']);die;
+        $content .= '<li class="prev-next-link-back">' . l(t("<< Back to the Current Selection"), $view->display_handler->options['path'], $options) . '</li>';
+      }
+
+      if ($p_nid && $prev_display && $prev_text != '') {
+        $p_node = node_load($p_nid);
+        if (module_exists('token')) {
+          $link = token_replace($prev_text, 'node', $p_node);
+        }
+        else {
+          $link = str_replace('[title]', $p_node->title, $prev_text);
+        }
+        $options = array('html' => TRUE);
+        $content .= '<li class="prev-next-link-prev">' . l($link, "node/$p_nid", $options) . '</li>';
+      }
+
+      if ($n_nid && $next_display && $next_text != '') {
+        $n_node = node_load($n_nid);
+        if (module_exists('token')) {
+          $link = token_replace($next_text, 'node', $n_node);
+        }
+        else {
+          $link = str_replace('[title]', $n_node->title, $next_text);
+        }
+        $options = array('html' => TRUE);
+        $content .= '<li class="prev-next-link-next">' . l($link, "node/$n_nid", $options) . '</li>';
+      }
+
+      $block = array(
+        'subject' => t('Prev/Next links'),
+        'content' => '<ul class="prev-next-links">' . $content . '</ul>',
+      );
+
+    }
+
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_block().().
+ */
+function prev_next_iaa_block_OLD($op = 'list', $delta = 0, $edit = array()) { }
+
+/**
+ * Create or update the prev_next_iaa records.
+ */
+function _prev_next_iaa_add($nid) {
+  $node_type = db_query("SELECT type FROM {node} WHERE nid = :nid LIMIT 1", array(':nid' => $nid))->fetchField();
+  $search_criteria = variable_get(PREV_NEXT_NODE_TYPE . $node_type . '_indexing_criteria', PREV_NEXT_INDEXING_CRITERIA_DEFAULT);
+
+  $criteria_value = db_query("SELECT %s FROM {node} WHERE nid = :nid LIMIT 1", array(':nid' => $search_criteria, '' => $nid))->fetchField();
+
+  $cond = _prev_next_iaa_node_types_sql($node_type);
+
+  // TODO Please convert this statement to the D7 database API syntax.
+  $next_nid = db_query("SELECT nid FROM {node} WHERE %s > '%s' AND status = 1 $cond ORDER BY %s ASC LIMIT 1",
+    $search_criteria, $criteria_value, $search_criteria)->fetchField();
+
+  // TODO Please convert this statement to the D7 database API syntax.
+  $prev_nid = db_query("SELECT nid FROM {node} WHERE %s < '%s' AND status = 1 $cond ORDER BY %s DESC LIMIT 1",
+    $search_criteria, $criteria_value, $search_criteria)->fetchField();
+
+  // Update the node-level data
+  $exists = db_query('SELECT COUNT(*) FROM {prev_next_iaa_node} WHERE nid = :nid', array(':nid' => $nid))->fetchField();
+  if ($exists) {
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query('UPDATE {prev_next_iaa_node} SET prev_nid = %d, next_nid = %d, changed = %d WHERE nid = %d', $prev_nid, $next_nid, REQUEST_TIME, $nid) */
+    db_update('prev_next_iaa_node')
+  ->fields(array(
+      'prev_nid' => $prev_nid,
+      'next_nid' => $next_nid,
+      'changed' => REQUEST_TIME,
+    ))
+  ->condition('nid', $nid)
+  ->execute();
+  }
+  else {
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query('INSERT INTO {prev_next_iaa_node} (prev_nid, next_nid, changed, nid) VALUES (%d, %d, %d, %d)', $prev_nid, $next_nid, REQUEST_TIME, $nid) */
+    $id = db_insert('prev_next_iaa_node')
+  ->fields(array(
+      'prev_nid' => $prev_nid,
+      'next_nid' => $next_nid,
+      'changed' => REQUEST_TIME,
+      'nid' => $nid,
+    ))
+  ->execute();
+  }
+
+  // Update the other nodes pointing to this node
+  foreach (node_type_get_types() as $type => $name) {
+    if (variable_get(PREV_NEXT_NODE_TYPE . $type, 0)) {
+      $search_criteria = variable_get(PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria', PREV_NEXT_INDEXING_CRITERIA_DEFAULT);
+      $criteria_value = db_query("SELECT %s FROM {node} WHERE nid = :nid LIMIT 1", array(':nid' => $search_criteria, '' => $nid))->fetchField();
+      $cond = _prev_next_iaa_node_types_sql($node_type);
+      // TODO Please convert this statement to the D7 database API syntax.
+      $next_nid = db_query("SELECT nid FROM {node} WHERE %s < '%s' AND status = 1 $cond ORDER BY %s DESC LIMIT 1",
+        $search_criteria, $criteria_value, $search_criteria)->fetchField();
+      if ($next_nid) {
+        // TODO Please review the conversion of this statement to the D7 database API syntax.
+        /* db_query("UPDATE {prev_next_iaa_node} SET next_nid = %d WHERE nid = %d", $nid, $next_nid) */
+        db_update('prev_next_iaa_node')
+  ->fields(array(
+          'next_nid' => $nid,
+        ))
+  ->condition('nid', $next_nid)
+  ->execute();
+      }
+      // TODO Please convert this statement to the D7 database API syntax.
+      $prev_nid = db_query("SELECT nid FROM {node} WHERE %s > '%s' AND status = 1 $cond ORDER BY %s ASC LIMIT 1",
+        $search_criteria, $criteria_value, $search_criteria)->fetchField();
+      if ($prev_nid) {
+        // TODO Please review the conversion of this statement to the D7 database API syntax.
+        /* db_query("UPDATE {prev_next_iaa_node} SET prev_nid = %d WHERE nid = %d", $nid, $prev_nid) */
+        db_update('prev_next_iaa_node')
+  ->fields(array(
+          'prev_nid' => $nid,
+        ))
+  ->condition('nid', $prev_nid)
+  ->execute();
+      }
+    }
+  }
+
+}
+
+/**
+ * Update the prev_next_iaa records.
+ */
+function _prev_next_iaa_modify($nid) {
+  // Find out if any other nodes point to this node and update them
+  _prev_next_iaa_modify_pointing_nodes($nid);
+  // Then update this one
+  _prev_next_iaa_add($nid);
+}
+
+/**
+ * Delete from the prev_next_iaa records.
+ */
+function _prev_next_iaa_remove($nid) {
+  // Find if there is an entry for this node
+  $node = db_fetch_object(db_query("SELECT nid, prev_nid, next_nid, changed FROM {prev_next_iaa_node} WHERE nid = :nid", array(':nid' => $nid)));
+  if ($node) {
+    // Delete the data for this node
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query("DELETE FROM {prev_next_iaa_node} WHERE nid = %d", $nid) */
+    db_delete('prev_next_iaa_node')
+  ->condition('nid', $nid)
+  ->execute();
+  }
+  // Find out if any other nodes point to this node and update them
+  _prev_next_iaa_modify_pointing_nodes($nid);
+}
+
+/**
+ * Update other nodes pointing to a particular node
+ */
+function _prev_next_iaa_modify_pointing_nodes($nid) {
+  // First for previous
+  $result = db_query("SELECT nid FROM {prev_next_iaa_node} WHERE prev_nid = :prev_nid", array(':prev_nid' => $nid));
+  while ($prev_row = db_fetch_object($result)) {
+    _prev_next_iaa_add($prev_row->nid);
+  }
+
+  // Then for next
+  $result = db_query("SELECT nid FROM {prev_next_iaa_node} WHERE next_nid = :next_nid", array(':next_nid' => $nid));
+  while ($next_row = db_fetch_object($result)) {
+    _prev_next_iaa_add($next_row->nid);
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function prev_next_iaa_node_insert($node) {
+  _prev_next_iaa_add($node->nid);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function prev_next_iaa_node_update($node) {
+  _prev_next_iaa_modify($node->nid);
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function prev_next_iaa_node_delete($node) {
+  _prev_next_iaa_remove($node->nid);
+}
+
+/**
+ * Implements hook_nodeapi().().
+ */
+function prev_next_iaa_nodeapi_OLD(&$node, $op) {
+  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
+  $found = FALSE;
+  foreach (_prev_next_iaa_node_types() as $type) {
+    if ($node->type == $type) {
+      $found = TRUE;
+      break;
+    }
+  }
+  if (!$found) {
+    return;
+  }
+}
+
+/*
+ * Callable API function to get the next/prev nid of a given nid
+ */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_nid($nid, $op = 'next') {
+  foreach (module_implements('prev_next_iaa_nid') as $module) {
+    $function = $module . '_prev_next_iaa_nid';
+    $ret = $function($nid, $op);
+    if ($ret !== FALSE) {
+      // If the function returns FALSE, keep trying other methods
+      return $ret;
+    }
+  }
+
+  if ($op == 'prev') {
+    return prev_next_iaa_nid_prev($nid);
+  }
+  elseif ($op == 'next') {
+    return prev_next_iaa_nid_next($nid);
+  }
+  else {
+    return 0;
+  }
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_nid_next($nid) {
+  return db_query("SELECT next_nid FROM {prev_next_iaa_node} WHERE nid = :nid", array(':nid' => $nid))->fetchField();
+}
+
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
+function prev_next_iaa_nid_prev($nid) {
+  return db_query("SELECT prev_nid FROM {prev_next_iaa_node} WHERE nid = :nid", array(':nid' => $nid))->fetchField();
+}
+
+/*
+ * Helper function to return an array of node types to index
+ */
+function _prev_next_iaa_node_types() {
+  $types = array();
+  foreach (node_type_get_types() as $type => $name) {
+    if (variable_get(PREV_NEXT_NODE_TYPE . $type, 0)) {
+      $types[] = $type;
+    }
+  }
+
+  return $types;
+}
+
+/*
+ * Helper function to return a SQL clause for types to be indexed
+ */
+function _prev_next_iaa_node_types_sql($node_type = '') {
+
+  $same_type = variable_get(PREV_NEXT_NODE_TYPE . $node_type . '_same_type', 0);
+
+  if (!$same_type) {
+
+    $types = _prev_next_iaa_node_types();
+
+    $quoted_types = array();
+    foreach (_prev_next_iaa_node_types() as $type) {
+      $quoted_types[] = "'" . $type . "'";
+    }
+    $cond = '';
+    if (count($types)) {
+      $cond  = ' AND type IN (' . implode(',', $quoted_types) . ')';
+    }
+
+  }
+  else {
+    $cond = " AND type = '" . $node_type . "'";
+  }
+
+  return $cond;
+}

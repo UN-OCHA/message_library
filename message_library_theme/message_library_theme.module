@@ -48,7 +48,7 @@ function message_library_theme_views_api() {
 function message_library_theme_form_alter(&$form, &$form_state, $form_id) {
   $path = drupal_get_path('module', 'message_library_theme');
 
-  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
+  if ($form['#id'] == 'views-exposed-form-message-libr^ary-search-page') {
     $form['#attached']['js'][]  = $path . '/message_library_theme.js';
     $form['#attached']['css'][] = $path . '/message_library_theme.css';
     // Note: use `dpm(drupal_get_library('system'));` to check what libraries
