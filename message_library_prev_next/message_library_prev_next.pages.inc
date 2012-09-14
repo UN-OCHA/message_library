@@ -5,37 +5,34 @@
  * Creates the message_library_prev_next administration form.
  */
 function message_library_prev_next_admin($form, &$form_state) {
+  // Index status overview
   $form['status'] = array(
     '#type' => 'fieldset',
     '#title' => t('Indexing status'),
   );
 
   $max_nid = variable_get('message_library_prev_next_index_nid', 0);
-  $cond =  _message_library_prev_next_node_types_sql();
 
-  // TODO Please convert this statement to the D7 database API syntax.
-  // @todo: add condition...
-  $total = db_query("SELECT COUNT(nid) FROM {node} WHERE status = 1")->fetchField();
+  $index_nids = _message_library_prev_next_get_index_nids();
+  $total = count($index_nids);
   $completed = db_query("SELECT COUNT(nid) FROM {message_library_prev_next_node}")->fetchField();
-  $remaining = max(0, $total - $completed);
+  $remaining = max(0, ($total - $completed));
 
   $percentage = ((int) min(100, 100 * ($total - $remaining) / max(1, $total))) . '%';
 
-  // Build status message
   $status = t('<p>%percentage of nodes have been indexed. There are %remaining
-      items left to index, out of a total of %total.</p>',
+    items left to index, out of a total of %total.</p>',
     array(
     '%percentage' => $percentage,
     '%remaining' => $remaining,
     '%total' => $total,
   ));
 
-  $status .= ($max_nid) ?
+  $status .= ($remaining) ?
     t('<p>Max node ID for indexing on the next cron run: @max.</p>',
         array('@max' => $max_nid)) :
     t('<p>Existing nodes have finished prev/next indexing.</p>');
 
-  // Index status
   $form['status']['status'] = array(
     '#type' => 'item',
     '#markup' => $status,

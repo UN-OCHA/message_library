@@ -11,9 +11,13 @@
  * Implement hook_uninstall()
  */
 function message_library_prev_next_uninstall() {
-  db_delete('variable')
-    ->condition('name', 'message_library_prev_next', 'LIKE')
-    ->execute();
+  // Remove all variables prefixed with 'message_library_prev_next'
+  $prefix = 'message_library_prev_next';
+  $result = db_query('SELECT name FROM {variable} WHERE name LIKE :pattern',
+      array(':pattern' => db_like($prefix) . '%'));
+  while($var_name = $result->fetchField()) {
+    variable_del($var_name);
+  }
 }
 
 /**
@@ -25,7 +29,7 @@ function message_library_prev_next_enable() {
   $max_nid = db_query('SELECT MAX(nid) FROM {node}')->fetchField();
   variable_set('message_library_prev_next_index_nid', $max_nid);
   if ($max_nid) {
-    drupal_set_message(t('Prev/Next IAA will index from node %nid downward.', array('%nid' => $max_nid)));
+    drupal_set_message(t('Messagee Library Prev/Next will index from node %nid downward.', array('%nid' => $max_nid)));
   }
 }
 

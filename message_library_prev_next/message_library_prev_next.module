@@ -2,10 +2,6 @@
 
 define('PREV_NEXT_NODE_TYPE', 'message_library_prev_next_node_type_');
 
-define('PREV_NEXT_DISPLAY_DEFAULT', 1);
-define('PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT', '[title] »');
-define('PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT', '« [title]');
-
 /**
  * Some variables set by this module:
  * - message_library_prev_next_index_nid
@@ -70,31 +66,26 @@ function message_library_prev_next_cron() {
   if (empty($max_nid)) return;
 
   $batch_size = variable_get('message_library_prev_next_batch_size', 200);
-  $last_nid = FALSE;
-  $cond = _message_library_prev_next_node_types_sql();
+
+  // Start timer
   timer_start('message_library_prev_next_cron');
 
-  $query = db_select('node', 'n');
-  $query->addField('n', 'nid');
-  $query->condition('nid', $max_nid, '<=');
-  $query->condition('status', 1 , '=');
-  $query->orderBy('nid', 'DESC');
-  $result = $query->execute();
-  $count = 0;
+  // Get all node ids
+  $nids = _message_library_prev_next_get_index_nids();
 
-  while ($row = $result->fetchObject()) {
-    print_r($row);
+  $last_nid = FALSE;
+  foreach($nids as $nid) {
     // Remove existing data for this node.
     db_delete('message_library_prev_next_node')
-      ->condition('nid', $row->nid)
-      ->execute();
+      ->condition('nid', $nid)->execute();
 
-    _message_library_prev_next_add($row->nid);
+    _message_library_prev_next_add($nid);
+
     // Note that we have indexed at least one node.
-    $last_nid = $row->nid;
-
-    $count++;
+    $last_nid = $nid;
   }
+
+  return;
 
   $time = timer_read('message_library_prev_next_cron');
 
@@ -124,10 +115,10 @@ function message_library_prev_next_cron() {
  * Implements hook_block_info().
  */
 function message_library_prev_next_block_info() {
-  $num_blocks = variable_get('message_library_prev_next_num_blocks', PREV_NEXT_NUM_BLOCKS_DEFAULT);
-  for ($b = 0; $b < $num_blocks; $b++) {
+  $num_blocks = variable_get('message_library_prev_next_num_blocks', 1);
+  for ($b = 1; $b <= $num_blocks; $b++) {
     $blocks[$b] = array(
-      'info' => t('Prev/Next links #!blocknum', array('!blocknum' => 1 + $b)),
+      'info' => t('Prev/Next links #!blocknum', array('!blocknum' => $b)),
       'status' => 0,
     );
   }
@@ -142,21 +133,27 @@ function message_library_prev_next_block_configure($delta) {
     'Use the available tokens (see below) to customize the link text.' :
     'The [title] token will be replaced by the actual node title.';
 
+  $base = 'message_library_prev_next_block_' . $delta;
+
   $form['previous'] = array(
     '#type' => 'fieldset',
     '#title' => t('Previous Node'),
     '#collapsible' => TRUE,
   );
-  $form['previous']['message_library_prev_next_display_prev' . $delta] = array(
+
+  $var = $base . '_prev';
+  $form['previous'][$var] = array(
     '#type' => 'checkbox',
     '#title' => t('Display'),
-    '#default_value' => variable_get('message_library_prev_next_display_prev' . $delta, PREV_NEXT_DISPLAY_DEFAULT),
+    '#default_value' => variable_get($var, TRUE),
   );
-  $form['previous']['message_library_prev_next_display_text_prev' . $delta] = array(
+
+  $var = $base . '_prev_text';
+  $form['previous'][$var] = array(
     '#type' => 'textfield',
     '#title' => t('Link text'),
     '#description' => $description,
-    '#default_value' => variable_get('message_library_prev_next_display_text_prev' . $delta, PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT),
+    '#default_value' => variable_get($var, '[node:title] »'),
   );
   if (module_exists('token')) {
     $form['previous']['token_help'] = array(
@@ -165,9 +162,10 @@ function message_library_prev_next_block_configure($delta) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
-    // TODO Please change this theme call to use an associative array for the $variables parameter.
+
     $form['previous']['token_help']['help'] = array(
-      '#value' => theme('token_help', 'node'),
+      '#theme' => 'token_tree',
+      '#token_types' => array('node'),
     );
   }
 
@@ -176,17 +174,22 @@ function message_library_prev_next_block_configure($delta) {
     '#title' => t('Next Node'),
     '#collapsible' => TRUE,
   );
-  $form['next']['message_library_prev_next_display_next' . $delta] = array(
+
+  $var = $base . '_next';
+  $form['next'][$var] = array(
     '#type' => 'checkbox',
     '#title' => t('Display'),
-    '#default_value' => variable_get('message_library_prev_next_display_next' . $delta, PREV_NEXT_DISPLAY_DEFAULT),
+    '#default_value' => variable_get($var, TRUE),
   );
-  $form['next']['message_library_prev_next_display_text_next' . $delta] = array(
+
+  $var = $base . '_next_text';
+  $form['next'][$var] = array(
     '#type' => 'textfield',
     '#title' => t('Link text'),
     '#description' => $description,
-    '#default_value' => variable_get('message_library_prev_next_display_text_next' . $delta, PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT),
+    '#default_value' => variable_get($var, '« [node:title]'),
   );
+
   if (module_exists('token')) {
     $form['next']['token_help'] = array(
       '#title' => t('Replacement patterns'),
@@ -196,7 +199,8 @@ function message_library_prev_next_block_configure($delta) {
     );
     // TODO Please change this theme call to use an associative array for the $variables parameter.
     $form['next']['token_help']['help'] = array(
-      '#value' => theme('token_help', 'node'),
+      '#theme' => 'token_tree',
+      '#token_types' => array('node'),
     );
   }
   return $form;
@@ -206,11 +210,12 @@ function message_library_prev_next_block_configure($delta) {
  * Implements hook_block_save().
  */
 function message_library_prev_next_block_save($delta, $edit) {
+  $base = 'message_library_prev_next_block_' . $delta;
   $keys = array(
-    'message_library_prev_next_display_prev' . $delta,
-    'message_library_prev_next_display_next' . $delta,
-    'message_library_prev_next_display_text_prev' . $delta,
-    'message_library_prev_next_display_text_next' . $delta
+    $base . '_prev',
+    $base . '_prev_text',
+    $base . '_next',
+    $base . '_next_text',
   );
   foreach($keys as $key) {
     variable_set($key, $edit[$key]);
@@ -277,7 +282,6 @@ function message_library_prev_next_block_view($delta) {
   return $block;
 }
 
-
 /**
  * Create or update the message_library_prev_next records.
  */
@@ -285,41 +289,42 @@ function _message_library_prev_next_add($nid) {
   $node = node_load($nid);
   if (empty($node)) return;
 
-  $node_type = node_type_get_name($node);
 
+  // Get the the index criteria of this node
   // Example: message_library_prev_next_node_type_message_indexing_criteria
+  $node_type = node_type_get_name($node);
   $search_criteria = variable_get(PREV_NEXT_NODE_TYPE . $node_type . '_indexing_criteria', 'nid');
 
-  // Get the field(criteria) of this node
-  $criteria_value = db_select('node', 'n')
-    ->fields('n', array($search_criteria))
-    ->condition('nid', $nid)
-    ->execute()
-    ->fetchCol();
-
-  // @todo: Turn this into condition queries.
-  // $cond = _message_library_prev_next_node_types_sql($node_type);
+  // Then get that field(criteria) value
+  if (empty($node->$search_criteria)) return;
+  $criteria_value = $node->$search_criteria;
 
   $next_nid = _message_library_prev_next_get_next_nid($nid, $search_criteria, $criteria_value);
   $prev_nid = _message_library_prev_next_get_prev_nid($nid, $search_criteria, $criteria_value);
 
+  print ($prev_nid . ' <= ' . $nid . ' => ' . $next_nid . "\n");
 
+  // Upsert the record
   db_merge('message_library_prev_next_node')
-    ->key(array('nid', $nid))
+    ->key(array('nid' => $nid))
     ->fields(array(
       'prev_nid' => $prev_nid,
       'next_nid' => $next_nid,
-      'changed' => REQUEST_TIME,
-    ))
+      'changed' => REQUEST_TIME))
     ->execute();
 
   // Update the other nodes pointing to this node
-  foreach (node_type_get_types() as $type => $name) {
+  $types = node_type_get_types();
+  foreach ($types as $type => $name) {
     if (variable_get(PREV_NEXT_NODE_TYPE . $type)) {
+      // Get the search criteria set for this type
       $search_criteria = variable_get(PREV_NEXT_NODE_TYPE . $type . '_indexing_criteria', PREV_NEXT_INDEXING_CRITERIA_DEFAULT);
-      $criteria_value = db_query("SELECT %s FROM {node} WHERE nid = :nid LIMIT 1", array(':nid' => $search_criteria, '' => $nid))->fetchField();
-      $cond = _message_library_prev_next_node_types_sql($node_type);
 
+      // Get the criteria value of the current node
+      if (empty($node->$search_criteria)) continue;
+      $criteria_value = $node->$search_criteria;
+
+      // Update the 'prev_nid' or 'next_nid' if necessary
       $next_nid = _message_library_prev_next_get_next_nid($nid, $search_criteria, $criteria_value);
       if ($next_nid) {
         db_update('message_library_prev_next_node')
@@ -327,7 +332,6 @@ function _message_library_prev_next_add($nid) {
           ->condition('nid', $next_nid)
           ->execute();
       }
-
       $prev_nid = _message_library_prev_next_get_prev_nid($nid, $search_criteria, $criteria_value);
       if ($prev_nid) {
         db_update('message_library_prev_next_node')
@@ -471,45 +475,24 @@ function _message_library_prev_next_node_types() {
 
   foreach ($node_types as $key => $type) {
     // Examples:
-    // message_library_prev_next_node_type_message
-    // message_library_prev_next_node_type_threat
+    // - message_library_prev_next_node_type_message
+    // - message_library_prev_next_node_type_threat
     $check_type = PREV_NEXT_NODE_TYPE . $type->type;
     if (!variable_get($check_type)) continue;
     $types[] = $type->type;
   }
 
+  if (empty($types)) {
+    $types = array_keys($node_types);
+  }
+
   return $types;
-}
-
-/*
- * Return a SQL clause for types to be indexed
- */
-function _message_library_prev_next_node_types_sql($node_type = '') {
-  $same_type = variable_get(PREV_NEXT_NODE_TYPE . $node_type . '_same_type', 0);
-
-  if (!$same_type) {
-    $types = _message_library_prev_next_node_types();
-
-    $quoted_types = array();
-    foreach (_message_library_prev_next_node_types() as $type) {
-      $quoted_types[] = "'" . $type . "'";
-    }
-    $cond = '';
-    if (count($types)) {
-      $cond  = ' AND type IN (' . implode(',', $quoted_types) . ')';
-    }
-  }
-  else {
-    $cond = " AND type = '" . $node_type . "'";
-  }
-
-  return $cond;
 }
 
 /**
  * Get the previous node id
  */
-function _message_library_prev_next_get_prev_nid($nid, $criterial, $value) {
+function _message_library_prev_next_get_prev_nid($nid, $search_criteria, $criteria_value) {
   $nid = db_select('node', 'n')
     ->fields('n', array('nid'))
     ->condition($search_criteria, $criteria_value, '<')
@@ -517,15 +500,14 @@ function _message_library_prev_next_get_prev_nid($nid, $criterial, $value) {
     ->orderBy($search_criteria, 'DESC')
     ->range(0, 1)
     ->execute()
-    ->fetchCol();
-
-  return $nid;
+    ->fetchField();
+  return !empty($nid) ? $nid : 0;
 }
 
 /**
  * Get the next node id
  */
-function _message_library_prev_next_get_next_nid($nid, $criterial, $value) {
+function _message_library_prev_next_get_next_nid($nid, $search_criteria, $criteria_value) {
   $nid = db_select('node', 'n')
     ->fields('n', array('nid'))
     ->condition($search_criteria, $criteria_value, '>')
@@ -533,14 +515,38 @@ function _message_library_prev_next_get_next_nid($nid, $criterial, $value) {
     ->orderBy($search_criteria, 'ASC')
     ->range(0, 1)
     ->execute()
-    ->fetchCol();
-
-  return $nid;
+    ->fetchField();
+  return !empty($nid) ? $nid : 0;
 }
 
 /**
- * Get the content types to be indexed
+ * Get all nodes to be indexed
  */
-function _message_library_prev_next_get_index_types() {
+function _message_library_prev_next_get_index_nids() {
+  $types = _message_library_prev_next_node_types();
 
+  $query = db_select('node', 'n');
+  $query->addField('n', 'nid');
+  $query->condition('status', 1 , '=');
+
+  // Limit the node types
+  if (!empty($types)) {
+    $query->condition('type', $types, 'IN');
+  }
+
+  // Limit the node nid, it should be smaller that the specified nid
+  if ($top_nid = variable_get('message_library_prev_next_index_nid')) {
+    $query->condition('nid', $top_nid, '<=');
+  }
+
+  $query->orderBy('nid', 'DESC');
+  $result = $query->execute();
+
+
+  $nids = array();
+  while($record = $result->fetchField()) {
+    $nids[] = $record;
+  }
+
+  return $nids;
 }
