@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Implements hook_prev_next_iaa_nid().().
+ * Implements hook_prev_next_iaa_nid().
+().
  */
 function prev_next_iaa_views_prev_next_iaa_nid($nid, $op = 'next') {
   if (isset($_SESSION['prev_next_iaa_views'])) {
@@ -30,7 +31,8 @@ function prev_next_iaa_views_prev_next_iaa_nid($nid, $op = 'next') {
 
 
 /**
- * Implements hook_perm().().
+ * Implements hook_perm().
+().
  */
 function prev_next_iaa_views_perm() {
   return array('administer prev_next_iaa_views');
@@ -38,7 +40,8 @@ function prev_next_iaa_views_perm() {
 
 
 /**
- * Implements hook_menu().().
+ * Implements hook_menu().
+().
  */
 function prev_next_iaa_views_menu() {
   $items = array();
@@ -58,7 +61,8 @@ function prev_next_iaa_views_menu() {
 
 
 /**
- * Implements hook_nodeapi().().
+ * Implements hook_nodeapi().
+().
  */
 function prev_next_iaa_views_nodeapi(&$node, $op) {
   if (isset($_SESSION['prev_next_iaa_views']) && (array_search($node->nid, $_SESSION['prev_next_iaa_views']) === FALSE) && $node->type == 'threat') {
@@ -70,7 +74,8 @@ function prev_next_iaa_views_nodeapi(&$node, $op) {
 
 
 /**
- * Implements hook_views_api().().
+ * Implements hook_views_api().
+().
  */
 function prev_next_iaa_views_views_api() {
   return array(
@@ -80,7 +85,8 @@ function prev_next_iaa_views_views_api() {
 
 
 /**
- * Implements hook_views_pre_execute().().
+ * Implements hook_views_pre_execute().
+().
  */
 function prev_next_iaa_views_views_pre_execute(&$view) {
   if (in_array($view->name, variable_get('prev_next_iaa_views_enabled', array()))) {

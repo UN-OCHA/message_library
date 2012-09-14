@@ -9,7 +9,8 @@ define('PREV_NEXT_NODE_TYPE', 'message_library_prev_next_node_type_');
  */
 
 /**
- * Implements hook_menu(). */
+ * Implements hook_menu().
+ */
 function message_library_prev_next_menu() {
   $items['admin/config/message_library/prev_next'] = array(
     'title' => 'Message library prev/next',
@@ -59,7 +60,8 @@ function message_library_prev_next_reindex() {
 }
 
 /**
- * Implements hook_cron() */
+ * Implements hook_cron()
+ */
 function message_library_prev_next_cron() {
   // Get the largest node id
   if ($max_nid = variable_get('message_library_prev_next_index_nid'));
@@ -414,7 +416,8 @@ function message_library_prev_next_node_delete($node) {
 }
 
 /**
- * Implements hook_nodeapi(). */
+ * Implements hook_nodeapi().
+ */
 function message_library_prev_next_nodeapi_OLD(&$node, $op) {
   // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
   $found = FALSE;
