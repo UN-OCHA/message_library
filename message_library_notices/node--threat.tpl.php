@@ -8,6 +8,10 @@
   <?php endif; ?>
   <?php print render($title_suffix); ?>
 
+  <?php if ($prev_next_link_block): ?>
+    <?php print render($prev_next_link_block['content']); ?>
+  <?php endif; ?>
+
   <?php if ($display_submitted): ?>
     <div class="submitted">
       <?php print $submitted; ?>

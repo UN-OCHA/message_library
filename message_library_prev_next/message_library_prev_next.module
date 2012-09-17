@@ -282,14 +282,13 @@ function message_library_prev_next_block_view($delta) {
     'href' => 'node/' . $n_nid,
   );
 
-  $content .= theme('links', array(
-    'links' => $links,
-    'attributes' => array('class' => array('prev-next-links'))
-  ));
-
   $block = array(
     'subject' => t('Prev/Next links'),
-    'content' => $content,
+    'content' => array(
+      '#theme' => 'links',
+      '#links' => $links,
+      '#attributes' => array('class' => array('prev-next-links')),
+    ),
   );
   return $block;
 }
@@ -300,6 +299,7 @@ function message_library_prev_next_block_view($delta) {
 function message_library_prev_next_preprocess_node(&$vars) {
   if ($vars['type'] == 'threat') {
     $block = module_invoke('message_library_prev_next', 'block_view', 1);
+    $vars['prev_next_link_block'] = $block;
   }
 }
 

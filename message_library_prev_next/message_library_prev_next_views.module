@@ -1,32 +1,24 @@
 <?php
 
 /**
- * Implements hook_prev_next_iaa_nid().
-().
+ * Implements hook_message_library_prev_next_nid().
+ * @see: message_library_prev_next_nid()
  */
-function message_library_prev_next_views_prev_next_iaa_nid($nid, $op = 'next') {
-  if (isset($_SESSION['message_library_prev_next_views'])) {
-    // There's a prev_next views list stored for this session
-    $index = array_search($nid, $_SESSION['message_library_prev_next_views']);
-    if ($index !== FALSE) {
-      // This node is part of the prev_next list, so return the appropriate node
-      $ret = $index;
-      if ($op == 'prev') {
-        $ret--;
-      }
-      elseif ($op == 'next') {
-        $ret++;
-      }
-      if (($ret >= 0) && ($ret < count($_SESSION['message_library_prev_next_views']))) {
-        return $_SESSION['message_library_prev_next_views'][$ret];
-      }
-      else {
-        // First or last element of the view
-        return 0;
-      }
-    }
-  }
-  return FALSE;
+function message_library_prev_next_views_message_library_prev_next_nid($nid, $op = 'next') {
+  if (!in_array($op, array('next', 'prev'))) return;
+
+  if (empty($_SESSION['message_library_prev_next_views_threats'])) return;
+  $threats = $_SESSION['message_library_prev_next_views_threats'];
+
+  // There's a prev_next views list stored for this session
+  $index = array_search($nid, $threats);
+  if ($index === FALSE) return;
+
+  // This node is part of the prev_next list, so return the appropriate node
+  while(key($threats) !== $index) next($threats);
+  $val = ($op == 'prev') ? prev($threats) : next($threats);
+
+  return $val;
 }
 
 
