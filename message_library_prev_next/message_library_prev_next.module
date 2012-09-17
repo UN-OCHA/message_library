@@ -87,8 +87,6 @@ function message_library_prev_next_cron() {
     $last_nid = $nid;
   }
 
-  return;
-
   $time = timer_read('message_library_prev_next_cron');
 
   if ($last_nid !== FALSE) {
@@ -110,7 +108,6 @@ function message_library_prev_next_cron() {
     '%count' => $count,
     '%remaining' => $remaining,
   )));
-
 }
 
 /**
@@ -226,62 +223,84 @@ function message_library_prev_next_block_save($delta, $edit) {
 
 /**
  * Implements hook_block_view().
+ *
+ * The original block's output is like this:
+ * @code
+ * <ul class="prev-next-links">
+ *  <li class="prev-next-link-back">
+ *    <a href="/message-library">&lt;&lt; Back to the Current Selection</a>
+ *    </li>
+ *   <li class="prev-next-link-prev">
+ *      <a href="/message-library/acute-respiratory-infections-aris">&lt; Previous threat</a>
+ *   </li>
+ *   <li class="prev-next-link-next">
+ *     <a href="/message-library/children-stop-going-school">Next threat &gt;</a>
+ *   </li>
+ * </ul>
+ * @endcode
+ *
  */
 function message_library_prev_next_block_view($delta) {
   $content = '';
 
-  $next_display = variable_get('message_library_prev_next_display_next' . $delta, PREV_NEXT_DISPLAY_DEFAULT);
-  $next_text = variable_get('message_library_prev_next_display_text_next' . $delta, PREV_NEXT_DISPLAY_TEXT_NEXT_DEFAULT);
-  $prev_display = variable_get('message_library_prev_next_display_prev' . $delta, PREV_NEXT_DISPLAY_DEFAULT);
-  $prev_text = variable_get('message_library_prev_next_display_text_prev' . $delta, PREV_NEXT_DISPLAY_TEXT_PREV_DEFAULT);
+  $base = 'message_library_prev_next_block';
+  $next_display = variable_get("{$base}_{$delta}_next");
+  $next_text    = variable_get("{$base}_{$delta}_next_text");
+  $prev_display = variable_get("{$base}_{$delta}_prev");
+  $prev_text    = variable_get("{$base}_{$delta}_prev_text");
 
-  if (arg(0) == 'node' && is_numeric(arg(1)) && !arg(2) ) {
-    $node = node_load(arg(1));
-    $n_nid = message_library_prev_next_nid($node->nid, 'next');
-    $p_nid = message_library_prev_next_nid($node->nid, 'prev');
-    if ((isset($_SESSION['message_library_prev_next_views_object']) && $_SESSION['message_library_prev_next_views_object'] != "") || $n_nid || $p_nid) {
+  // dpm(compact('delta', 'next_display', 'next_text', 'prev_display', 'prev_text'));
 
-      if (isset($_SESSION['message_library_prev_next_views_object'])) {
-        $options = array('html' => TRUE);
-        $view = unserialize($_SESSION['message_library_prev_next_views_object']);
-        //echo "<pre>";print_r($view->display_handler->options['path']);die;
-        $content .= '<li class="prev-next-link-back">' . l(t("<< Back to the Current Selection"), $view->display_handler->options['path'], $options) . '</li>';
-      }
+  $node = menu_get_object();
+  if (arg(0) != 'node' || !is_numeric(arg(1)) || arg(2)) return;
 
-      if ($p_nid && $prev_display && $prev_text != '') {
-        $p_node = node_load($p_nid);
-        if (module_exists('token')) {
-          $link = token_replace($prev_text, 'node', $p_node);
-        }
-        else {
-          $link = str_replace('[title]', $p_node->title, $prev_text);
-        }
-        $options = array('html' => TRUE);
-        $content .= '<li class="prev-next-link-prev">' . l($link, "node/$p_nid", $options) . '</li>';
-      }
+  $p_nid = message_library_prev_next_nid($node->nid, 'prev');
+  $n_nid = message_library_prev_next_nid($node->nid, 'next');
 
-      if ($n_nid && $next_display && $next_text != '') {
-        $n_node = node_load($n_nid);
-        if (module_exists('token')) {
-          $link = token_replace($next_text, 'node', $n_node);
-        }
-        else {
-          $link = str_replace('[title]', $n_node->title, $next_text);
-        }
-        $options = array('html' => TRUE);
-        $content .= '<li class="prev-next-link-next">' . l($link, "node/$n_nid", $options) . '</li>';
-      }
+  $links = array();
 
-      $block = array(
-        'subject' => t('Prev/Next links'),
-        'content' => '<ul class="prev-next-links">' . $content . '</ul>',
-      );
+  // Prepare the link for current selection.
+  $view_path = $_SESSION['message_library_prev_next_views_url'];
+  $links['prev-next-link-back'] = array(
+    'title' => t('<< Back to the Current Selection'),
+    'href' => $view_path,
+  );
 
-    }
 
-  }
+  // Prepare the link for prev item
+  $title = token_replace($prev_text, array('node' => node_load($p_nid)));
+  $links['prev-next-link-prev'] = array(
+    'title' => $title,
+    'href' => 'node/' . $p_nid,
+  );
 
+  // Prepare the link for next item
+  $n_node = node_load($n_nid);
+  $title = token_replace($next_text, array('node' => $n_node));
+  $links['prev-next-link-next'] = array(
+    'title' => $title,
+    'href' => 'node/' . $n_nid,
+  );
+
+  $content .= theme('links', array(
+    'links' => $links,
+    'attributes' => array('class' => array('prev-next-links'))
+  ));
+
+  $block = array(
+    'subject' => t('Prev/Next links'),
+    'content' => $content,
+  );
   return $block;
+}
+
+/**
+ * Implememts MODULE_preprocess_HOOK()
+ */
+function message_library_prev_next_preprocess_node(&$vars) {
+  if ($vars['type'] == 'threat') {
+    $block = module_invoke('message_library_prev_next', 'block_view', 1);
+  }
 }
 
 /**

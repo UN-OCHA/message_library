@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * Implements hook_prev_next_iaa_nid().
+().
+ */
+function message_library_prev_next_views_prev_next_iaa_nid($nid, $op = 'next') {
+  if (isset($_SESSION['message_library_prev_next_views'])) {
+    // There's a prev_next views list stored for this session
+    $index = array_search($nid, $_SESSION['message_library_prev_next_views']);
+    if ($index !== FALSE) {
+      // This node is part of the prev_next list, so return the appropriate node
+      $ret = $index;
+      if ($op == 'prev') {
+        $ret--;
+      }
+      elseif ($op == 'next') {
+        $ret++;
+      }
+      if (($ret >= 0) && ($ret < count($_SESSION['message_library_prev_next_views']))) {
+        return $_SESSION['message_library_prev_next_views'][$ret];
+      }
+      else {
+        // First or last element of the view
+        return 0;
+      }
+    }
+  }
+  return FALSE;
+}
+
+
+/**
+ * Implements hook_perm().
+ */
+function message_library_prev_next_views_perm() {
+  return array('administer message library prev next views');
+}
+
+
+/**
+ * Implements hook_menu().
+ */
+function message_library_prev_next_views_menu() {
+  $items = array();
+
+  $items['admin/config/message_library/prev_next/views'] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => 'Views',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('message_library_prev_next_views_settings'),
+    'access arguments' => array('administer message library prev next views'),
+    'weight' => 10,
+    'file' => 'message_library_prev_next_views.admin.inc',
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_nodeapi().
+ */
+function message_library_prev_next_views_nodeapi(&$node, $op) {
+  if (isset($_SESSION['message_library_prev_next_views']) &&
+     (array_search($node->nid, $_SESSION['message_library_prev_next_views']) === FALSE) &&
+     $node->type == 'threat') {
+    // The current node is no longer part of the views results, so forget about it
+    unset($_SESSION['message_library_prev_next_views']);
+    unset($_SESSION['message_library_prev_next_views_object']);
+  }
+}
+
+
+/**
+ * Implements hook_views_api().
+ */
+function message_library_prev_next_views_views_api() {
+  return array(
+    'api' => 3,
+  );
+}
+
+
+/**
+ * Implements hook_views_post_execute().
+ */
+function message_library_prev_next_views_views_post_execute(&$view) {
+  // Check if the current view need to be handled
+  $items = array_filter(variable_get('message_library_prev_next_views_enabled'));
+  if (empty($items[$view->name])) return;
+
+  $query = $view->query;
+  if (!empty($view) && ($query instanceof SearchApiViewsQuery)) {
+    $cache_id = 'message_library_views';
+    $array_threat = message_library_views_search_all_threat($cache_id, $query);
+    // Reset the numeric keys
+    $array_threat = !empty($array_threat) ?
+      array_values(array_unique($array_threat)) :
+      array();
+  }
+
+
+
+  // @todo: cache the whole view? necessary??
+  // $start_memory = memory_get_usage();
+  // $foo = serialize($view);
+  // dpm(memory_get_usage() - $start_memory);
+  // $_SESSION['message_library_prev_next_views_object'] = serialize($view);
+  $_SESSION['message_library_prev_next_views_threats'] = $array_threat;
+  // Store the views url so that the user can come back after viewing the result
+  // items
+  global $base_root;
+  $_SESSION['message_library_prev_next_views_url'] = $base_root . request_uri();
+}
+
+
+/**
+ * Implements hook_views_post_render()
+ */
+function message_library_prev_next_views_views_post_render(&$view, &$output, &$cache) {
+  // Check if the current view need to be handled
+  $items = array_filter(variable_get('message_library_prev_next_views_enabled'));
+  if (empty($items[$view->name])) return;
+
+
+}
+
+

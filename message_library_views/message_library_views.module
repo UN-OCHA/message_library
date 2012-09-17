@@ -28,7 +28,7 @@ function message_library_views_search_all_threat($cache_id, $query) {
   }
 
   // [Legacy code].
-  $arrayThreat = array();
+  $array_threat = array();
 
   $api_query = clone $query->getSearchApiQuery();
   $api_query->range(NULL, NULL);
@@ -39,16 +39,18 @@ function message_library_views_search_all_threat($cache_id, $query) {
     $entities = entity_load($query->getIndex()->item_type, array_keys($result['results']));
     foreach ($entities as $node) {
       if (!empty($node->field_message_threat['und'][0]['target_id'])) {
-        $arrayThreat[] = $node->field_message_threat['und'][0]['target_id'];
+        $array_threat[] = $node->field_message_threat['und'][0]['target_id'];
       }
     }
 
     // [Legacy code].
-    $arrayThreat = array_unique($arrayThreat);
+    $array_threat = array_unique($array_threat);
 
     // Cache.
-    search_api_current_search($cache_id, $api_query, $arrayThreat);
+    search_api_current_search($cache_id, $api_query, $array_threat);
   }
 
-  return $arrayThreat;
+  return $array_threat;
 }
+
+

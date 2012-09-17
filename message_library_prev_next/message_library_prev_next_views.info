@@ -1,0 +1,7 @@
+name = Message Librray Prev/Next for Views
+description = Provide an API for previous/next nodes for Views results
+package = Infoasaid
+core = 7.x
+dependencies[] = views
+dependencies[] = message_library_prev_next
+dependencies[] = message_library_views
