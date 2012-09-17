@@ -11,6 +11,7 @@ function message_library_prev_next_views_message_library_prev_next_nid($nid, $op
   $threats = $_SESSION['message_library_prev_next_views_threats'];
 
   // There's a prev_next views list stored for this session
+  // dpm(compact('nid', 'op', 'threats'));
   $index = array_search($nid, $threats);
   if ($index === FALSE) return;
 

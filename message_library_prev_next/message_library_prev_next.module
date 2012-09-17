@@ -244,18 +244,18 @@ function message_library_prev_next_block_view($delta) {
   $content = '';
 
   $base = 'message_library_prev_next_block';
-  $next_display = variable_get("{$base}_{$delta}_next");
-  $next_text    = variable_get("{$base}_{$delta}_next_text");
   $prev_display = variable_get("{$base}_{$delta}_prev");
   $prev_text    = variable_get("{$base}_{$delta}_prev_text");
+  $next_display = variable_get("{$base}_{$delta}_next");
+  $next_text    = variable_get("{$base}_{$delta}_next_text");
 
-  // dpm(compact('delta', 'next_display', 'next_text', 'prev_display', 'prev_text'));
-
-  $node = menu_get_object();
   if (arg(0) != 'node' || !is_numeric(arg(1)) || arg(2)) return;
+  $node = menu_get_object();
 
   $p_nid = message_library_prev_next_nid($node->nid, 'prev');
   $n_nid = message_library_prev_next_nid($node->nid, 'next');
+
+  dpm(compact('delta', 'next_display', 'next_text', 'prev_display', 'prev_text', 'p_nid', 'n_nid', 'node'));
 
   $links = array();
 
@@ -266,21 +266,27 @@ function message_library_prev_next_block_view($delta) {
     'href' => $view_path,
   );
 
+  // Ensure that:
+  // - the prev/next item exists
+  // - the prev/next item is configured to display
 
   // Prepare the link for prev item
-  $title = token_replace($prev_text, array('node' => node_load($p_nid)));
-  $links['prev-next-link-prev'] = array(
-    'title' => $title,
-    'href' => 'node/' . $p_nid,
-  );
+  if ($prev_display && $p_nid) {
+    $title = token_replace($prev_text, array('node' => node_load($p_nid)));
+    $links['prev-next-link-prev'] = array(
+      'title' => $title,
+      'href' => 'node/' . $p_nid,
+    );
+  }
 
   // Prepare the link for next item
-  $n_node = node_load($n_nid);
-  $title = token_replace($next_text, array('node' => $n_node));
-  $links['prev-next-link-next'] = array(
-    'title' => $title,
-    'href' => 'node/' . $n_nid,
-  );
+  if ($next_display && $n_nid) {
+    $title = token_replace($next_text, array('node' => node_load($n_nid)));
+    $links['prev-next-link-next'] = array(
+      'title' => $title,
+      'href' => 'node/' . $n_nid,
+    );
+  }
 
   $block = array(
     'subject' => t('Prev/Next links'),
