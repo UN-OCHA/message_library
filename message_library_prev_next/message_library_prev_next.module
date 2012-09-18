@@ -255,7 +255,7 @@ function message_library_prev_next_block_view($delta) {
   $p_nid = message_library_prev_next_nid($node->nid, 'prev');
   $n_nid = message_library_prev_next_nid($node->nid, 'next');
 
-  dpm(compact('delta', 'next_display', 'next_text', 'prev_display', 'prev_text', 'p_nid', 'n_nid', 'node'));
+  // dpm(compact('delta', 'next_display', 'next_text', 'prev_display', 'prev_text', 'p_nid', 'n_nid', 'node'));
 
   $links = array();
 
@@ -438,23 +438,6 @@ function message_library_prev_next_node_update($node) {
  */
 function message_library_prev_next_node_delete($node) {
   _message_library_prev_next_remove($node->nid);
-}
-
-/**
- * Implements hook_nodeapi().
- */
-function message_library_prev_next_nodeapi_OLD(&$node, $op) {
-  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
-  $found = FALSE;
-  foreach (_message_library_prev_next_node_types() as $type) {
-    if ($node->type == $type) {
-      $found = TRUE;
-      break;
-    }
-  }
-  if (!$found) {
-    return;
-  }
 }
 
 /*

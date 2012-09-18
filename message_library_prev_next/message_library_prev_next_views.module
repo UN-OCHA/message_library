@@ -115,8 +115,6 @@ function message_library_prev_next_views_views_post_render(&$view, &$output, &$c
   // Check if the current view need to be handled
   $items = array_filter(variable_get('message_library_prev_next_views_enabled'));
   if (empty($items[$view->name])) return;
-
-
 }
 
 
