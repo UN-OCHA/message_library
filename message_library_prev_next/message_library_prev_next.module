@@ -329,7 +329,7 @@ function _message_library_prev_next_add($nid) {
   $next_nid = _message_library_prev_next_get_next_nid($nid, $search_criteria, $criteria_value);
   $prev_nid = _message_library_prev_next_get_prev_nid($nid, $search_criteria, $criteria_value);
 
-  print ($prev_nid . ' <= ' . $nid . ' => ' . $next_nid . "\n");
+  //print ($prev_nid . ' <= ' . $nid . ' => ' . $next_nid . "\n");
 
   // Upsert the record
   db_merge('message_library_prev_next_node')
@@ -385,10 +385,10 @@ function _message_library_prev_next_modify($nid) {
  */
 function _message_library_prev_next_remove($nid) {
   // Find if there is an entry for this node
-  $node = db_fetch_object(db_query("
+  $node = db_query("
           SELECT nid, prev_nid, next_nid, changed
           FROM {message_library_prev_next_node}
-          WHERE nid = :nid", array(':nid' => $nid)));
+          WHERE nid = :nid", array(':nid' => $nid))->fetch();
 
   if ($node) {
     // Delete the data for this node
@@ -405,18 +405,26 @@ function _message_library_prev_next_remove($nid) {
  */
 function _message_library_prev_next_modify_pointing_nodes($nid) {
   // First for previous
-  $result = db_query("SELECT nid FROM {message_library_prev_next_node}
-                      WHERE prev_nid = :prev_nid", array(':prev_nid' => $nid));
-  while ($prev_row = db_fetch_object($result)) {
-    _message_library_prev_next_add($prev_row->nid);
+  $result = db_select('message_library_prev_next_node', 'pnn')
+    ->fields('pnn', array('nid'))
+    ->condition('prev_nid', $nid, '=')
+    ->execute();
+
+  while ($nid = $result->fetchField()) {
+    _message_library_prev_next_add($nid);
   }
 
   // Then for next
-  $result = db_query("SELECT nid FROM {message_library_prev_next_node}
-                      WHERE next_nid = :next_nid", array(':next_nid' => $nid));
-  while ($next_row = db_fetch_object($result)) {
-    _message_library_prev_next_add($next_row->nid);
+  $result = db_select('message_library_prev_next_node', 'pnn')
+    ->fields('pnn', array('nid'))
+    ->condition('next_nid', $nid, '=')
+    ->execute();
+
+  while ($nid = $result->fetchField()) {
+    _message_library_prev_next_add($nid);
   }
+
+  // @todo: Can these two actions be combined together?
 }
 
 /**

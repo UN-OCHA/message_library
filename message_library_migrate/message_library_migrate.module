@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Drupal needs this blank file.
+ * @see: [Drupal-to-Drupal data migration](http://drupal.org/sandbox/mikeryan/1234554)
  */
 // Define the source database (D6 site)
 define("SOURCE_DATABASE", 'infoasaidorg_d6_origin');
@@ -17,13 +17,14 @@ function message_library_migrate_api() {
  * Implementation of hook_flush_caches().
  */
 function message_library_flush_caches() {
-  message_library_register_migrations();
+  //message_library_register_migrations();
 }
 
 /**
  * Register all D6->D7 migrations.
  */
 function message_library_register_migrations() {
+  return false;
   /**
    * Each migration being registered takes an array of arguments, some required
    * and some optional. Start with the common arguments required by all
@@ -43,8 +44,10 @@ function message_library_register_migrations() {
    *   'prefix' => '',
    * );
    */
-  $common_arguments = array('source_connection' => 'migration',
-      'source_version' => 6,);
+  $common_arguments = array(
+    'source_connection' => 'migration',
+    'source_version' => 6,
+  );
   /* Vocabulary Migration
    * ------------------------------------------------------------------------*/
   // For vocabulary migrations, source_vocabulary and destination_vocabulary are
@@ -54,28 +57,24 @@ function message_library_register_migrations() {
     // ------- Message --------------------------
     // ------------------------------------------
     // At Risk Groups (vid - 2)
-    array('description' => t('Migration of term [At Risk Groups]'),
+    array(
+      'description' => t('Migration of term [At Risk Groups]'),
       'machine_name' => 'TermAtRiskGroups',
       'source_vocabulary' => '2',
       'destination_vocabulary' => 'at_risk_groups',
     ),
 
     // Target Audience (vid - 1)
-    array('description' => t('Migration of term [Target Audience]'),
+    array(
+      'description' => t('Migration of term [Target Audience]'),
       'machine_name' => 'TermTargetAudience',
       'source_vocabulary' => '1',
       'destination_vocabulary' => 'target_audience'
     ),
 
-    // Sensitivity (vid - 17)
-    array('description' => t('Migration of term [Sensitivity]'),
-      'machine_name' => 'TermSensitivity',
-      'source_vocabulary' => '17',
-      'destination_vocabulary' => 'sensitivity'
-    ),
-
     // Information Type (vid - 14)
-    array('description' => t('Migration of term [Information Type]'),
+    array(
+      'description' => t('Migration of term [Information Type]'),
       'machine_name' => 'TermInformationType',
       'source_vocabulary' => '14',
       'destination_vocabulary' => 'information_type'
@@ -84,20 +83,26 @@ function message_library_register_migrations() {
     // ------- Threat ---------------------------
     // ------------------------------------------
     // Hazard (vid - 11)
-    array('description' => t('Migration of term [Hazard]'),
-      'machine_name' => 'TermHazard', 'source_vocabulary' => '11',
+    array(
+      'description' => t('Migration of term [Hazard]'),
+      'machine_name' => 'TermHazard',
+      'source_vocabulary' => '11',
       'destination_vocabulary' => 'hazard'
     ),
 
     // Issues (vid - 12)
-    array('description' => t('Migration of term [Issues]'),
-      'machine_name' => 'TermIssues', 'source_vocabulary' => '12',
+    array(
+      'description' => t('Migration of term [Issues]'),
+      'machine_name' => 'TermIssues',
+      'source_vocabulary' => '12',
       'destination_vocabulary' => 'issues'
     ),
 
     // Sector (vid - 3)
-    array('description' => t('Migration of term [Sector]'),
-      'machine_name' => 'TermSector', 'source_vocabulary' => '3',
+    array(
+      'description' => t('Migration of term [Sector]'),
+      'machine_name' => 'TermSector',
+      'source_vocabulary' => '3',
       'destination_vocabulary' => 'sector'
     )
   );
@@ -130,7 +135,8 @@ function message_library_register_migrations() {
       'machine_name' => 'NodeMessageMigration',
       'class_name' => 'InfoasaidNodeMessageMigration',
       'description' => t('Migration of [Message] nodes from Drupal 6'),
-      'source_type' => 'message', 'destination_type' => 'message'
+      'source_type' => 'message',
+      'destination_type' => 'message'
     )
   );
 
@@ -153,5 +159,83 @@ function message_library_register_migrations() {
 class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
   public function __construct(array $arguments) {
     parent::__construct($arguments);
+
+    // ---- Term reference -----------------------------------------------------
+    // At risk group
+    $this->addFieldMapping('field_message_group_risk', 'field_message_group_risk')
+         ->sourceMigration('TermAtRiskGroups')
+         ->arguments(array('source_type' => 'tid'));
+
+    // Target audience
+    $this->addFieldMapping('field_message_audience', 'field_message_audience')
+         ->sourceMigration('TermTargetAudience')
+         ->arguments(array('source_type' => 'tid'));
+
+
+    // Information type
+    $this->addFieldMapping('field_message_info_type', 'field_message_info_type')
+         ->sourceMigration('TermInformationType')
+         ->arguments(array('source_type' => 'tid'));
+
+    // Simple mappings
+    $this->addSimpleMappings(array(
+      'field_message_sensitivity',
+      'field_message_group_mess',
+      'field_message_sensitivity_messag',
+      'field_message_sensitivity_questi',
+      'field_message_sensitivity_causes',
+      'field_message_target_comment',
+      'field_message_group_risk_comment',
+    ));
+
+    // ---- Text field ---------------------------------------------------------
+    // ---- Link field ---------------------------------------------------------
+
+    // DNM destination
+//     $this->addUnmigratedDestinations(array(
+//       'body',
+//       'body:summary',
+//       'body:format',
+//       'body:language'));
+
+    // DNM source
+    $this->addUnmigratedSources(array(
+      'uid',
+      '1',
+      '2',
+      '14',
+      '17',
+    ));
+  }
+
+  public function prepareRow($row) {
+    parent::prepareRow($row);
+
+    // Transform the sensitivity value
+    // The sensitivity vocabulary was coverted to a simple list_integer field
+    $sensitivity_map = array(
+      // Not sensitive
+      '56' => 0,
+      // Sensitive
+      '57' => 1,
+      // Very sensitive
+      '58' => 2,
+    );
+    $origin_val = $row->field_message_sensitivity;
+    // It's a single value field
+    $row->field_message_sensitivity =
+      array_key_exists($origin_val, $sensitivity_map) ?
+      array($sensitivity_map[$origin_val]) :
+      array($sensitivity_map['56']);
+
+    // Process 'At risk group'
+
+    // Process 'Target audience'
+
+    // Process 'Information type'
+
+  }
+
+  public function prepare($entity, $row) {
   }
 }
