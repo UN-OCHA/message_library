@@ -1,5 +1,5 @@
 a.export2rtf_link {
-	font-weight: bold;
+  font-weight: bold;
     text-decoration: underline;
 }
 
@@ -9,12 +9,12 @@ a.export2rtf_link {
 }
 
 #block-download_email-0 {
-    float:left; 
+    float:left;
     clear: right;
 }
 
 #block-export2rtf-0 {
-    float:left; 
+    float:left;
     background: transparent;
     border: none;
     margin: 0;
@@ -25,7 +25,7 @@ a.export2rtf_link {
 }
 
 #maincontent .block-prev_next_iaa-1 {
-    clear: both;	
+    clear: both;
 }
 
 #export2rtf_link {

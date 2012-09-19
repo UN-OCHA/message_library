@@ -8,17 +8,17 @@
 <div class="message_library_help">
   <?php if ($icon == 'both' || $icon == 'controller') : ?>
     <?php if ($status == 'show'): ?>
-     	<div class="_message_library_help_button_wrapper message_library_help_button_wrapper_hide" id="<?php echo $help['id']; ?>">
+       <div class="_message_library_help_button_wrapper message_library_help_button_wrapper_hide" id="<?php echo $help['id']; ?>">
              <a href="#<?php echo $help['id']; ?>-message" class="_message_library_help_button_hide">
                  <span class="_message_library_help_button_message"><?php echo t("hide"); ?></span>
              </a>
          </div>
      <?php else : ?>
-     	<div class="_message_library_help_button_wrapper message_library_help_button_wrapper_show" id="<?php echo $help['id']; ?>">
+       <div class="_message_library_help_button_wrapper message_library_help_button_wrapper_show" id="<?php echo $help['id']; ?>">
              <a href="#<?php echo $help['id']; ?>-message" class="_message_library_help_button_show">
                  <span class="_message_library_help_button_message"><?php echo t("show"); ?></span>
              </a>
-    	</div>
+      </div>
      <?php endif; ?>
   <?php endif; ?>
 

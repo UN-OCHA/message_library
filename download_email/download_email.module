@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Implements hook_init(). */
+ * Implements hook_init().
+ */
 // function download_email_init() {
 //   drupal_add_js(drupal_get_path('module', 'download_email') . '/js/download_email.js');
 //   drupal_add_css(drupal_get_path('module', 'download_email') . '/css/download_email.css');
@@ -41,11 +42,13 @@ function download_email_block_view($delta) {
 }
 
 /**
- * Implements hook_block(). */
+ * Implements hook_block().
+ */
 function download_email_block_OLD($op = 'list', $delta = 0, $edit = array()) { }
 
 /**
- * Implements hook_theme(). * @param $existing
+ * Implements hook_theme().
+ * @param $existing
  * @param $type
  * @param $theme
  * @param $path

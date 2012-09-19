@@ -17,14 +17,13 @@ function message_library_migrate_api() {
  * Implementation of hook_flush_caches().
  */
 function message_library_flush_caches() {
-  //message_library_register_migrations();
+  message_library_register_migrations();
 }
 
 /**
  * Register all D6->D7 migrations.
  */
 function message_library_register_migrations() {
-  return false;
   /**
    * Each migration being registered takes an array of arguments, some required
    * and some optional. Start with the common arguments required by all
@@ -123,7 +122,6 @@ function message_library_register_migrations() {
     );
   }
 
-
   /* Content Migration
    * ------------------------------------------------------------------------*/
   // Node migrations - each has its own class derived from the migrate_d2d class,
@@ -137,6 +135,15 @@ function message_library_register_migrations() {
       'description' => t('Migration of [Message] nodes from Drupal 6'),
       'source_type' => 'message',
       'destination_type' => 'message'
+    ),
+
+    // Threat
+    array(
+      'machine_name' => 'NodeThreatMigration',
+      'class_name' => 'InfoasaidNodeThreatMigration',
+      'description' => t('Migration of [Threat] nodes from Drupal 6'),
+      'source_type' => 'threat',
+      'destination_type' => 'threat'
     )
   );
 
@@ -171,7 +178,6 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
          ->sourceMigration('TermTargetAudience')
          ->arguments(array('source_type' => 'tid'));
 
-
     // Information type
     $this->addFieldMapping('field_message_info_type', 'field_message_info_type')
          ->sourceMigration('TermInformationType')
@@ -188,8 +194,8 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       'field_message_group_risk_comment',
     ));
 
-    // ---- Text field ---------------------------------------------------------
-    // ---- Link field ---------------------------------------------------------
+    // @todo: unset the body fields, because the message doesn't have a field
+    // for that...
 
     // DNM destination
 //     $this->addUnmigratedDestinations(array(
@@ -205,6 +211,7 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       '2',
       '14',
       '17',
+      'field_message_sensitivity_messag:format',
     ));
   }
 
@@ -214,12 +221,9 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
     // Transform the sensitivity value
     // The sensitivity vocabulary was coverted to a simple list_integer field
     $sensitivity_map = array(
-      // Not sensitive
-      '56' => 0,
-      // Sensitive
-      '57' => 1,
-      // Very sensitive
-      '58' => 2,
+      '56' => 0, // Not sensitive
+      '57' => 1, // Sensitive
+      '58' => 2, // Very sensitive
     );
     $origin_val = $row->field_message_sensitivity;
     // It's a single value field
@@ -227,15 +231,51 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       array_key_exists($origin_val, $sensitivity_map) ?
       array($sensitivity_map[$origin_val]) :
       array($sensitivity_map['56']);
-
-    // Process 'At risk group'
-
-    // Process 'Target audience'
-
-    // Process 'Information type'
-
   }
 
-  public function prepare($entity, $row) {
+  public function prepare($entity, $row) {}
+}
+
+
+/**
+ * Integration for the content type - 'Threat'
+ */
+class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
+  public function __construct(array $arguments) {
+    parent::__construct($arguments);
+
+    $this->addUnmigratedSources(array());
+
+    $this->addFieldMapping('field_threat_category', 'field_threat_category')
+         ->sourceMigration('TermIssues')
+         ->arguments(array('source_type' => 'tid'));
+
+    $this->addFieldMapping('field_threat_hazard', 'field_threat_hazard')
+         ->sourceMigration('TermHazard')
+         ->arguments(array('source_type' => 'tid'));
+
+    $this->addFieldMapping('field_threat_sector', 'field_threat_sector')
+         ->sourceMigration('TermSector')
+         ->arguments(array('source_type' => 'tid'));;
+
+    $this->addUnmigratedDestinations(array(
+      'field_threat_hazard:source_type',
+      'field_threat_hazard:create_term',
+      'field_threat_hazard:ignore_case',
+      'field_threat_category:source_type',
+      'field_threat_category:create_term',
+      'field_threat_category:ignore_case',
+      'field_threat_sector:source_type',
+      'field_threat_sector:create_term',
+      'field_threat_sector:ignore_case',
+    ));
+
+    $this->addUnmigratedSources(array(
+      'field_threat_rules',
+      'uid',
+      '3',
+      '11',
+      '12'
+    ));
   }
 }
