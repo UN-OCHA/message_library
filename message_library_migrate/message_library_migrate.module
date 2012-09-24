@@ -162,6 +162,14 @@ function message_library_register_migrations() {
 
 /**
  * Integration for the content type - 'Message'
+ *
+ * To test this migration class use the following drush command and check debug
+ * output in the terminal:
+ *
+ * @code
+ *   drush migrate-rollback NodeMessageMigration; drush mi NodeMessageMigration
+ * @endcode
+ *
  */
 class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
   public function __construct(array $arguments) {
@@ -182,6 +190,10 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
     $this->addFieldMapping('field_message_info_type', 'field_message_info_type')
          ->sourceMigration('TermInformationType')
          ->arguments(array('source_type' => 'tid'));
+
+    // Threat (node reference field => entityreference field)
+    $this->addFieldMapping('field_message_threat', 'field_message_threat')
+         ->sourceMigration('NodeThreatMigration');
 
     // Simple mappings
     $this->addSimpleMappings(array(
@@ -212,6 +224,7 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       '14',
       '17',
       'field_message_sensitivity_messag:format',
+      'field_message_sensitivity_causes:format',
     ));
   }
 
@@ -231,14 +244,19 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       array_key_exists($origin_val, $sensitivity_map) ?
       array($sensitivity_map[$origin_val]) :
       array($sensitivity_map['56']);
-  }
 
-  public function prepare($entity, $row) {}
+    print_r($row);
+  }
 }
 
 
 /**
  * Integration for the content type - 'Threat'
+ *
+ * To test this class using the following drush commands:
+ * @code
+ *   drush migrate-rollback NodeThreatMigration; drush mi NodeThreatMigration
+ * @endcode
  */
 class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
   public function __construct(array $arguments) {
@@ -246,17 +264,24 @@ class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
 
     $this->addUnmigratedSources(array());
 
+    // Issue
     $this->addFieldMapping('field_threat_category', 'field_threat_category')
          ->sourceMigration('TermIssues')
          ->arguments(array('source_type' => 'tid'));
 
+    // Hazard
     $this->addFieldMapping('field_threat_hazard', 'field_threat_hazard')
          ->sourceMigration('TermHazard')
          ->arguments(array('source_type' => 'tid'));
 
+    // Sector
     $this->addFieldMapping('field_threat_sector', 'field_threat_sector')
          ->sourceMigration('TermSector')
          ->arguments(array('source_type' => 'tid'));;
+
+    // Message (node reference field => entityreference field)
+    $this->addFieldMapping('field_threat_message', 'field_threat_message')
+         ->sourceMigration('NodeMessageMigration');
 
     $this->addUnmigratedDestinations(array(
       'field_threat_hazard:source_type',
@@ -277,5 +302,12 @@ class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
       '11',
       '12'
     ));
+  }
+
+  public function prepareRow($row) {
+    parent::prepareRow($row);
+    // Hanlde the message nodes, remove duplicate messages
+    $row->field_threat_message = !empty($row->field_threat_message) ?
+      array_unique($row->field_threat_message) : array();
   }
 }
