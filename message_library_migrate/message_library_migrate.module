@@ -244,8 +244,30 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       array_key_exists($origin_val, $sensitivity_map) ?
       array($sensitivity_map[$origin_val]) :
       array($sensitivity_map['56']);
+  }
 
-    print_r($row);
+  // If the migration referenced in sourceMigration() implements a createStub()
+  // method, which creates a dummy node and returns its ID, then if the lookup
+  // of ref_id fails createStub will be called and the resulting node used to
+  // fill in field_article_ref. Then, when article B finally runs through the
+  // migration, the actual content of article B will replace the dummy data and
+  // everything will be hunky-dory
+  protected function createStub($migration, $source_id) {
+    $node = new stdClass;
+    $node->title = t('Stub for source messagee node of nid #%nid', array('%nid' => $source_id[0]));
+    $node->body = t('Stub body for source message node of nid #%nid', array('%nid' => $source_id[0]));
+    $node->type = $this->destination->getBundle();
+    $node->uid = 1;
+    $node->status = 0;
+    $node->language = LANGUAGE_NONE;
+    node_save($node);
+
+    if (isset($node->nid)) {
+      return array($node->nid);
+    }
+    else {
+      return FALSE;
+    }
   }
 }
 
@@ -309,5 +331,23 @@ class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
     // Hanlde the message nodes, remove duplicate messages
     $row->field_threat_message = !empty($row->field_threat_message) ?
       array_unique($row->field_threat_message) : array();
+  }
+
+  protected function createStub($migration, $source_id) {
+    $node = new stdClass;
+    $node->title = t('Stub for source threat of nid #!nid', array('!nid' => $source_id[0]));
+    $node->body = t('Stub body for threat message of nid #!nid', array('!nid' => $source_id[0]));
+    $node->type = $this->destination->getBundle();
+    $node->uid = 1;
+    $node->status = 0;
+    $node->language = LANGUAGE_NONE;
+    node_save($node);
+
+    if (isset($node->nid)) {
+      return array($node->nid);
+    }
+    else {
+      return FALSE;
+    }
   }
 }
