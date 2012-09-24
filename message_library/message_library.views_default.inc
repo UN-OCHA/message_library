@@ -23,9 +23,10 @@ function message_library_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Message Library';
-  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['search_api_bypass_access'] = 1;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
   $handler->display->display_options['exposed_form']['options']['reset_button'] = TRUE;

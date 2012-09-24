@@ -103,6 +103,7 @@ features[facetapi][] = search_api@node_search:block:field_threat_message
 features[facetapi][] = search_api@node_search:block:field_threat_sector
 features[facetapi][] = search_api@node_search:block:search_api_language
 features[features_api][] = api:1
+features[field][] = node-message-body
 features[field][] = node-message-field_message_audience
 features[field][] = node-message-field_message_example_communic
 features[field][] = node-message-field_message_group_mess

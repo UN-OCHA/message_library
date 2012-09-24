@@ -94,18 +94,19 @@ function message_library_default_search_api_index() {
         "field_message_audience" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_target_comment" : { "type" : "text" },
         "field_message_info_type" : { "type" : "integer", "entity_type" : "taxonomy_term" },
-        "field_message_sensitivity" : { "type" : "integer", "entity_type" : "taxonomy_term" },
-        "field_message_sensitivity_messag" : { "type" : "text" },
-        "field_message_sensitivity_questi" : { "type" : "text" },
+        "field_message_sensitivity_questi" : { "type" : "list\\u003Ctext\\u003E" },
         "field_message_sensitivity_causes" : { "type" : "text" },
         "field_message_group_mess" : { "type" : "text" },
         "field_message_threat" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "node" },
+        "field_message_sensitivity" : { "type" : "integer", "entity_type" : "taxonomy_term" },
+        "field_message_sensitivity_messag" : { "type" : "text" },
         "field_threat_hazard" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_threat_category" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_threat_sector" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_threat_message" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "node" },
         "search_api_language" : { "type" : "string" },
-        "search_api_access_node" : { "type" : "list\\u003Cstring\\u003E" }
+        "field_message_threat:nid" : { "type" : "list\\u003Cinteger\\u003E" },
+        "field_message_threat:title_field" : { "type" : "list\\u003Ctext\\u003E" }
       },
       "data_alter_callbacks" : {
         "search_api_alter_bundle_filter" : {
