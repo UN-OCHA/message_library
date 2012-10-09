@@ -11,7 +11,7 @@
  *
  * Creating all the terms need by the 'Message Library'
  */
-function message_library_migrate_drush_command() {
+function message_library_drush_command() {
   $items = array();
 
   // The 'prepopulate-ml-terms' command
@@ -28,7 +28,7 @@ function message_library_migrate_drush_command() {
  *
  * The specific drush command callback
  */
-function drush_message_library_migrate_prepopulate_ml_terms() {
+function drush_message_library_prepopulate_ml_terms() {
   // The following vocabularies need prepopulating:
   // 1. At risk group
   // 2. Hazard
@@ -45,7 +45,7 @@ function drush_message_library_migrate_prepopulate_ml_terms() {
     'target_audience'
   );
 
-  $dir = drupal_get_path('module', 'message_library_migrate') . '/csv/terms';
+  $dir = drupal_get_path('module', 'message_library') . '/csv/terms';
 
   foreach($vocab_list as $vocab) {
     drush_print('--------------------------------------------------------');
@@ -60,7 +60,7 @@ function drush_message_library_migrate_prepopulate_ml_terms() {
 
     // Empty all the terms in that vocabulary
     $vocab_term_ids = array();
-    $vocab_term_ids = message_library_migrate_get_terms($vocab_vid);
+    $vocab_term_ids = message_library_get_terms($vocab_vid);
     foreach($vocab_term_ids as $tid) {
       taxonomy_term_delete($tid);
     }
@@ -134,12 +134,11 @@ function drush_message_library_migrate_prepopulate_ml_terms() {
   }
 }
 
-
 /**
  * Get all the term ids in a specific vocabulary
  * Adapted from `devel_generate_get_terms()`
  */
-function message_library_migrate_get_terms($vid) {
+function message_library_get_terms($vid) {
   return db_select('taxonomy_term_data', 'td')
     ->fields('td', array('tid'))
     ->condition('vid', $vid, '=')
