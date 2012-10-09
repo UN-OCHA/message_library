@@ -20,6 +20,7 @@ dependencies[] = hs_taxonomy
 dependencies[] = humanitarianresponse_organizations
 dependencies[] = link
 dependencies[] = list
+dependencies[] = message_library_views
 dependencies[] = node
 dependencies[] = options
 dependencies[] = search_api
