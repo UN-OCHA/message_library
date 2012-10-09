@@ -66,7 +66,7 @@
     <!-- Advanced search, collapsed by default -->
     <div class="clearfix"></div>
 
-    <fieldset class="collapsible <?php if ($advanced_search_collapsed) print 'collapsed'; ?> clearfix">
+    <fieldset class="collapsible <?php if (!empty($advanced_search_collapsed)) print 'collapsed'; ?> clearfix">
       <legend>
         <span class="fieldset-legend"><?php print t('Advanced Search'); ?></span>
       </legend>

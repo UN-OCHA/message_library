@@ -13,13 +13,20 @@ include_once 'message_library.features.inc';
 function message_library_form_alter(&$form, $form_state, $form_id) {
   if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
     // overrides <All> on the dropdown
-    $form['audience']['#options']['All'] = t('<All target Audience>');
-    $form['group_risk']['#options']['All'] = t('<All groups>');
-    $form['issues']['#options']['All'] = t('<All issues>');
-    $form['title']['#options']['All'] = t('<All threats>');
+    if (!empty($form['audience']['#options'])) {
+      $form['audience']['#options']['All'] = t('<All target Audience>');
+    }
+    if (!empty($form['group_risk']['#options'])) {
+      $form['group_risk']['#options']['All'] = t('<All groups>');
+    }
+    if (!empty($form['issues']['#options'])) {
+      $form['issues']['#options']['All'] = t('<All issues>');
+    }
+    if (!empty($form['threat_title']['#options'])) {
+      $form['threat_title']['#options']['All'] = t('<All threats>');
+    }
   }
 }
-
 
 /**
  * Implements hook_menu().
@@ -28,14 +35,14 @@ function message_library_form_alter(&$form, $form_state, $form_id) {
  */
 function message_library_menu() {
   $items['admin/config/message_library'] = array(
-      'title' => 'Message Library',
-      'description' => 'Settings for the Message Library.',
-      'position' => 'right',
-      'weight' => -10,
-      'page callback' => 'system_admin_menu_block_page',
-      'access arguments' => array('administer site configuration'),
-      'file' => 'system.admin.inc',
-      'file path' => drupal_get_path('module', 'system'),
+    'title' => 'Message Library',
+    'description' => 'Settings for the Message Library.',
+    'position' => 'right',
+    'weight' => -10,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
   );
   return $items;
 }
