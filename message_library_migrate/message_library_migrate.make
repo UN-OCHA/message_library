@@ -12,8 +12,9 @@ projects[migrate][version] = 2.x-dev
 projects[migrate_extras][type]    = module
 projects[migrate_extras][version] = 2.x-dev
 
-; 'Drupal-to-Drupal data migration' is still a sandbox project yet
+; Drupal-to-Drupal data migration
 projects[migrate_d2d][type] = module
 projects[migrate_d2d][directory_name]   = drupal_to_drupal_data_migration
 projects[migrate_d2d][download][type]   = git
-projects[migrate_d2d][download][url]    = http://git.drupal.org/sandbox/mikeryan/1234554.git
+projects[migrate_d2d][download][url]    = http://git.drupal.org/project/migrate_d2d.git
+projects[migrate_d2d][download][branch] = 7.x-2.x
