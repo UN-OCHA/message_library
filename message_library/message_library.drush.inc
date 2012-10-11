@@ -19,6 +19,10 @@ function message_library_drush_command() {
     'description' => "Generate all the terms needed by the 'Message Library'.",
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
+  $items['prepopulate-ml-threat-terms'] = array(
+    'description' => "Generate all the theat terms.",
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+  );
 
   return $items;
 }
@@ -132,6 +136,38 @@ function drush_message_library_prepopulate_ml_terms() {
       fclose($handle);
     }
   }
+}
+
+/**
+ * Drush command used for generate threat terms
+ */
+function drush_message_library_prepopulate_ml_threat_terms() {
+  $info = array(
+    'database' => 'infoasaidorg',
+    'username' => 'root',
+    'password' => 'root',
+    'host' => 'localhost',
+    'port' => '',
+    'driver' => 'mysql',
+    'prefix' => array(
+      'default' => '',
+    ),
+  );
+  Database::addConnectionInfo('default', 'migration', $info);
+  $query = Database::getConnection('migration', 'default')
+    ->select('node', 'n')
+    ->fields('n')
+    ->condition('type', 'message', '=')
+    ->orderBy('changed');
+  $query->innerJoin('node_revisions', 'nr', 'n.vid=nr.vid');
+  $query->fields('nr', array('body', 'teaser', 'format'));
+
+  $result = $query->execute();
+  while ($row = $result->fetchAssoc()) {
+    drush_print_r($row);
+  }
+
+
 }
 
 /**
