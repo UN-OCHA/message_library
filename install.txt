@@ -3,35 +3,40 @@ Setting up for development
 
 Preparation work:
 =================
+
 - Install the site
 
-```
-shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" -y
-```
+    shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" --account-pass=admin -y
 
 - Download message library related modules
 
-shell> cd sites/all/modules/
-shell> git clone git@github.com:Wiredcraft/message_library.git message_library
-shell> cd message_library
+    shell> cd DRUPALROOT
+    shell> drush make --no-core sites/all/modules/message_library/message_library_migrate/message_library_migrate.make -y
+
+    shell> cd sites/all/modules/
+    shell> git clone git@github.com:Wiredcraft/message_library.git message_library
+    shell> cd message_library
+
+- Download or enable other helping modules
+    shell> drush en diff -y
+    shell> drush en devel_generate -y
 
 
-1. Enable features
+- Enable relevant modules and features
 
+    shell> drush en message_library* -y
+    shell> drush fr message_library -y
+    shell> drush cc all
 
-2. Prepare the taxonomies
+- Prepare the taxonomies
 
-```
-drush prepopulate-ml-terms
-```
+    shell> drush prepopulate-ml-terms
 
-3. Prepare some content for testing
-```
-drush
+- Prepare some content for testing
 
-```
+    shell> drush generate-content 600 --kill --types=message
 
-4.Make sure solr is configured and working propertly
+- Make sure solr is configured and working propertly
 
 - Make essential configuration at: `admin/config/search/search_api`
 

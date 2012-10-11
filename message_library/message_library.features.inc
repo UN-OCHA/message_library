@@ -42,14 +42,6 @@ function message_library_node_info() {
       'title_label' => t('Information Requirement'),
       'help' => '',
     ),
-    'threat' => array(
-      'name' => t('Threat'),
-      'base' => 'node_content',
-      'description' => t('Use <em>Threat</em> for creating the corresponding content in <strong>Message Library</strong>'),
-      'has_title' => '1',
-      'title_label' => t('Title'),
-      'help' => '',
-    ),
   );
   return $items;
 }
