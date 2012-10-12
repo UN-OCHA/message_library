@@ -18,6 +18,7 @@ Preparation work:
     shell> cd message_library
 
 - Download or enable other helping modules
+
     shell> drush en diff -y
     shell> drush en devel_generate -y
 
@@ -31,6 +32,7 @@ Preparation work:
 - Prepare the taxonomies
 
     shell> drush prepopulate-ml-terms
+    shell> drush generate-terms threat 50 --kill
 
 - Prepare some content for testing
 

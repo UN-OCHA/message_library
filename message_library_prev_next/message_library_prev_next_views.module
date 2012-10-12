@@ -22,14 +22,12 @@ function message_library_prev_next_views_message_library_prev_next_nid($nid, $op
   return $val;
 }
 
-
 /**
  * Implements hook_perm().
  */
 function message_library_prev_next_views_perm() {
   return array('administer message library prev next views');
 }
-
 
 /**
  * Implements hook_menu().
@@ -50,7 +48,6 @@ function message_library_prev_next_views_menu() {
   return $items;
 }
 
-
 /**
  * Implements hook_nodeapi().
  */
@@ -64,7 +61,6 @@ function message_library_prev_next_views_nodeapi(&$node, $op) {
   }
 }
 
-
 /**
  * Implements hook_views_api().
  */
@@ -74,13 +70,12 @@ function message_library_prev_next_views_views_api() {
   );
 }
 
-
 /**
  * Implements hook_views_post_execute().
  */
 function message_library_prev_next_views_views_post_execute(&$view) {
   // Check if the current view need to be handled
-  $items = array_filter(variable_get('message_library_prev_next_views_enabled'));
+  $items = array_filter(variable_get('message_library_prev_next_views_enabled', array()));
   if (empty($items[$view->name])) return;
 
   $query = $view->query;
@@ -92,8 +87,6 @@ function message_library_prev_next_views_views_post_execute(&$view) {
       array_values(array_unique($array_threat)) :
       array();
   }
-
-
 
   // @todo: cache the whole view? necessary??
   // $start_memory = memory_get_usage();
@@ -107,14 +100,11 @@ function message_library_prev_next_views_views_post_execute(&$view) {
   $_SESSION['message_library_prev_next_views_url'] = $base_root . request_uri();
 }
 
-
 /**
  * Implements hook_views_post_render()
  */
 function message_library_prev_next_views_views_post_render(&$view, &$output, &$cache) {
   // Check if the current view need to be handled
-  $items = array_filter(variable_get('message_library_prev_next_views_enabled'));
+  $items = array_filter(variable_get('message_library_prev_next_views_enabled', array()));
   if (empty($items[$view->name])) return;
 }
-
-

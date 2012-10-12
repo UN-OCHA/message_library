@@ -17,13 +17,6 @@ function message_library_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: create threat content.
-  $permissions['create threat content'] = array(
-    'name' => 'create threat content',
-    'roles' => array(),
-    'module' => 'node',
-  );
-
   // Exported permission: delete any message content.
   $permissions['delete any message content'] = array(
     'name' => 'delete any message content',
@@ -31,23 +24,9 @@ function message_library_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: delete any threat content.
-  $permissions['delete any threat content'] = array(
-    'name' => 'delete any threat content',
-    'roles' => array(),
-    'module' => 'node',
-  );
-
   // Exported permission: delete own message content.
   $permissions['delete own message content'] = array(
     'name' => 'delete own message content',
-    'roles' => array(),
-    'module' => 'node',
-  );
-
-  // Exported permission: delete own threat content.
-  $permissions['delete own threat content'] = array(
-    'name' => 'delete own threat content',
     'roles' => array(),
     'module' => 'node',
   );
@@ -66,6 +45,13 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
+  // Exported permission: delete terms in information_type.
+  $permissions['delete terms in information_type'] = array(
+    'name' => 'delete terms in information_type',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
   // Exported permission: delete terms in issues.
   $permissions['delete terms in issues'] = array(
     'name' => 'delete terms in issues',
@@ -80,16 +66,16 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in sensitivity.
-  $permissions['delete terms in sensitivity'] = array(
-    'name' => 'delete terms in sensitivity',
+  // Exported permission: delete terms in target_audience.
+  $permissions['delete terms in target_audience'] = array(
+    'name' => 'delete terms in target_audience',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: delete terms in target_audience.
-  $permissions['delete terms in target_audience'] = array(
-    'name' => 'delete terms in target_audience',
+  // Exported permission: delete terms in threat.
+  $permissions['delete terms in threat'] = array(
+    'name' => 'delete terms in threat',
     'roles' => array(),
     'module' => 'taxonomy',
   );
@@ -101,23 +87,9 @@ function message_library_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: edit any threat content.
-  $permissions['edit any threat content'] = array(
-    'name' => 'edit any threat content',
-    'roles' => array(),
-    'module' => 'node',
-  );
-
   // Exported permission: edit own message content.
   $permissions['edit own message content'] = array(
     'name' => 'edit own message content',
-    'roles' => array(),
-    'module' => 'node',
-  );
-
-  // Exported permission: edit own threat content.
-  $permissions['edit own threat content'] = array(
-    'name' => 'edit own threat content',
     'roles' => array(),
     'module' => 'node',
   );
@@ -136,6 +108,13 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
+  // Exported permission: edit terms in information_type.
+  $permissions['edit terms in information_type'] = array(
+    'name' => 'edit terms in information_type',
+    'roles' => array(),
+    'module' => 'taxonomy',
+  );
+
   // Exported permission: edit terms in issues.
   $permissions['edit terms in issues'] = array(
     'name' => 'edit terms in issues',
@@ -150,16 +129,16 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in sensitivity.
-  $permissions['edit terms in sensitivity'] = array(
-    'name' => 'edit terms in sensitivity',
+  // Exported permission: edit terms in target_audience.
+  $permissions['edit terms in target_audience'] = array(
+    'name' => 'edit terms in target_audience',
     'roles' => array(),
     'module' => 'taxonomy',
   );
 
-  // Exported permission: edit terms in target_audience.
-  $permissions['edit terms in target_audience'] = array(
-    'name' => 'edit terms in target_audience',
+  // Exported permission: edit terms in threat.
+  $permissions['edit terms in threat'] = array(
+    'name' => 'edit terms in threat',
     'roles' => array(),
     'module' => 'taxonomy',
   );
