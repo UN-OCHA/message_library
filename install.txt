@@ -12,6 +12,7 @@ Preparation work:
 
     shell> cd DRUPALROOT
     shell> drush make --no-core sites/all/modules/message_library/message_library_migrate/message_library_migrate.make -y
+    shell> drush make --no-core sites/all/modules/message_library/message_library.make -y
 
     shell> cd sites/all/modules/
     shell> git clone git@github.com:Wiredcraft/message_library.git message_library
