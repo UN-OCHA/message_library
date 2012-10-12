@@ -216,7 +216,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['operator_id'] = 'field_message_threat_field_threat_category_op';
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['label'] = 'Issues';
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['operator'] = 'field_message_threat_field_threat_category_op';
-  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['identifier'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['identifier'] = 'issues';
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['remember_roles'] = array(
     2 => '2',
     1 => 0,
