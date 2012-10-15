@@ -1,9 +1,6 @@
 Setting up for development
 --------------------------
 
-Preparation work:
-=================
-
 - Install the site
 
     shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" --account-pass=admin -y
@@ -21,8 +18,7 @@ Preparation work:
 - Download or enable other helping modules
 
     shell> drush en diff -y
-    shell> drush en devel_generate -y
-
+    shell> drush dl devel --dev; drush en devel_generate -y
 
 - Enable relevant modules and features
 
@@ -42,8 +38,3 @@ Preparation work:
 - Make sure solr is configured and working propertly
 
 - Make essential configuration at: `admin/config/search/search_api`
-
-  * Solr host: localhost
-  * Solr port: 8983
-
-
