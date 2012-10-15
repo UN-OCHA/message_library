@@ -57,7 +57,6 @@ function message_library_exposedfilters_views_pre_render(&$view) {
     $vars['search_criteria_help'] = message_library_help_generate('ml_view_counter');
   }
 
-  dpm($vars);
   $view->attachment_before .= theme('current_selected_criteria', $vars);
 }
 
