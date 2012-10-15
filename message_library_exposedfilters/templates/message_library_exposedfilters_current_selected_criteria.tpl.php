@@ -67,55 +67,55 @@ EOT;
   <?php else: ?>
     <h4>Currently Selected Criteria</h4>
     <?php if (!empty($total_rows)): ?>
-      <div class="criteria_inline">
-        <div class="nb_result">
+      <div class="criteria-inline">
+        <div class="nb-result">
           <?php print $total_rows_text; ?>
         </div>
       </div>
     <?php endif;?>
 
-    <?php if (!empty($search_api_views_fulltext)): ?>
+    <?php if (!empty($ml_search_text)): ?>
     <!-- Search Text -->
     <div class="exposedfilterscontainer">
       <label>Search Text:</label>
-      <em><?php print $search_api_views_fulltext; ?></em>
-      <a class="_vef_facets pointer" id="vef_edit-search-api-views-fulltext">(remove)</a>
+      <em><?php print $ml_search_text; ?></em>
+      <a class="ml-views-facets pointer" id="edit-ml-views-ml-search-text">(remove)</a>
     </div>
     <?php endif; ?>
 
-    <?php if (!empty($issues)): ?>
+    <?php if (!empty($issue)): ?>
     <!-- Issues -->
-    <div class="exposedfilterscontainer issues">
+    <div class="exposedfilterscontainer issue">
       <label>Issues:</label>
-        <em><?php print $issues; ?></em>
-        <a class="_vef_facets pointer" id="vef_edit-issues">(remove)</a>
+        <em><?php print $issue; ?></em>
+        <a class="ml-views-facets pointer" id="edit-ml-views-issue">(remove)</a>
     </div>
     <?php endif; ?>
 
     <?php if (!empty($threat)): ?>
     <!-- Threat -->
-    <div class="exposedfilterscontainer title">
+    <div class="exposedfilterscontainer threat">
       <label>Threat:</label>
       <em><?php print $threat; ?></em>
-      <a class="_vef_facets pointer" id="vef_edit-title">(remove)</a>
+      <a class="ml-views-facets pointer" id="edit-ml-views-threat">(remove)</a>
     </div>
     <?php endif; ?>
 
-    <?php if (!empty($group_risk)): ?>
+    <?php if (!empty($at_risk_group)): ?>
     <!-- At risk group -->
-    <div class="exposedfilterscontainer group-risk">
+    <div class="exposedfilterscontainer at-risk-group">
       <label>At risk group:</label>
-      <em><?php print $group_risk; ?></em>
-      <a class="_vef_facets pointer" id="vef_edit-group-risk">(remove)</a>
+      <em><?php print $at_risk_group; ?></em>
+      <a class="ml-views-facets pointer" id="edit-ml-views-at-risk-group">(remove)</a>
     </div>
     <?php endif; ?>
 
-    <?php if (!empty($audience)): ?>
+    <?php if (!empty($target_audience)): ?>
     <!--  Target audience -->
-    <div class="exposedfilterscontainer audience">
+    <div class="exposedfilterscontainer target-audience">
       <label>Target audience:</label>
-      <em><?php print $audience; ?></em>
-      <a class="_vef_facets pointer" id="vef_edit-audience">(remove)</a>
+      <em><?php print $target_audience; ?></em>
+      <a class="ml-views-facets pointer" id="edit-ml-views-target-audience">(remove)</a>
     </div>
     <?php endif; ?>
 

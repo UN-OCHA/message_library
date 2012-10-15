@@ -24,17 +24,17 @@ function message_library_exposedfilters_views_pre_render(&$view) {
   if (empty($view->exposed_input)) return;
 
   $vars = array();
-
   foreach($view->exposed_input as $key => $val) {
     switch ($key) {
       // 1. Text field, as assign it is
-      case 'search_api_views_fulltext':
+      case 'ml_search_text':
         $vars[$key] = !empty($val) ? $val : '';
         break;
       // 2. For vocabularies, load and assign term name
-      case 'issues':
-      case 'group_risk':
-      case 'audience':
+      case 'issue':
+      case 'at_risk_group':
+      case 'target_audience':
+      case 'threat':
         if ((int) $val) { // option 'All' will be cast to 0 and ignored
           $term = taxonomy_term_load($val);
           $vars[$key] = $term->name;
@@ -42,10 +42,6 @@ function message_library_exposedfilters_views_pre_render(&$view) {
         else {
           $vars[$key] = '';
         }
-        break;
-      // 3. For content, load and assign node name
-      case 'threat_title':
-        $vars[$key] = $val;
         break;
     }
   }
@@ -56,14 +52,13 @@ function message_library_exposedfilters_views_pre_render(&$view) {
   $vars['total_rows_text'] = t('<strong>@count</strong> records matched criteria.',
       array('@count' => $vars['total_rows']));
 
-
   // Add the inline help for the search criteria
   if (module_exists('message_library_help')) {
     $vars['search_criteria_help'] = message_library_help_generate('ml_view_counter');
   }
 
+  dpm($vars);
   $view->attachment_before .= theme('current_selected_criteria', $vars);
-
 }
 
 /**
@@ -74,11 +69,11 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
   $vars['has_criteria'] = FALSE;
 
   $check_keys = array(
-    'search_api_views_fulltext',
-    'issues',
-    'group_risk',
-    'audience',
-    'threat_title'
+    'ml_search_text',
+    'issue',
+    'at_risk_group',
+    'target_audience',
+    'threat'
   );
 
   foreach($check_keys as $key) {
@@ -95,10 +90,9 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
 function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
   // For the search field in the exposed widget for views 'message_library',
   // implement the HTML 5 input placehodler feature.
-  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
-    $form['search_api_views_fulltext']['#attributes']['placeholder'] = t('enter search terms');
-  }
+  if ($form['#id'] !== 'views-exposed-form-message-library-search-page') return;
 
+  $form['ml_search_text']['#attributes']['placeholder'] = t('enter search terms');
   // Add necessary js and css files
   $path = drupal_get_path('module', 'message_library_exposedfilters');
   $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
@@ -115,25 +109,23 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
 
   // Prepare two set of select options, for the exposed filter of 'Issues'
   // - 'Sectors' : A nested list
-  $form['issues']['#prefix'] = theme('issues_options_display_mode_switcher');
+  $form['issue']['#prefix'] = theme('issues_options_display_mode_switcher');
 
-  $form['edit-issues-nested'] = array(
+  $form['edit-issue-nested'] = array(
     '#type' => 'select',
-    '#id' => array('edit-issues-nested'),
+    '#id' => array('edit-issue-nested'),
     '#options' => $nested_issue_terms,
     '#attributes' => array('style' => 'display:none'),
   );
 
   // - 'Alphabetically' : A flat list, in alphabetical order
-  $form['edit-issues-alpha'] = array(
+  $form['edit-issue-alpha'] = array(
     '#type' => 'select',
-    '#id' => array('edit-issues-alpha'),
+    '#id' => array('edit-issue-alpha'),
     '#options' => $alpha_list_terms,
     '#attributes' => array('style' => 'display:none'),
   );
-
 }
-
 
 /*----------------- HELPER FUNCTIONS
  *----------------------------------------------------------------------------*/

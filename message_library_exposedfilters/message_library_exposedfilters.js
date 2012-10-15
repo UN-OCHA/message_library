@@ -5,11 +5,26 @@
        * -------------------------------------------------------------------- */
       // Handle 'remove' link beside each search facet, this will remove the
       // correponding facet and resubmit the exposed widget form
-      $('._vef_facets').click(function() {
-        // Get the id of target exposed element, this need proper setting in the
-        // template
-        var id = '#' + $(this).attr('id').substring(4);
-        var exposedElement = $(id);
+      $('.ml-views-facets').click(function() {
+        // #edit-search-api-views-fulltext
+        // #edit-issues
+        // #edit-group-risk
+        // #edit-audience
+        // #edit-threat-title
+
+        console.log($(this));
+
+        var var_names = {
+          'edit-ml-views-ml-search-text': 'edit-ml-search-text',
+          'edit-ml-views-issue': 'edit-issue',
+          'edit-ml-views-threat': 'edit-threat',
+          'edit-ml-views-at-risk-group': 'edit-at-risk-group',
+          'edit-ml-views-target-audience': 'edit-target-audience',
+        };
+
+        var id = $(this).attr('id');
+        var widget_id = var_names[id];
+        var exposedElement = $('#' + widget_id);
 
         if (exposedElement.attr('type') == 'text') {
           exposedElement.val('');
@@ -18,10 +33,10 @@
           exposedElement.attr('selectedIndex', 0);
         }
 
-        exposedElement.closest('form').submit();
+        var exposedForm = $('#views-exposed-form-message-library-search-page');
+        exposedForm.submit();
         return false;
       });
-
 
       /* Handle different display modes for the exposed filter - 'Issues'
        * -------------------------------------------------------------------- */
@@ -52,11 +67,14 @@
        * #4 Replace the options in #2
        */
       function displayNestedList(mode) {
-        var issueSelectEl = $('select#edit-issues', viewsForm);
+        var issueSelectEl = $('select#edit-issue', viewsForm);
         var selectedOptionVal = issueSelectEl.find(':selected').val();
 
-        var alphaListOptions  = $('#edit-issues-alpha option').clone();
-        var nestedListOptions = $('#edit-issues-nested option').clone();
+        var alphaListOptions  = $('#edit-issue-alpha option').clone();
+        var nestedListOptions = $('#edit-issue-nested option').clone();
+
+        console.log(alphaListOptions);
+        console.log(nestedListOptions);
 
         if (mode == 'alpha') {
           switcherLink.html(Drupal.t('Alphabetically'));

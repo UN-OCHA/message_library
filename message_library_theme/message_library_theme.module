@@ -69,11 +69,10 @@ function message_library_theme_preprocess_views_exposed_form(&$vars) {
     $vars['advanced_search_collapsed'] = TRUE;
 
     $advanced_widgets = array(
-      'issues',
-      'group_risk',
-      'audience',
-      'issues',
-      'threat_title'
+      'issue',
+      'threat',
+      'at_risk_group',
+      'target_audience',
     );
 
     foreach ($advanced_widgets as $widget_name) {
