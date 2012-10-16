@@ -25,6 +25,8 @@ function message_library_form_alter(&$form, $form_state, $form_id) {
     if (!empty($form['threat_title']['#options'])) {
       $form['threat_title']['#options']['All'] = t('<All threats>');
     }
+
+		$form['search_api_views_fulltext']['#attributes'] = array('class' => array('ctools-auto-submit-exclude'));	
   }
 }
 
