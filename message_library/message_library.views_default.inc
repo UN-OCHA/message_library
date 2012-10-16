@@ -132,6 +132,17 @@ function message_library_views_default_views() {
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['content'] = 'There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.';
   $handler->display->display_options['empty']['area']['format'] = 'simple';
+  /* Relationship: Indexed Node: Threat */
+  $handler->display->display_options['relationships']['field_message_threat']['id'] = 'field_message_threat';
+  $handler->display->display_options['relationships']['field_message_threat']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['relationships']['field_message_threat']['field'] = 'field_message_threat';
+  /* Field: Threat: Term ID (indexed) */
+  $handler->display->display_options['fields']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat_tid']['separator'] = '';
+  $handler->display->display_options['fields']['field_message_threat_tid']['link_to_entity'] = 0;
   /* Field: Indexed Node: Node ID */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_message_library_index';
@@ -139,6 +150,8 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nid']['separator'] = '';
+  $handler->display->display_options['fields']['nid']['link_to_entity'] = 0;
   /* Field: Threat: Issue (indexed) */
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['id'] = 'field_message_threat_field_threat_category';
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['table'] = 'search_api_index_message_library_index';
@@ -150,14 +163,19 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
   $handler->display->display_options['fields']['field_message_threat']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_threat']['field'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]';
+  $handler->display->display_options['fields']['field_message_threat']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['field_message_threat']['view_mode'] = 'full';
   /* Field: Indexed Node: Title */
   $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
   $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['title_1']['field'] = 'title';
   $handler->display->display_options['fields']['title_1']['label'] = 'Information requirement';
   $handler->display->display_options['fields']['title_1']['alter']['make_link'] = TRUE;
-  $handler->display->display_options['fields']['title_1']['alter']['path'] = '[url]#[nid]';
+  $handler->display->display_options['fields']['title_1']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]#[nid] ';
   $handler->display->display_options['fields']['title_1']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 0;
   /* Field: Indexed Node: At risk group */
   $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
   $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
@@ -288,6 +306,13 @@ function message_library_views_default_views() {
     3 => 0,
   );
   $handler->display->display_options['filters']['field_message_threat']['expose']['reduce'] = 0;
+  /* Filter criterion: Indexed Node: Status */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = array(
+    1 => '1',
+  );
 
   /* Display: Search Page */
   $handler = $view->new_display('page', 'Search Page', 'search_page');
@@ -322,10 +347,10 @@ function message_library_views_default_views() {
     t('Search Summary'),
     t('<strong>@total</strong> records matched criteria.'),
     t('There is no result for this search. Your search might be too narrow. Click the remove link next to the criteria to expand the search, or click on the Reset Search button to remove all currently selected criteria.'),
-    t('.'),
-    t(','),
-    t('Issue'),
     t('Threat'),
+    t('Term ID (indexed)'),
+    t('.'),
+    t('Issue'),
     t('Information requirement'),
     t('At risk group'),
     t('Target audience'),
@@ -339,6 +364,187 @@ function message_library_views_default_views() {
     t('Feed'),
   );
   $export['message_library'] = $view;
+
+  $view = new view();
+  $view->name = 'messsage_library_threat';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'node';
+  $view->human_name = 'Messsage Library Threat';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['group_by'] = TRUE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['row_plugin'] = 'node';
+  $handler->display->display_options['row_options']['links'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Contextual filter: Content: Has taxonomy term ID */
+  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
+  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['default_action'] = 'empty';
+  $handler->display->display_options['arguments']['tid']['title_enable'] = TRUE;
+  $handler->display->display_options['arguments']['tid']['title'] = '%1';
+  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'message' => 'message',
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'main_page');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['path'] = 'message-library/threat/%';
+
+  /* Display: Attachment */
+  $handler = $view->new_display('attachment', 'Attachment', 'attachment_header');
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '1';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['default_row_class'] = FALSE;
+  $handler->display->display_options['style_options']['row_class_special'] = FALSE;
+  $handler->display->display_options['style_options']['columns'] = array(
+    'field_threat_category' => 'field_threat_category',
+    'field_threat_sector' => 'field_threat_sector',
+  );
+  $handler->display->display_options['style_options']['default'] = '-1';
+  $handler->display->display_options['style_options']['info'] = array(
+    'field_threat_category' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_threat_sector' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  $handler->display->display_options['style_options']['override'] = FALSE;
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Content: Taxonomy terms on node */
+  $handler->display->display_options['relationships']['term_node_tid']['id'] = 'term_node_tid';
+  $handler->display->display_options['relationships']['term_node_tid']['table'] = 'node';
+  $handler->display->display_options['relationships']['term_node_tid']['field'] = 'term_node_tid';
+  $handler->display->display_options['relationships']['term_node_tid']['label'] = 'threat';
+  $handler->display->display_options['relationships']['term_node_tid']['vocabularies'] = array(
+    'threat' => 'threat',
+    'map_types' => 0,
+    'at_risk_groups' => 0,
+    'clusters' => 0,
+    'coordination_hubs' => 0,
+    'disaster_types' => 0,
+    'display_properties' => 0,
+    'document_types' => 0,
+    'emergencies' => 0,
+    'event_categories' => 0,
+    'funding' => 0,
+    'gallery_collections' => 0,
+    'hazard' => 0,
+    'information_type' => 0,
+    'issues' => 0,
+    'job_title' => 0,
+    'locations' => 0,
+    'organization_types' => 0,
+    'organizations' => 0,
+    'sector' => 0,
+    'tags' => 0,
+    'target_audience' => 0,
+    'themes' => 0,
+  );
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Taxonomy term: Issue */
+  $handler->display->display_options['fields']['field_threat_category']['id'] = 'field_threat_category';
+  $handler->display->display_options['fields']['field_threat_category']['table'] = 'field_data_field_threat_category';
+  $handler->display->display_options['fields']['field_threat_category']['field'] = 'field_threat_category';
+  $handler->display->display_options['fields']['field_threat_category']['relationship'] = 'term_node_tid';
+  $handler->display->display_options['fields']['field_threat_category']['type'] = 'taxonomy_term_reference_plain';
+  $handler->display->display_options['fields']['field_threat_category']['group_columns'] = array(
+    'entity_id' => 'entity_id',
+  );
+  $handler->display->display_options['fields']['field_threat_category']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_threat_category']['multi_type'] = 'ul';
+  /* Field: Taxonomy term: Sector */
+  $handler->display->display_options['fields']['field_threat_sector']['id'] = 'field_threat_sector';
+  $handler->display->display_options['fields']['field_threat_sector']['table'] = 'field_data_field_threat_sector';
+  $handler->display->display_options['fields']['field_threat_sector']['field'] = 'field_threat_sector';
+  $handler->display->display_options['fields']['field_threat_sector']['relationship'] = 'term_node_tid';
+  $handler->display->display_options['fields']['field_threat_sector']['type'] = 'taxonomy_term_reference_plain';
+  $handler->display->display_options['fields']['field_threat_sector']['group_columns'] = array(
+    'entity_id' => 'entity_id',
+  );
+  $handler->display->display_options['fields']['field_threat_sector']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_threat_sector']['multi_type'] = 'ul';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  $handler->display->display_options['displays'] = array(
+    'main_page' => 'main_page',
+    'default' => 0,
+  );
+  $translatables['messsage_library_threat'] = array(
+    t('Master'),
+    t('more'),
+    t('Apply'),
+    t('Reset'),
+    t('Sort by'),
+    t('Asc'),
+    t('Desc'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ previous'),
+    t('next ›'),
+    t('last »'),
+    t('All'),
+    t('%1'),
+    t('Page'),
+    t('Attachment'),
+    t('threat'),
+    t('Issue'),
+    t('Sector'),
+  );
+  $export['messsage_library_threat'] = $view;
 
   return $export;
 }

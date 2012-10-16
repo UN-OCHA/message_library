@@ -7,13 +7,14 @@ Setting up for development
 
 - Download message library related modules
 
-    shell> cd DRUPALROOT
-    shell> drush make --no-core sites/all/modules/message_library/message_library_migrate/message_library_migrate.make -y
-    shell> drush make --no-core sites/all/modules/message_library/message_library.make -y
-
     shell> cd sites/all/modules/
     shell> git clone git@github.com:Wiredcraft/message_library.git message_library
     shell> cd message_library
+    shell> git checkout -b threat origin/threat_filter
+
+    shell> cd DRUPALROOT
+    shell> drush make --no-core sites/all/modules/message_library/message_library_migrate/message_library_migrate.make -y
+    shell> drush make --no-core sites/all/modules/message_library/message_library.make -y
 
 - Download or enable other helping modules
 
@@ -38,3 +39,12 @@ Setting up for development
 - Make sure solr is configured and working propertly
 
 - Make essential configuration at: `admin/config/search/search_api`
+
+
+
+Setting up for dev platform
+---------------------------
+
+scp ~/humanitarianresponse-7.x-1.7.tar.gz wiredcraft@chat.dev.wiredcraft.com:/var/www/in.dev.wiredcraft.com
+
+drush si emergency_site --db-url=mysql://internews:XvMnw2#a@127.0.0.1/in_dev_wiredcraft_com --db-su=internews --db-su-pw=XvMnw2#a --site-name="Humanitarian Response" --account-pass=admin -y
