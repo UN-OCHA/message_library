@@ -19,7 +19,6 @@ dependencies[] = humanitarianresponse_organizations
 dependencies[] = link
 dependencies[] = list
 dependencies[] = message_library_help
-dependencies[] = message_library_migrate
 dependencies[] = message_library_notices
 dependencies[] = message_library_prev_next
 dependencies[] = message_library_subscription
