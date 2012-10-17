@@ -48,13 +48,14 @@ function message_library_rtf_generate_threat_rtf($tids) {
   $rtf = new MyPHPRtfLite();
 
   // Settings
-  $arial28 = new PHPRtfLite_Font(28, 'Arial', '#000066');
-  $arial18 = new PHPRtfLite_Font(18, 'Arial', '#000066');
-  $arial14 = new PHPRtfLite_Font(14, 'Arial', '#000066');
+  $arial28 = new PHPRtfLite_Font(28, 'Arial', '#B91222');
+  $arial18 = new PHPRtfLite_Font(18, 'Arial', '#B91222');
+  $arial14 = new PHPRtfLite_Font(14, 'Arial', '#000000');
   $arial12 = new PHPRtfLite_Font(12, 'Arial', '#000000');
   $arial12Link = new PHPRtfLite_Font(12, 'Arial', '#000000');
   $arial10Black = new PHPRtfLite_Font(10, 'Arial', '#000000');
   $times12 = new PHPRtfLite_Font(12, 'Times new Roman');
+  $font_link = new PHPRtfLite_Font(12, 'Arial', '#B91222');
 
   $par_format = new PHPRtfLite_ParFormat();
   $par_list = new PHPRtfLite_ParFormat();
@@ -112,7 +113,7 @@ function message_library_rtf_generate_threat_rtf($tids) {
         if ($sen_level == 1 && !empty($message->field_message_sensitivity_messag['und'][0])) {
           $sen_message = $message->field_message_sensitivity_messag['und'][0]['value'];
           $sen_message = '<br><i>' . strtoupper(trim($sen_message)) . '</i><br><br>';
-          $sect->writeText($sen_message, $arial10Black, $par_format);
+          $sect->writeText($sen_message, $arial12, $par_format);
         }
         // for very sensitive message
         if ($sen_level == 2 && !empty($message->field_message_sensitivity_messag['und'][0])) {
@@ -238,24 +239,37 @@ function message_library_rtf_generate_threat_rtf($tids) {
           $sect->writeText($text, $times12, $par_format);
 
           foreach ($items as $item) {
-            $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $arial12, $par_list);
+            $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $font_link, $par_list);
           }
         }
 
-        // Add message 'Examples of Communication around this issue' (file)
-        // $items = field_get_items('node', $message, 'field_message_example_communic');
-        // if (!empty($items)) {
-        //   $text = '<b><i>Source: </i></b>';
-        //   $sect->writeText($text, $times12, $par_format);
+        // Add message 'websites' (link)
+        $items = field_get_items('node', $message, 'field_message_url');
+        if (!empty($items)) {
+          $text = '<b><i>Websites: </i></b>';
+          $sect->writeText($text, $times12, $par_format);
 
-        //   foreach ($items as $item) {
-        //     $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $arial12, $par_list);
-        //   }
-        // }
+          foreach ($items as $item) {
+            $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $font_link, $par_list);
+          }
+        }
+
+        // Add message 'Examples of Communication around this issue'
+        $items = field_get_items('node', $message, 'field_message_example_communic');
+        if (!empty($items)) {
+          $text = '<b><i>Examples of Communication around this issue: </i></b>';
+          $sect->writeText($text, $times12, $par_format);
+          $items = array_map('unserialize', array_unique(array_map('serialize', $items)));
+          foreach ($items as $item) {
+            $url = file_create_url($item['uri']);
+            $sect->writeHyperLink($url, '<bullet>  ' . $item['filename'], $font_link, $par_list);
+          }
+        }
       }
     }
   }
 
+  //$rtf->save('Nice');
   $rtf->sendRtf();
   return '';
 }
