@@ -22,24 +22,36 @@ class message_library_views_handler_area_link_rtf extends views_handler_area {
   function render($empty = FALSE) {
     $output = '';
 
-    // Get total.
-    $total = $this->view->total_rows;
+    // For view 'messsage_library_threat'
+    if ($this->view->name == 'messsage_library_threat') {
+      $threat_tid = reset($this->view->args);
 
-    // Cache ID.
-    // TODO: make it unique?
-    $cache_id = 'message_library_views';
-
-    // Get all results, with Search API.
-    if (!empty($total)) {
-      $query = $this->query;
-      if (!empty($query) && ($query instanceof SearchApiViewsQuery)) {
-        $array_threat = message_library_views_search_all_threat($cache_id, $query);
-
-        if (!empty($array_threat)) {
-          $nid_list = implode(',', $array_threat);
-          $output .= '<div class="export2rtf_box">' .
-            l(t('Download as an RTF Document'), 'export2rtf/' . $nid_list) .
+      if (!empty($threat_tid)) {
+        $output .= '<div class="export2rtf_box">' .
+            l(t('Download as an RTF Document'), 'message-library-rtf/threat/' . $threat_tid) .
           '</div>';
+      }
+    }
+    else {
+      // Get total.
+      $total = $this->view->total_rows;
+
+      // Cache ID.
+      // TODO: make it unique?
+      $cache_id = 'message_library_views';
+
+      // Get all results, with Search API.
+      if (!empty($total)) {
+        $query = $this->query;
+        if (!empty($query) && ($query instanceof SearchApiViewsQuery)) {
+          $array_threat = message_library_views_search_all_threat($cache_id, $query);
+
+          if (!empty($array_threat)) {
+            $nid_list = implode(',', $array_threat);
+            $output .= '<div class="export2rtf_box">' .
+              l(t('Download as an RTF Document'), 'export2rtf/' . $nid_list) .
+            '</div>';
+          }
         }
       }
     }
