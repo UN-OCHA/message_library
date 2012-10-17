@@ -1,0 +1,4 @@
+name =  Message Library RTF
+description = Export "Message Library" to RTF
+package = Message Library
+core = 7.x
