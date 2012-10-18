@@ -40,6 +40,7 @@ function message_library_rtf_libraries_info() {
  * Callback
  */
 function message_library_rtf_generate_threat_rtf($tids) {
+  $tids = urldecode($tids);
   $tids = explode(',', $tids);
 
   // registers PHPRtfLite autoloader (spl)
@@ -65,7 +66,12 @@ function message_library_rtf_generate_threat_rtf($tids) {
   $sect = $rtf->addSection();
 
   $terms = taxonomy_term_load_multiple($tids);
-  foreach ($terms as $term) {
+  $j = 0;
+  foreach ($terms as $key => $term) {
+    // Give some space between threat
+    if ($j != 0) {
+      $sect->addEmptyParagraph();
+    }
     // Add threat title
     $sect->writeText($term->name . '<br>', $arial28, $par_format);
 
@@ -98,10 +104,11 @@ function message_library_rtf_generate_threat_rtf($tids) {
     $message_nids = _message_library_get_threat_messages($term->tid);
     if (!empty($message_nids)) {
       $messages = node_load_multiple($message_nids);
-      foreach ($messages as $i => $message) {
+      $i = 0;
+      foreach ($messages as $message) {
         // Add message title
         $text = ($i == 0) ? '' : '<br>';
-        $text .= $message->title . '<br>';
+        $text .= ($i+1) . '. ' . $message->title . '<br>';
         $sect->writeText($text, $arial18, $par_format);
 
         // Add message sensitive message or relevant question based on sensitivity
@@ -265,12 +272,14 @@ function message_library_rtf_generate_threat_rtf($tids) {
             $sect->writeHyperLink($url, '<bullet>  ' . $item['filename'], $font_link, $par_list);
           }
         }
+        $i++;
       }
     }
+    $j++;
   }
 
   //$rtf->save('Nice');
-  $rtf->sendRtf();
+  $rtf->sendRtf('message library');
   return '';
 }
 

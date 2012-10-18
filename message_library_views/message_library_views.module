@@ -37,20 +37,30 @@ function message_library_views_search_all_threat($cache_id, $query) {
     // Load all the entities.
     // @see EntityFieldHandlerHelper::pre_render().
     $entities = entity_load($query->getIndex()->item_type, array_keys($result['results']));
+
+    $threat_tids = array();
+
+    // Each message node
     foreach ($entities as $node) {
-      if (!empty($node->field_message_threat['und'][0]['target_id'])) {
-        $array_threat[] = $node->field_message_threat['und'][0]['target_id'];
+      // Extract the threat tids
+      if (!empty($node->field_message_threat['und'])) {
+        foreach($node->field_message_threat['und'] as $item) {
+          if (!empty($item['tid'])) {
+            $threat_tids[] = $item['tid'];
+          }
+        }
       }
     }
 
     // [Legacy code].
-    $array_threat = array_unique($array_threat);
+    $threat_tids = array_unique($threat_tids);
+    sort($threat_tids, SORT_NUMERIC);
 
     // Cache.
-    search_api_current_search($cache_id, $api_query, $array_threat);
+    search_api_current_search($cache_id, $api_query, $threat_tids);
   }
 
-  return $array_threat;
+  return $threat_tids;
 }
 
 
