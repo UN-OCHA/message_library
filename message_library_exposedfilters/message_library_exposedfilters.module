@@ -46,16 +46,15 @@ function message_library_exposedfilters_views_pre_render(&$view) {
     }
   }
 
+  // Add help box
+  $box = module_invoke('boxes', 'block_view', 'ml_help_criteria');
+  $vars['ml_help_criteria'] = $box['content'];
+
   // Add a summary text like '800 records matched criteria.', just as the one
   // displayed in the footer
   $vars['total_rows'] = !empty($view->total_rows) ? $view->total_rows : 0;
   $vars['total_rows_text'] = t('<strong>@count</strong> records matched criteria.',
       array('@count' => $vars['total_rows']));
-
-  // Add the inline help for the search criteria
-  if (module_exists('message_library_help')) {
-    $vars['search_criteria_help'] = message_library_help_generate('ml_view_counter');
-  }
 
   $view->attachment_before .= theme('current_selected_criteria', $vars);
 }

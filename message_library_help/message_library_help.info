@@ -1,4 +1,12 @@
-name = IAA Inline Help
+name = message_library_help
 description = Inline Help script
-package = Message Library
 core = 7.x
+package = Message Library
+php = 5.2.4
+dependencies[] = boxes
+dependencies[] = ctools
+features[box][] = ml_help_criteria
+features[box][] = ml_help_general
+features[box][] = ml_help_quick_search
+features[ctools][] = boxes:box:1
+features[features_api][] = api:1

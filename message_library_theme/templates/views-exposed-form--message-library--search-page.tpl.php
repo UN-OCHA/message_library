@@ -26,14 +26,20 @@
     print $q;
   ?>
 <?php endif; ?>
+
+<?php if(!empty($ml_help_general)): ?>
+  <?php print $ml_help_general; ?>
+<?php endif;?>
+
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clearfix">
     <!-- Simple search -->
     <div class="views-exposed-widget ml-title-text fulltext-search clearfix">
-      <h2>Quick Search</h2>
-        <?php
-          echo message_library_help_generate('ml_view_quick_search','both');
-        ?>
+      <h2 id="ml-view-quick-search-title">Quick Search</h2>
+        <?php if(!empty($ml_help_quick_search)): ?>
+          <?php print $ml_help_quick_search; ?>
+        <?php endif;?>
+
         <div class="clearfix"></div>
         <?php $text_widget = $widgets['filter-search_api_views_fulltext']; ?>
         <?php if (!empty($text_widget)): ?>
@@ -61,7 +67,6 @@
           </div>
        <?php endif; ?>
     </div>
-
 
     <!-- Advanced search, collapsed by default -->
     <div class="clearfix"></div>
@@ -112,7 +117,5 @@
         <?php print $offset; ?>
       </div>
     <?php endif; ?>
-
-
   </div>
 </div>
