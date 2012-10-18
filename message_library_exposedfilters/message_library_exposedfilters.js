@@ -73,9 +73,6 @@
         var alphaListOptions  = $('#edit-issue-alpha option').clone();
         var nestedListOptions = $('#edit-issue-nested option').clone();
 
-        console.log(alphaListOptions);
-        console.log(nestedListOptions);
-
         if (mode == 'alpha') {
           switcherLink.html(Drupal.t('Alphabetically'));
           issueSelectEl.empty().append(alphaListOptions);

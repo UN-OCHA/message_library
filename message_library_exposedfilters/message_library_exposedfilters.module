@@ -103,7 +103,6 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $alpha_list_terms = _get_issues_outter_terms($nested_terms);
   // asort() is good because the index(tid) will be preserved.
   asort($alpha_list_terms);
-
   $nested_issue_terms = _get_issues_nested_terms('issues');
 
   // Prepare two set of select options, for the exposed filter of 'Issues'
@@ -111,18 +110,24 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $form['issue']['#prefix'] = theme('issues_options_display_mode_switcher');
 
   $form['edit-issue-nested'] = array(
-    '#type' => 'select',
-    '#id' => array('edit-issue-nested'),
-    '#options' => $nested_issue_terms,
-    '#attributes' => array('style' => 'display:none'),
+    '#type' => 'markup',
+    '#markup' => theme('select', array(
+      'element' => array(
+        '#options' => $nested_issue_terms,
+        '#attributes' => array('id' => 'edit-issue-nested', 'style' => 'display:none'),
+      ),
+    )),
+    //'#attributes' => array('style' => 'display:none'),
   );
-
   // - 'Alphabetically' : A flat list, in alphabetical order
   $form['edit-issue-alpha'] = array(
-    '#type' => 'select',
-    '#id' => array('edit-issue-alpha'),
-    '#options' => $alpha_list_terms,
-    '#attributes' => array('style' => 'display:none'),
+    '#type' => 'markup',
+    '#markup' => theme('select', array(
+      'element' => array(
+        '#options' => $alpha_list_terms,
+        '#attributes' => array('id' => 'edit-issue-alpha', 'style' => 'display:none'),
+      ),
+    )),
   );
 }
 
