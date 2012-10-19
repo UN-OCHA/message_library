@@ -78,7 +78,7 @@ function message_library_highlight_views_pre_execute(& $view)
 		$thread_id = $view->args[0];
 		// if ($thread_id !== $_SESSION['hl_thread_id']) { // check exists
 			$_SESSION['hl_thread_id'] = $thread_id; // save
-			$messages = $_SESSION['hl_messages'][$thread_id];
+			$messages = isset($_SESSION['hl_messages'][$thread_id]) ? $_SESSION['hl_messages'][$thread_id] : array();
 			krsort($messages);
 
 			$_SESSION['hl_sorted_keys'] = array_keys($messages);
