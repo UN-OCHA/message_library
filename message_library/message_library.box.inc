@@ -37,8 +37,8 @@ function message_library_default_box() {
   $box->api_version = 1;
   $box->delta = 'ml_about';
   $box->plugin_key = 'i18n';
-  $box->title = 'About Message Library';
-  $box->description = 'About Message Library';
+  $box->title = 'About  Message Library';
+  $box->description = 'Message Library About ';
   $box->options = array(
     'body' => array(
       'value' => '<p><a href="/node/6682">Quick reference User Manual</a></p>

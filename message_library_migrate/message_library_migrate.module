@@ -3,8 +3,6 @@
  * @file
  * @see: [Drupal-to-Drupal data migration](http://drupal.org/sandbox/mikeryan/1234554)
  */
-// Define the source database (D6 site)
-define("SOURCE_DATABASE", 'infoasaidorg');
 
 /**
  * Implementation of hook_migrate_api()
@@ -43,8 +41,21 @@ function message_library_register_migrations() {
    *   'prefix' => '',
    * );
    */
+
+  // Database::addConnectionInfo('default', 'ml_migration', array(
+  //   'database' => 'infoasaidorg',
+  //   'username' => 'root',
+  //   'password' => 'root',
+  //   'host' => 'localhost',
+  //   'port' => '',
+  //   'driver' => 'mysql',
+  //   'prefix' => array(
+  //     'default' => '',
+  //   ),
+  // ));
+
   $common_arguments = array(
-    'source_connection' => 'migration',
+    'source_connection' => 'ml_migration',
     'source_version' => 6,
   );
   /* Vocabulary Migration
@@ -122,9 +133,6 @@ function message_library_register_migrations() {
     );
   }
 
-  // Threat migration is from D6 CT to taxonmy
-  Migration::registerMigration('InfoasaidThreatMigration', 'TermThreat');
-
   /* Content Migration
    * ------------------------------------------------------------------------*/
   // Node migrations - each has its own class derived from the migrate_d2d class,
@@ -187,9 +195,7 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
          ->sourceMigration('TermInformationType')
          ->arguments(array('source_type' => 'tid'));
 
-    // Threat (node reference field => entityreference field)
-    $this->addFieldMapping('field_message_threat', 'field_message_threat')
-         ->sourceMigration('NodeThreatMigration');
+    // @todo: Threat (node reference field => entityreference field)
 
     // Simple mappings
     $this->addSimpleMappings(array(
@@ -265,183 +271,4 @@ class InfoasaidNodeMessageMigration extends DrupalNode6Migration {
       return FALSE;
     }
   }
-}
-
-
-/**
- * Integration for the content type - 'Threat'
- *
- * To test this class using the following drush commands:
- * @code
- *   drush migrate-rollback NodeThreatMigration; drush mi NodeThreatMigration
- * @endcode
- */
-class InfoasaidNodeThreatMigration extends DrupalNode6Migration {
-  public function __construct(array $arguments) {
-    parent::__construct($arguments);
-
-    $this->addUnmigratedSources(array());
-
-    // Issue
-    $this->addFieldMapping('field_threat_category', 'field_threat_category')
-         ->sourceMigration('TermIssues')
-         ->arguments(array('source_type' => 'tid'));
-
-    // Hazard
-    $this->addFieldMapping('field_threat_hazard', 'field_threat_hazard')
-         ->sourceMigration('TermHazard')
-         ->arguments(array('source_type' => 'tid'));
-
-    // Sector
-    $this->addFieldMapping('field_threat_sector', 'field_threat_sector')
-         ->sourceMigration('TermSector')
-         ->arguments(array('source_type' => 'tid'));;
-
-    // Message (node reference field => entityreference field)
-    $this->addFieldMapping('field_threat_message', 'field_threat_message')
-         ->sourceMigration('NodeMessageMigration');
-
-    $this->addUnmigratedDestinations(array(
-      'field_threat_hazard:source_type',
-      'field_threat_hazard:create_term',
-      'field_threat_hazard:ignore_case',
-      'field_threat_category:source_type',
-      'field_threat_category:create_term',
-      'field_threat_category:ignore_case',
-      'field_threat_sector:source_type',
-      'field_threat_sector:create_term',
-      'field_threat_sector:ignore_case',
-    ));
-
-    $this->addUnmigratedSources(array(
-      'field_threat_rules',
-      'uid',
-      '3',
-      '11',
-      '12'
-    ));
-  }
-
-  public function prepareRow($row) {
-    parent::prepareRow($row);
-    // Hanlde the message nodes, remove duplicate messages
-    $row->field_threat_message = !empty($row->field_threat_message) ?
-      array_unique($row->field_threat_message) : array();
-  }
-
-  protected function createStub($migration, $source_id) {
-    $node = new stdClass;
-    $node->title = t('Stub for source threat of nid #!nid', array('!nid' => $source_id[0]));
-    $node->body = t('Stub body for threat message of nid #!nid', array('!nid' => $source_id[0]));
-    $node->type = $this->destination->getBundle();
-    $node->uid = 1;
-    $node->status = 0;
-    $node->language = LANGUAGE_NONE;
-    node_save($node);
-
-    if (isset($node->nid)) {
-      return array($node->nid);
-    }
-    else {
-      return FALSE;
-    }
-  }
-}
-
-/**
- * Migration from D6's CT 'threat' to D7's taxonomy 'threat'
- */
-class InfoasaidThreatMigration extends  Migration {
-  /**
-   * Translation from field names assigned when executing the query to our
-   * subfield notation.
-   *
-   * @var array
-   *  key: DB-compatible name (e.g., field_buy_link_title).
-   *  value: Subfield notation (e.g., field_buy_link:title).
-   */
-  protected $fixFieldNames = array();
-
-  /**
-   * An array of available source fields, beyond those in the base query.
-   * Derived classes should populate this before calling the parent
-   * constructor.
-   *
-   * @var array
-   */
-  protected $sourceFields = array();
-
-
-  public function __construct() {
-    parent::__construct();
-
-    // Source
-    $query = $this->query();
-    $this->sourceOptions['fix_field_names'] = $this->fixFieldNames;
-    $query = $this->query('SELECT * FROM node');
-    $this->source = new MigrateDrupal6SourceSQL($query, $this->sourceFields, NULL,
-        $this->sourceOptions);
-
-    // Destination
-
-    // Map
-    $this->map = new MigrateSQLMap($this->machineName,
-      array(
-        'nid' => array('type' => 'int',
-                       'unsigned' => TRUE,
-                       'not null' => TRUE,
-                       'description' => 'Source node ID',
-                       'alias' => 'n',
-                      ),
-      ),
-      MigrateDestinationNode::getKeySchema()
-    );
-  }
-
-  /**
-   * Query for basic node fields from Drupal 6.
-   *
-   * @return QueryConditionInterface
-   */
-  protected function query() {
-    $query = Database::getConnection('default', $this->sourceConnection)
-             ->select('node', 'n')
-             ->fields('n', array('nid', 'vid', 'language', 'title',
-                 'uid', 'status', 'created', 'changed', 'comment', 'promote',
-                 'moderate', 'sticky', 'tnid', 'translate'))
-             ->condition('type', $this->sourceType)
-             ->orderBy('changed');
-    $query->innerJoin('node_revisions', 'nr', 'n.vid=nr.vid');
-    $query->fields('nr', array('body', 'teaser', 'format'));
-    // Pick up simple CCK fields
-    $cck_table = 'content_type_' . $this->sourceType;
-    if (Database::getConnection('default', $this->sourceConnection)
-          ->schema()->tableExists($cck_table)) {
-      $query->leftJoin($cck_table, 'f', 'n.vid=f.vid');
-      // The main column for the field should be rendered with
-      // the field name, not the column name (e.g., field_foo rather
-      // than field_foo_value).
-      $field_info = $this->version->getSourceFieldInfo();
-      foreach ($field_info as $field_name => $info) {
-        if (isset($info['columns']) && !$info['multiple'] && $info['db_storage']) {
-          $i = 0;
-          foreach ($info['columns'] as $display_name => $column_name) {
-            if ($i++ == 0) {
-              $query->addField('f', $column_name, $field_name);
-            }
-            else {
-              // The database API won't allow colons in column aliases, so we
-              // will accept the default alias, and fix up the field names later.
-              // Remember how to translate the field names.
-              $clean_name = str_replace(':', '_', $display_name);
-              $this->fixFieldNames[$clean_name] = $display_name;
-              $query->addField('f', $column_name);
-            }
-          }
-        }
-      }
-    }
-    return $query;
-  }
-
 }

@@ -156,18 +156,102 @@ function drush_message_library_prepopulate_ml_threat_terms() {
   Database::addConnectionInfo('default', 'migration', $info);
   $query = Database::getConnection('migration', 'default')
     ->select('node', 'n')
-    ->fields('n')
-    ->condition('type', 'message', '=')
+    ->fields('n', array('nid'))
+    ->condition('type', 'threat', '=')
+    ->condition('status', '1', '=')
     ->orderBy('changed');
+
   $query->innerJoin('node_revisions', 'nr', 'n.vid=nr.vid');
-  $query->fields('nr', array('body', 'teaser', 'format'));
+  $query->fields('nr', array('title'));
+
+  // Issues
+  $query->leftJoin('content_field_threat_category', 'issues', 'n.vid = issues.vid');
+  $query->fields('issues', array('field_threat_category_value'));
+
+  // Hazard
+  $query->leftJoin('content_field_threat_hazard', 'hazard', 'n.vid = hazard.vid');
+  $query->fields('hazard', array('field_threat_hazard_value'));
+
+  // Messages
+  $query->leftJoin('content_field_threat_message', 'message', 'n.vid = message.vid');
+  $query->fields('message', array('field_threat_message_nid'));
+
+  // Sectors
+  $query->leftJoin('content_field_threat_sector', 'sector', 'n.vid = sector.vid');
+  $query->fields('sector', array('field_threat_sector_value'));
 
   $result = $query->execute();
+  $rows = array();
   while ($row = $result->fetchAssoc()) {
-    drush_print_r($row);
+    $rows[] = $row;
   }
 
+  $nodes = array();
+  foreach ($rows as $row) {
+    // Node id
+    $nodes[$row['nid']]['title'] = $row['title'];
 
+    $field_names = array(
+      'field_threat_category_value',
+      'field_threat_hazard_value',
+      'field_threat_message_nid',
+      'field_threat_sector_value'
+    );
+
+    foreach ($field_names as $field_name) {
+      if (!empty($row[$field_name])) {
+        if (empty($nodes[$row['nid']][$field_name])) {
+          $nodes[$row['nid']][$field_name] = array();
+        }
+
+        if (!in_array($row[$field_name], $nodes[$row['nid']][$field_name])) {
+          $nodes[$row['nid']][$field_name][] = $row[$field_name];
+        }
+      }
+    }
+  }
+
+  $old_nodes = $nodes;
+
+  // Replace with the migrated tids or nids
+  foreach ($nodes as $key => $node) {
+    // messages
+    if (!empty($nodes[$key]['field_threat_message_nid'])) {
+      array_walk($nodes[$key]['field_threat_message_nid'], '_message_library_get_message_map_nid');
+    }
+
+    // issues
+    if (!empty($nodes[$key]['field_threat_category_value'])) {
+      array_walk($nodes[$key]['field_threat_category_value'], '_message_library_get_issue_map_tid');
+    }
+
+    // hazard
+    if (!empty($nodes[$key]['field_threat_hazard_value'])) {
+      array_walk($nodes[$key]['field_threat_hazard_value'], '_message_library_get_hazard_map_tid');
+    }
+
+    // sector
+    if (!empty($nodes[$key]['field_threat_sector_value'])) {
+      array_walk($nodes[$key]['field_threat_sector_value'], '_message_library_get_sector_map_tid');
+    }
+  }
+
+  // drush_print_r($nodes);
+  // drush_print_r(array_diff($old_nodes, $nodes));
+
+  $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+  $theat_vid = $threat_vocab->vid;
+
+  // Create threat terms
+  foreach ($nodes as $key => $node) {
+    drush_print_r($node);
+    $term = new stdClass();
+    $term->name = $node['title'];
+    $term->vid = $theat_vid;
+    $term->field_custom_field_name[LANGUAGE_NONE][0]['value'] = ‘Some value’; // OPTIONAL. If your term has a custom field attached it can added as simple as this
+    taxonomy_term_save($term); // Finally, save our term
+
+  }
 }
 
 /**
@@ -181,4 +265,23 @@ function message_library_get_terms($vid) {
     ->orderBy('tid', 'ASC')
     ->execute()
     ->fetchCol('tid');
+}
+
+/**
+ * Help function callbacks
+ */
+function _message_library_get_message_map_nid(&$nid) {
+  $nid =  db_query('SELECT destid1 FROM {migrate_map_nodemessagemigration} WHERE sourceid1 = :nid', array(':nid' => $nid))->fetchField();
+}
+
+function _message_library_get_issue_map_tid(&$tid) {
+  $tid = db_query('SELECT destid1 FROM {migrate_map_termissues} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
+}
+
+function _message_library_get_hazard_map_tid(&$tid) {
+  $tid = db_query('SELECT destid1 FROM {migrate_map_termhazard} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
+}
+
+function _message_library_get_sector_map_tid(&$tid) {
+  $tid = db_query('SELECT destid1 FROM {migrate_map_termsector} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
 }
