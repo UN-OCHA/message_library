@@ -1,0 +1,154 @@
+<?php
+/**
+ * @file
+ * deal with highlight function in message library
+ *
+ * @author yarco <yarco@wiredcraft.com>
+ * @date 2012/10/17
+ */
+
+/**
+ * hook_init
+ */
+function message_library_highlight_init()
+{
+	drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
+}
+
+/**
+ * hook_theme
+ */
+function message_library_highlight_theme($existing, $type, $theme, $path)
+{
+	return array(
+    'search_highlight_links' => array(
+      'template' => 'templates/search_highlight_links',
+      'variables' => array(
+        'prev_link' => '',
+        'next_link' => '',
+      ),
+    ),
+	);
+}
+
+/**
+ * hook_views_api().
+ */
+function message_library_highlight_views_api()
+{
+  return array(
+    'api' => 2,
+  );
+}
+
+/**
+ * hook_views_pre_execute
+ *
+ * @deprecated unvalid in drupal 8
+ */
+function message_library_highlight_views_pre_execute(& $view)
+{
+	// any other view will use this function?
+	if ($view->name === 'message_library') {
+		$query = clone $view->query->getSearchApiQuery();
+		$res = $query->range()->execute(); // same order when you are viewing detail page
+		$messages = array();
+		if (!empty($res['results'])) {
+			$entities = entity_load($query->getIndex()->item_type, array_keys($res['results']));
+
+			foreach($entities as $entity) {
+				// get threat id
+				$threat = field_get_items('node', $entity, 'field_message_threat');
+				$threat_id = $threat[0]['tid']; // dont care about others
+
+				if (!isset($messages[$threat_id])) {
+					$messages[$threat_id] = array();
+				}
+
+				$message = & $messages[$threat_id][$entity->nid];
+				$message = url('message-library/threat/' . $threat_id . '#' . $entity->nid);
+			}
+		}
+		$_SESSION['hl_messages'] = $messages;
+		$_SESSION['hl_words'] = explode(' ', $_SESSION['views']['message_library']['default']['ml_search_text']);
+		// $_SESSION['views']['message_library']['default']['ml_search_text'];
+	}
+	
+	if ($view->name === 'messsage_library_threat') {
+		$thread_id = $view->args[0];
+		// if ($thread_id !== $_SESSION['hl_thread_id']) { // check exists
+			$_SESSION['hl_thread_id'] = $thread_id; // save
+			$messages = isset($_SESSION['hl_messages'][$thread_id]) ? $_SESSION['hl_messages'][$thread_id] : array();
+			krsort($messages);
+
+			$_SESSION['hl_sorted_keys'] = array_keys($messages);
+			$_SESSION['hl_sorted_messages'] = array_values($messages);
+		// }
+	}
+}
+
+/**
+ * hook_preprocess_node
+ */
+function message_library_highlight_preprocess_node(& $vars)
+{
+	$nid = $vars['nid'];
+	$key = array_search($nid, $_SESSION['hl_sorted_keys']);
+	if ($key !== false) {
+		$prev_link = $key > 1 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
+		$next_link = $key < (count($_SESSION['hl_sorted_messages']) - 1) ? $_SESSION['hl_sorted_messages'][$key + 1] : '';
+		$vars['prev_next_links'] = theme('search_highlight_links', array('prev_link' => $prev_link, 'next_link' => $next_link));
+		$vars['classes_array'][] = 'message_highlight';
+	}
+}
+
+/**
+ * hook_preprocess_views_view_table
+ */
+function message_library_highlight_preprocess_views_view_table(& $vars)
+{
+	if ($vars['view']->name === 'message_library') {
+		foreach($vars['rows'] as & $row) {
+			$row['field_message_group_mess'] = _search_highlight_content($row['field_message_group_mess']);
+			// $row['field_message_threat_field_threat_category'] = _search_highlight_content($row['field_message_threat_field_threat_category']); // maybe search in content is enough
+		}
+	}
+}
+
+/**
+ * hook_preprocess_views_view_unformatted
+ */
+function message_library_highlight_preprocess_views_view_unformatted(& $vars)
+{
+	if ($vars['view']->name === 'messsage_library_threat') {
+		foreach($vars['rows'] as & $row) {
+			$row = _search_highlight_content($row);
+		}
+	}
+}
+
+// copy from previous version
+function _search_highlight_content($content)
+{
+  if (isset($_SESSION['hl_words']) && !empty($_SESSION['hl_words'])) {
+    $highlights = $_SESSION['hl_words'];
+    foreach ($highlights as $highlight) {
+      if ($highlight != '') {
+        // on echappe les caractères regexp
+        $highlight = str_replace(array('\\', '/', '?', '.', '*', '+', '-', '(', ')', '[', ']', '^', '$', '{', '}', '|'), array('\\\\', '\/', '\?', '\.', '\*', '\+', '\-', '\(', '\)', '\[', '\]', '\^', '\$', '\{', '\}', '\|'), $highlight);
+        //$pattern = '/\b('.$highlight.')\b(?=[^><]*<|.$)/i'; // recherche texte strict + "/(\w*?(?:$keywordsPattern)\w*)/ui" si highlight mot complet
+        $pattern = '/\b(' . _search_highlight_format_term($highlight) . ')\b(?=[^><]*<|.$)/i'; // recherche texte non strict
+        $replacement = '<span class="search_highlight">\1</span>';
+        // on passe par un <div> car j'arrive pas à faire l'expression régulière correctement
+        $content_div = preg_replace($pattern, $replacement, '<div>' . $content . '</div>');
+        $content = substr($content_div, 5, -6);
+      }
+    }
+  }
+  return $content;
+}
+
+function _search_highlight_format_term($term)
+{
+  return str_replace(array('(', ')'), array('\(', '\)'), $term);
+}

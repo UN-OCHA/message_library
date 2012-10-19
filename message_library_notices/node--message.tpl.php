@@ -35,6 +35,7 @@
           print render($content);
         ?>
       </div>
+			<?php print render($prev_next_links); ?>
     </div>
   <?php endif; ?>
 </div>

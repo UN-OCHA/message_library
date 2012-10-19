@@ -1,0 +1,7 @@
+; module for highlight search result, by yarco
+name = Message Library Highlight
+description = highlight message search result
+core = 7.x
+package = Message Library
+
+version = "0.1"

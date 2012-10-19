@@ -244,13 +244,32 @@ function drush_message_library_prepopulate_ml_threat_terms() {
 
   // Create threat terms
   foreach ($nodes as $key => $node) {
-    drush_print_r($node);
     $term = new stdClass();
     $term->name = $node['title'];
     $term->vid = $theat_vid;
-    $term->field_custom_field_name[LANGUAGE_NONE][0]['value'] = ‘Some value’; // OPTIONAL. If your term has a custom field attached it can added as simple as this
-    taxonomy_term_save($term); // Finally, save our term
 
+    // Issues
+    if (!empty($node['field_threat_category_value'])) {
+      foreach($node['field_threat_category_value'] as $value) {
+        $term->field_threat_category[LANGUAGE_NONE][]['value'] = $value;
+      }
+    }
+
+    // Hazard
+    if (!empty($node['field_threat_hazard_value'])) {
+      foreach($node['field_threat_hazard_value'] as $value) {
+        $term->field_threat_hazard[LANGUAGE_NONE][]['value'] = $value;
+      }
+    }
+
+    // Sector
+    if (!empty($node['field_threat_sector_value'])) {
+      foreach( $node['field_threat_sector_value'] as $value) {
+        $term->field_threat_sector[LANGUAGE_NONE][]['value'] = $value;
+      }
+    }
+
+    taxonomy_term_save($term); // Finally, save our term
   }
 }
 
