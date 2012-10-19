@@ -51,27 +51,29 @@
         displayNestedList('alpha');
       }
 
-      switcherLink.click(function(e) {
-        e.preventDefault();
-        if ($.cookie('exposed_issues_display_mode') == 'alpha') {
-          displayNestedList('nested');
-        } else {
-          displayNestedList('alpha');
-        }
+      switcherLink.toggle(function(e) {
+        displayNestedList('nested');
+      },function() {
+        displayNestedList('alpha');
       });
 
       /**
-       * #1 Replace the link text with the current mode(Issues/alphabetically)
+       * #1 Replace the link text with the current mode(nestest/alphabetically)
        * #2 Get the issues exposed widget select element
        * #3 Get the preprocessed options in the hidden nested/alphabetic list
        * #4 Replace the options in #2
        */
       function displayNestedList(mode) {
+        // Maintain the mode, prevent from being reset after the page refreshes
+        $.cookie('exposed_issues_display_mode', mode);
+
         var issueSelectEl = $('select#edit-issue', viewsForm);
         var selectedOptionVal = issueSelectEl.find(':selected').val();
 
         var alphaListOptions  = $('#edit-issue-alpha option').clone();
         var nestedListOptions = $('#edit-issue-nested option').clone();
+        //console.log(alphaListOptions);
+        //console.log(nestedListOptions);
 
         if (mode == 'alpha') {
           switcherLink.html(Drupal.t('Alphabetically'));
@@ -85,9 +87,6 @@
         $('option', issueSelectEl).filter(function() {
           return $(this).val() == selectedOptionVal;
         }).attr('selected', true);
-
-        // Maintain the mode, prevent from being reset after the page refreshes
-        $.cookie('exposed_issues_display_mode', mode);
         return;
       }
     }

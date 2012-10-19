@@ -2,7 +2,6 @@
   Drupal.behaviors.messageLibraryHelp = {
     attach: function (context, settings) {
       var ml_help_boxes =  $('#boxes-box-ml_help_general, #boxes-box-ml_help_quick_search, #boxes-box-ml_help_criteria');
-      console.log(ml_help_boxes);
 
       // By default, hidden
       ml_help_boxes.hide();

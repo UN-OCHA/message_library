@@ -94,6 +94,7 @@ function template_preprocess_ml_subscription_saved_search(&$vars) {
   // Recoverable fatal error: Argument 3 passed to
   // message_library_subscription_save_search_simple_form() must be an instance
   // of SearchApiSavedSearchesSettings, null given in.....
+  return;
   $form = drupal_get_form(
     'message_library_subscription_save_search_simple_form', $settings, $query);
   $vars['save_form'] = $form;

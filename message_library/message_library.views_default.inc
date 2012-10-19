@@ -431,6 +431,15 @@ function message_library_views_default_views() {
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'none';
   $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Message Library: Link to download rtf */
+  $handler->display->display_options['footer']['link_rtf']['id'] = 'link_rtf';
+  $handler->display->display_options['footer']['link_rtf']['table'] = 'message_library';
+  $handler->display->display_options['footer']['link_rtf']['field'] = 'link_rtf';
+  /* Footer: Message Library: Link to email rtf */
+  $handler->display->display_options['footer']['link_email_rtf']['id'] = 'link_email_rtf';
+  $handler->display->display_options['footer']['link_email_rtf']['table'] = 'message_library';
+  $handler->display->display_options['footer']['link_email_rtf']['field'] = 'link_email_rtf';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   /* Contextual filter: Content: Has taxonomy term ID */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
