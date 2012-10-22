@@ -23,7 +23,10 @@ function message_library_drush_command() {
     'description' => "Generate all the theat terms.",
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
-
+  $items['prepopulate-ml-message-threat'] = array(
+    'description' => "Set the threat for each message.",
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+  );
   return $items;
 }
 
@@ -217,22 +220,22 @@ function drush_message_library_prepopulate_ml_threat_terms() {
   foreach ($nodes as $key => $node) {
     // messages
     if (!empty($nodes[$key]['field_threat_message_nid'])) {
-      array_walk($nodes[$key]['field_threat_message_nid'], '_message_library_get_message_map_nid');
+      array_walk($nodes[$key]['field_threat_message_nid'], '_message_library_get_message_map_dest_nid');
     }
 
     // issues
     if (!empty($nodes[$key]['field_threat_category_value'])) {
-      array_walk($nodes[$key]['field_threat_category_value'], '_message_library_get_issue_map_tid');
+      array_walk($nodes[$key]['field_threat_category_value'], '_message_library_get_issue_map_dest_tid');
     }
 
     // hazard
     if (!empty($nodes[$key]['field_threat_hazard_value'])) {
-      array_walk($nodes[$key]['field_threat_hazard_value'], '_message_library_get_hazard_map_tid');
+      array_walk($nodes[$key]['field_threat_hazard_value'], '_message_library_get_hazard_map_dest_tid');
     }
 
     // sector
     if (!empty($nodes[$key]['field_threat_sector_value'])) {
-      array_walk($nodes[$key]['field_threat_sector_value'], '_message_library_get_sector_map_tid');
+      array_walk($nodes[$key]['field_threat_sector_value'], '_message_library_get_sector_map_dest_tid');
     }
   }
 
@@ -251,24 +254,25 @@ function drush_message_library_prepopulate_ml_threat_terms() {
     // Issues
     if (!empty($node['field_threat_category_value'])) {
       foreach($node['field_threat_category_value'] as $value) {
-        $term->field_threat_category[LANGUAGE_NONE][]['value'] = $value;
+        $term->field_threat_category[LANGUAGE_NONE][]['tid'] = $value;
       }
     }
 
     // Hazard
     if (!empty($node['field_threat_hazard_value'])) {
       foreach($node['field_threat_hazard_value'] as $value) {
-        $term->field_threat_hazard[LANGUAGE_NONE][]['value'] = $value;
+        $term->field_threat_hazard[LANGUAGE_NONE][]['tid'] = $value;
       }
     }
 
     // Sector
     if (!empty($node['field_threat_sector_value'])) {
       foreach( $node['field_threat_sector_value'] as $value) {
-        $term->field_threat_sector[LANGUAGE_NONE][]['value'] = $value;
+        $term->field_threat_sector[LANGUAGE_NONE][]['tid'] = $value;
       }
     }
 
+    drush_print_r($term);
     taxonomy_term_save($term); // Finally, save our term
   }
 }
@@ -287,20 +291,125 @@ function message_library_get_terms($vid) {
 }
 
 /**
+ * Drush command used for setting threat for each message
+ */
+function drush_message_library_prepopulate_ml_message_threat() {
+  $info = array(
+    'database' => 'infoasaidorg',
+    'username' => 'root',
+    'password' => 'root',
+    'host' => 'localhost',
+    'port' => '',
+    'driver' => 'mysql',
+    'prefix' => array(
+      'default' => '',
+    ),
+  );
+  Database::addConnectionInfo('default', 'migration', $info);
+
+  $d7_threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+  $d7_threat_vocab_vid = $threat_vocab->vid;
+
+  // Get all messages in the D7
+  $messages = node_load_multiple(array(), array('type' => 'message'));
+
+  // For each message, get the match message in D6
+  foreach ($messages as $message) {
+    drush_print("\n\n");
+    drush_print(dt('For message [!title]', array('!title' => $message->title)));
+
+    $d6_message_nid = _message_library_get_message_map_source_nid($message->nid);
+
+
+    // Find no source in D6
+    if (empty($d6_message_nid)) {
+      drush_log(dt('The d6 message can\'t be found.'), 'warning');
+      continue;
+    }
+    else {
+      drush_print(dt('The d6 message match\'s nid is: !nid', array('!nid' => $d6_message_nid)));
+    }
+
+    // Get the D6 message's threat()
+    $query = Database::getConnection('migration', 'default')
+      ->select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.type', 'message', '=')
+      ->condition('n.nid', $d6_message_nid, '=')
+      ->condition('n.status', '1', '=')
+      ->orderBy('n.changed');
+
+    $query->innerJoin('node_revisions', 'nr', 'n.vid=nr.vid');
+    $query->fields('nr', array('title'));
+
+    $query->leftJoin('content_field_message_threat', 'threat', 'n.vid = threat.vid');
+    $query->fields('threat', array('field_message_threat_nid'));
+
+    $result = $query->execute();
+
+    $rows = array();
+    while ($row = $result->fetchAssoc()) {
+      if (!empty($row['field_message_threat_nid'])) {
+        $rows[] = $row;
+      }
+    }
+
+    if (empty($rows)) continue;
+
+    $d6_threat_nid = reset($rows)['field_message_threat_nid'];
+    drush_print(dt('It\'s point to threat nid: !nid', array('!nid' => $d6_threat_nid)));
+    // Get its title
+    $query = Database::getConnection('migration', 'default')
+      ->select('node', 'n')
+      ->fields('n', array('title'))
+      ->condition('n.type', 'threat')
+      ->condition('n.nid', $d6_threat_nid);
+
+    $d6_threat_title = $query->execute()->fetchField();
+
+    // Check which term it is in D7(by title)
+    drush_print(dt('Search term in D7 by name: @name', array('@name' => $d6_threat_title)));
+    if (!empty($d6_threat_title)) {
+      $search_terms = taxonomy_get_term_by_name($d6_threat_title, $d7_threat_vocab_vid);
+
+     drush_log(dt('!count terms found.', array('!count' => count($search_terms))));
+     if (!empty($search_terms)) {
+       $d7_threat_term = reset($search_terms);
+       drush_log(dt('Got the term name in D7.'), 'success');
+
+       $d7_threat_term_tid = $d7_threat_term->tid;
+
+       $message->field_message_threat['und']['0']['tid'] = $d7_threat_term_tid;
+       node_save($message);
+     }
+    }
+    else {
+      drush_log(dt('Can\'t get threat name in D6 by it nid'), 'error');
+    }
+  }
+  // Assign it to the D7 message
+}
+
+/**
  * Help function callbacks
  */
-function _message_library_get_message_map_nid(&$nid) {
+function _message_library_get_message_map_dest_nid(&$nid) {
   $nid =  db_query('SELECT destid1 FROM {migrate_map_nodemessagemigration} WHERE sourceid1 = :nid', array(':nid' => $nid))->fetchField();
 }
 
-function _message_library_get_issue_map_tid(&$tid) {
+function _message_library_get_message_map_source_nid($nid) {
+  $nid =  db_query('SELECT sourceid1 FROM {migrate_map_nodemessagemigration} WHERE destid1 = :nid', array(':nid' => $nid))->fetchField();
+  return $nid;
+}
+
+function _message_library_get_issue_map_dest_tid(&$tid) {
   $tid = db_query('SELECT destid1 FROM {migrate_map_termissues} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
 }
 
-function _message_library_get_hazard_map_tid(&$tid) {
+function _message_library_get_hazard_map_dest_tid(&$tid) {
   $tid = db_query('SELECT destid1 FROM {migrate_map_termhazard} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
 }
 
-function _message_library_get_sector_map_tid(&$tid) {
+function _message_library_get_sector_map_dest_tid(&$tid) {
   $tid = db_query('SELECT destid1 FROM {migrate_map_termsector} WHERE sourceid1 = :tid', array(':tid' => $tid))->fetchField();
 }
