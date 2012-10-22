@@ -1,6 +1,7 @@
-name = message_library_help
+name = Message Library Help
 description = Inline Help script
 core = 7.x
+version = 7.x-1.0-dev
 package = Message Library
 php = 5.2.4
 dependencies[] = boxes

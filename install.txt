@@ -10,7 +10,6 @@ Setting up for development
     shell> cd sites/all/modules/
     shell> git clone git@github.com:Wiredcraft/message_library.git message_library
     shell> cd message_library
-    shell> git checkout -b threat origin/threat_filter
 
     shell> cd DRUPALROOT
     shell> drush make --no-core sites/all/modules/message_library/message_library_migrate/message_library_migrate.make -y
@@ -23,7 +22,7 @@ Setting up for development
 
 - Enable relevant modules and features
 
-    shell> drush en message_library* -y
+    shell> drush en message_library
     shell> drush fr message_library -y
     shell> drush cc all
 
