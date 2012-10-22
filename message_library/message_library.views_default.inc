@@ -223,6 +223,8 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['search_api_views_fulltext']['fields'] = array(
     'title' => 'title',
     'field_message_group_mess' => 'field_message_group_mess',
+    'field_message_threat:name' => 'field_message_threat:name',
+    'field_message_threat:field_threat_category:name' => 'field_message_threat:field_threat_category:name',
   );
   /* Filter criterion: Threat: Issue (indexed) */
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['id'] = 'field_message_threat_field_threat_category';

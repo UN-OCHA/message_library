@@ -27,9 +27,10 @@ Setting up for development
     shell> drush cc all
 
 - Prepare the taxonomies
+    - Use migrate to prepare some taxonomies and messages
+    - shell> drush prepopulate-ml-threat-terms
+    - shell> drush prepopulate-ml-message-threat
 
-    shell> drush prepopulate-ml-terms
-    shell> drush generate-terms threat 50 --kill
 
 - Prepare some content for testing
 

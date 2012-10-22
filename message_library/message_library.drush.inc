@@ -145,6 +145,8 @@ function drush_message_library_prepopulate_ml_terms() {
  * Drush command used for generate threat terms
  */
 function drush_message_library_prepopulate_ml_threat_terms() {
+  // @todo: remove all the terms in the 'threat' vocabulary
+
   $info = array(
     'database' => 'infoasaidorg',
     'username' => 'root',
@@ -272,7 +274,6 @@ function drush_message_library_prepopulate_ml_threat_terms() {
       }
     }
 
-    drush_print_r($term);
     taxonomy_term_save($term); // Finally, save our term
   }
 }

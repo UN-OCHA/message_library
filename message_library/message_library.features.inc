@@ -110,7 +110,8 @@ function message_library_default_search_api_index() {
         "field_message_threat:field_threat_sector" : {
           "type" : "list\\u003Clist\\u003Cinteger\\u003E\\u003E",
           "entity_type" : "taxonomy_term"
-        }
+        },
+        "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Clist\\u003Ctext\\u003E\\u003E" }
       },
       "data_alter_callbacks" : {
         "search_api_alter_bundle_filter" : {

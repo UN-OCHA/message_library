@@ -96,6 +96,13 @@ function message_library_tou_form_alter(&$form, &$form_state, $form_id) {
  */
 function message_library_tou_url_inbound_alter(&$path, $original_path, $path_language) {
   if (arg(0, $original_path) !== 'message-library') return;
+  // Prevent the edit link on the content listing admin page
+  // (eg. message-library/message/what-think-about/edit) from not working
+  if ((arg(0) == 'message-library')
+    && (arg(1, $original_path) == 'message')
+    && (arg(3, $original_path) == 'edit')) {
+    return;
+  }
 
   if (!message_library_tou_get_cgi_access()) {
     // drupal_goto('message-library-cgi', array('query' => drupal_get_destination()));
