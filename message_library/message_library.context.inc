@@ -20,10 +20,28 @@ function message_library_context_default_contexts() {
     'views' => array(
       'values' => array(
         'message_library:search_page' => 'message_library:search_page',
+        'messsage_library_threat' => 'messsage_library_threat',
       ),
     ),
   );
-  $context->reactions = array();
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'boxes-message_library_about' => array(
+          'module' => 'boxes',
+          'delta' => 'message_library_about',
+          'region' => 'sidebar_first',
+          'weight' => '-10',
+        ),
+        'message_library_subscription-ml_subscription_saved_search' => array(
+          'module' => 'message_library_subscription',
+          'delta' => 'ml_subscription_saved_search',
+          'region' => 'sidebar_first',
+          'weight' => '-9',
+        ),
+      ),
+    ),
+  );
   $context->condition_mode = 0;
 
   // Translatables

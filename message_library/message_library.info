@@ -31,7 +31,6 @@ dependencies[] = search_api
 dependencies[] = strongarm
 dependencies[] = views
 features[box][] = message_library_about
-features[box][] = ml_about
 features[conditional_fields][] = node:message
 features[context][] = message_library_search
 features[ctools][] = boxes:box:1

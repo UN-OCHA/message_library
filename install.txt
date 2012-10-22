@@ -4,6 +4,7 @@ Setting up for development
 - Install the site
 
     shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" --account-pass=admin -y
+    shell> drush si emergency_site --db-url=mysql://internews:XvMnw2#a@127.0.0.1/in_dev_wiredcraft_com --site-name="Humanitarian Response" --account-pass=admin -y
 
 - Download message library related modules
 
