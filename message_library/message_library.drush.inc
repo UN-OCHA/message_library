@@ -357,7 +357,9 @@ function drush_message_library_prepopulate_ml_message_threat() {
 
     if (empty($rows)) continue;
 
-    $d6_threat_nid = reset($rows)['field_message_threat_nid'];
+    $d6_threat_row = reset($rows);
+    $d6_threat_nid = $d6_threat_row['field_message_threat_nid'];
+
     drush_print(dt('It\'s point to threat nid: !nid', array('!nid' => $d6_threat_nid)));
     // Get its title
     $query = Database::getConnection('migration', 'default')
