@@ -143,23 +143,38 @@ function drush_message_library_prepopulate_ml_terms() {
 
 /**
  * Drush command used for generate threat terms
+ *
+ * This grab the threat nodes in the D6 and convert them into threat terms in D7
+ *
+ * Make sure you have add some lines in `settings.php` like:
+ *
+ * $databases['ml_migration']['default'] = array(
+ *   'driver' => 'mysql',
+ *   'database' => 'infoasaidorg',
+ *   'username' => 'root',
+ *   'password' => 'root',
+ *   'host' => 'localhost',
+ *   'prefix' => '',
+ * );
+ *
  */
 function drush_message_library_prepopulate_ml_threat_terms() {
-  // @todo: remove all the terms in the 'threat' vocabulary
+  $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+  $theat_vid = $threat_vocab->vid;
 
-  $info = array(
-    'database' => 'infoasaidorg',
-    'username' => 'root',
-    'password' => 'root',
-    'host' => 'localhost',
-    'port' => '',
-    'driver' => 'mysql',
-    'prefix' => array(
-      'default' => '',
-    ),
-  );
-  Database::addConnectionInfo('default', 'migration', $info);
-  $query = Database::getConnection('migration', 'default')
+  drush_print(dt('Checking and removing all the threat terms in D7'));
+  $old_d7_threat_terms = taxonomy_get_tree($theat_vid);
+  if (!empty($old_d7_threat_terms)) {
+    foreach ($old_d7_threat_terms as $term) {
+      taxonomy_term_delete($term->tid);
+    }
+    drush_print(dt('!count threat terms removed', array('!count' => count($old_d7_threat_terms))));
+  }
+  else {
+    drush_print(dt('No threat terms found.'));
+  }
+
+  $query = Database::getConnection('default', 'ml_migration')
     ->select('node', 'n')
     ->fields('n', array('nid'))
     ->condition('type', 'threat', '=')
@@ -241,12 +256,6 @@ function drush_message_library_prepopulate_ml_threat_terms() {
     }
   }
 
-  // drush_print_r($nodes);
-  // drush_print_r(array_diff($old_nodes, $nodes));
-
-  $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
-  $theat_vid = $threat_vocab->vid;
-
   // Create threat terms
   foreach ($nodes as $key => $node) {
     $term = new stdClass();
@@ -275,6 +284,13 @@ function drush_message_library_prepopulate_ml_threat_terms() {
     }
 
     taxonomy_term_save($term); // Finally, save our term
+
+    if (!empty($term->tid)) {
+      drush_log(dt('[!name] created (tid: !tid)', array('!name' => $term->name, '!tid' => $term->tid)), 'success');
+    }
+    else {
+      drush_log(dt('[!name] created failed.', array('!name' => $term->name)), 'error');
+    }
   }
 }
 
@@ -293,21 +309,13 @@ function message_library_get_terms($vid) {
 
 /**
  * Drush command used for setting threat for each message
+ *
+ * This command will set proper value to the field threat on each message.
+ *
+ * This depends on the proper migration 'NodeMessageMigration', otherwise
+ * it won't be able to find the mapping
  */
 function drush_message_library_prepopulate_ml_message_threat() {
-  $info = array(
-    'database' => 'infoasaidorg',
-    'username' => 'root',
-    'password' => 'root',
-    'host' => 'localhost',
-    'port' => '',
-    'driver' => 'mysql',
-    'prefix' => array(
-      'default' => '',
-    ),
-  );
-  Database::addConnectionInfo('default', 'migration', $info);
-
   $d7_threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
   $d7_threat_vocab_vid = $threat_vocab->vid;
 
@@ -316,23 +324,22 @@ function drush_message_library_prepopulate_ml_message_threat() {
 
   // For each message, get the match message in D6
   foreach ($messages as $message) {
-    drush_print("\n\n");
-    drush_print(dt('For message [!title]', array('!title' => $message->title)));
+    drush_print("\n");
+    drush_print(dt('For D7 message [!title]', array('!title' => $message->title)));
 
     $d6_message_nid = _message_library_get_message_map_source_nid($message->nid);
 
-
     // Find no source in D6
     if (empty($d6_message_nid)) {
-      drush_log(dt('The d6 message can\'t be found.'), 'warning');
+      drush_log(dt('The D6 message can\'t be found.'), 'warning');
       continue;
     }
     else {
-      drush_print(dt('The d6 message match\'s nid is: !nid', array('!nid' => $d6_message_nid)));
+      drush_print(dt('The D6 message match\'s nid is: !nid', array('!nid' => $d6_message_nid)));
     }
 
     // Get the D6 message's threat()
-    $query = Database::getConnection('migration', 'default')
+    $query = Database::getConnection('default', 'ml_migration')
       ->select('node', 'n')
       ->fields('n', array('nid'))
       ->condition('n.type', 'message', '=')
@@ -360,9 +367,9 @@ function drush_message_library_prepopulate_ml_message_threat() {
     $d6_threat_row = reset($rows);
     $d6_threat_nid = $d6_threat_row['field_message_threat_nid'];
 
-    drush_print(dt('It\'s point to threat nid: !nid', array('!nid' => $d6_threat_nid)));
-    // Get its title
-    $query = Database::getConnection('migration', 'default')
+    drush_print(dt('The D6 correspondent is pointing to D6 threat nid: !nid', array('!nid' => $d6_threat_nid)));
+    // Get the D6 threat's title
+    $query = Database::getConnection('default', 'ml_migration')
       ->select('node', 'n')
       ->fields('n', array('title'))
       ->condition('n.type', 'threat')
@@ -378,19 +385,19 @@ function drush_message_library_prepopulate_ml_message_threat() {
      drush_log(dt('!count terms found.', array('!count' => count($search_terms))));
      if (!empty($search_terms)) {
        $d7_threat_term = reset($search_terms);
-       drush_log(dt('Got the term name in D7.'), 'success');
+       drush_log(dt('Found the term name in D7.'), 'success');
 
+       // Assign it to the D7 message
+       // @todo: It may point to multiple threats
        $d7_threat_term_tid = $d7_threat_term->tid;
-
        $message->field_message_threat['und']['0']['tid'] = $d7_threat_term_tid;
        node_save($message);
      }
     }
     else {
-      drush_log(dt('Can\'t get threat name in D6 by it nid'), 'error');
+      drush_log(dt('Can\'t Found threat name in D7 by it nid'), 'error');
     }
   }
-  // Assign it to the D7 message
 }
 
 /**
