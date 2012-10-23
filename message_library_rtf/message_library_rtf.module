@@ -1,8 +1,9 @@
 <?php
 
 $path = drupal_get_path('module', 'message_library_rtf');
-require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite.php';
-require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite/Autoloader.php';
+
+require_once  $path . '/libraries/phprtflite-1.2.0/lib/PHPRtfLite.php';
+require_once  $path . '/libraries/phprtflite-1.2.0/lib/PHPRtfLite/Autoloader.php';
 /**
  * Implements hook_menu().
  */
