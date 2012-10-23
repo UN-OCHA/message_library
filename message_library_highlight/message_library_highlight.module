@@ -69,9 +69,9 @@ function message_library_highlight_views_pre_execute(& $view)
 				$message = url('message-library/threat/' . $threat_id, array('fragment' => $entity->nid));
 			}
 		}
-		$_SESSION['hl_messages'] = $messages;
-		$_SESSION['hl_words'] = explode(' ', $_SESSION['views']['message_library']['default']['ml_search_text']);
-		// $_SESSION['views']['message_library']['default']['ml_search_text'];
+		$search_text = isset($_SESSION['views']['message_library']['default']['ml_search_text']) && !empty($_SESSION['views']['message_library']['default']['ml_search_text']) ? $_SESSION['views']['message_library']['default']['ml_search_text'] : '';
+		$_SESSION['hl_messages'] = $search_text ? $messages : array();
+		$_SESSION['hl_words'] = $search_text ? preg_split('|\s+|', $search_text) : array();
 	}
 	
 	if ($view->name === 'messsage_library_threat') {
@@ -109,8 +109,11 @@ function message_library_highlight_preprocess_views_view_table(& $vars)
 {
 	if ($vars['view']->name === 'message_library') {
 		foreach($vars['rows'] as & $row) {
+			$row['field_message_threat_field_threat_category'] = _search_highlight_content($row['field_message_threat_field_threat_category']);
+			$row['field_message_threat'] = _search_highlight_content($row['field_message_threat']);
+			$row['title_1'] = _search_highlight_content($row['title_1']);
 			$row['field_message_group_mess'] = _search_highlight_content($row['field_message_group_mess']);
-			// $row['field_message_threat_field_threat_category'] = _search_highlight_content($row['field_message_threat_field_threat_category']); // maybe search in content is enough
+			$row['field_message_example_communic'] = _search_highlight_content($row['field_message_example_communic']);
 		}
 	}
 }
