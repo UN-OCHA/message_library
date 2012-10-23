@@ -9,6 +9,7 @@ dependencies[] = boxes
 dependencies[] = conditional_fields
 dependencies[] = context
 dependencies[] = ctools
+dependencies[] = entity
 dependencies[] = entityreference
 dependencies[] = facetapi
 dependencies[] = features
