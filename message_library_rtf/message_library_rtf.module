@@ -2,8 +2,8 @@
 
 $path = drupal_get_path('module', 'message_library_rtf');
 
-require_once  $path . '/libraries/phprtflite-1.2.0/lib/PHPRtfLite.php';
-require_once  $path . '/libraries/phprtflite-1.2.0/lib/PHPRtfLite/Autoloader.php';
+require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite.php';
+require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite/Autoloader.php';
 /**
  * Implements hook_menu().
  */
@@ -289,7 +289,7 @@ function message_library_rtf_generate_threat_rtf($tids) {
  */
 class MyPHPRtfLite extends PHPRtfLite {
   public static function registerAutoloader() {
-    $baseClassDir = drupal_get_path('module', 'message_library_rtf') . '/libraries/phprtflite-1.2.0/lib';
+    $baseClassDir = drupal_get_path('module', 'message_library_rtf') . '/libraries/phprtflite/lib';
     MyPHPRtfLite_Autoloader::setBaseDir($baseClassDir);
     return spl_autoload_register(array('MyPHPRtfLite_Autoloader', 'autoload'));
   }
