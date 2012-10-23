@@ -157,7 +157,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['field'] = 'field_message_threat_field_threat_category';
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['label'] = 'Issue';
-  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['link_to_entity'] = 0;
   $handler->display->display_options['fields']['field_message_threat_field_threat_category']['view_mode'] = 'full';
   /* Field: Indexed Node: Threat */
   $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
