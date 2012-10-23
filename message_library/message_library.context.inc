@@ -33,12 +33,6 @@ function message_library_context_default_contexts() {
           'region' => 'sidebar_first',
           'weight' => '-10',
         ),
-        'message_library_subscription-ml_subscription_saved_search' => array(
-          'module' => 'message_library_subscription',
-          'delta' => 'ml_subscription_saved_search',
-          'region' => 'sidebar_first',
-          'weight' => '-9',
-        ),
       ),
     ),
   );

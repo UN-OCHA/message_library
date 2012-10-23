@@ -23,7 +23,6 @@ dependencies[] = message_library_notices
 dependencies[] = message_library_prev_next
 dependencies[] = message_library_prev_next_views
 dependencies[] = message_library_rtf
-dependencies[] = message_library_subscription
 dependencies[] = message_library_theme
 dependencies[] = message_library_tou
 dependencies[] = message_library_views

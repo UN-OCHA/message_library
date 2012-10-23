@@ -2,7 +2,7 @@ Setting up for development
 --------------------------
 
 - Install the site
-
+    scp ~/humanitarianresponse-7.x-1.7.tar.gz wiredcraft@chat.dev.wiredcraft.com:/var/www/in.dev.wiredcraft.com
     shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" --account-pass=admin -y
     shell> drush si emergency_site --db-url=mysql://internews:XvMnw2#a@127.0.0.1/in_dev_wiredcraft_com --site-name="Humanitarian Response" --account-pass=admin -y
 
@@ -27,15 +27,33 @@ Setting up for development
     shell> drush fr message_library -y
     shell> drush cc all
 
-- Prepare the taxonomies
-    - Use migrate to prepare some taxonomies and messages
-    - shell> drush prepopulate-ml-threat-terms
-    - shell> drush prepopulate-ml-message-threat
+- Prepare the taxonomies and content
+    - Prepare the following terms:
+      * [At Risk Groups] (used by CT: messasge, field_message_group_risk)
+      * [Target Audience] (used by CT: messasge, field_message_audience)
+      * [Information Type] (used by CT: messasge, field_message_info_type)
+      * [Hazard] (used by vocabulary: threat, field_threat_hazard)
+      * [Issues] (used by vocabulary: threat, field_threat_category)
+      * [Sector] (used by vocabulary: threat, field_threat_sector)
 
+      These terms can be prepopulated:
+        - using migrate
+        - using the drush command `prepopulate-ml-terms`
 
-- Prepare some content for testing
+    - Import the *message* content, using `Migrate` module
 
-    shell> drush generate-content 600 --kill --types=message
+      NOTE: The messages are prepopulated using `Migrate`(but it's difficult to
+      have field_message_threat migrated because the threat is changed from a CT
+      to a vocabulary.)
+
+    - Import the threat terms, using a custom drush command:
+
+      shell > drush prepopulate-ml-threat-terms
+
+    - Fix the field_threat_message on the CT *message*
+
+      shell> drush prepopulate-ml-message-threat
+
 
 - Make sure solr is configured and working propertly
 
@@ -43,9 +61,5 @@ Setting up for development
 
 
 
-Setting up for dev platform
----------------------------
 
-scp ~/humanitarianresponse-7.x-1.7.tar.gz wiredcraft@chat.dev.wiredcraft.com:/var/www/in.dev.wiredcraft.com
 
-drush si emergency_site --db-url=mysql://internews:XvMnw2#a@127.0.0.1/in_dev_wiredcraft_com --db-su=internews --db-su-pw=XvMnw2#a --site-name="Humanitarian Response" --account-pass=admin -y
