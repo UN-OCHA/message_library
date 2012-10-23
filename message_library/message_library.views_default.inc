@@ -201,6 +201,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_url']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_url']['field'] = 'field_message_url';
   $handler->display->display_options['fields']['field_message_url']['exclude'] = TRUE;
+  /* Sort criterion: Threat: Term ID (indexed) */
+  $handler->display->display_options['sorts']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
+  $handler->display->display_options['sorts']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['sorts']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
   /* Filter criterion: Search: Fulltext search */
   $handler->display->display_options['filters']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
   $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_message_library_index';
