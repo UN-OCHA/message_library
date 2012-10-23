@@ -95,7 +95,7 @@ function message_library_highlight_preprocess_node(& $vars)
 	$nid = $vars['nid'];
 	$key = array_search($nid, $_SESSION['hl_sorted_keys']);
 	if ($key !== false) {
-		$prev_link = $key > 1 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
+		$prev_link = $key > 0 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
 		$next_link = $key < (count($_SESSION['hl_sorted_messages']) - 1) ? $_SESSION['hl_sorted_messages'][$key + 1] : '';
 		$vars['prev_next_links'] = theme('search_highlight_links', array('prev_link' => $prev_link, 'next_link' => $next_link));
 		$vars['classes_array'][] = 'message_highlight';
