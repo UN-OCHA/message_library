@@ -288,7 +288,7 @@ function message_library_rtf_generate_threat_rtf($tids) {
  */
 class MyPHPRtfLite extends PHPRtfLite {
   public static function registerAutoloader() {
-    $baseClassDir = drupal_get_path('module', 'message_library_rtf') . '/libraries/phprtfLite/lib';
+    $baseClassDir = drupal_get_path('module', 'message_library_rtf') . '/libraries/phprtflite-1.2.0/lib';
     MyPHPRtfLite_Autoloader::setBaseDir($baseClassDir);
     return spl_autoload_register(array('MyPHPRtfLite_Autoloader', 'autoload'));
   }

@@ -55,7 +55,6 @@ class PHPRtfLite_Autoloader
      */
     public static function autoload($className)
     {
-        var_dump($className);
         // validate classname
         if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/m', $className)) {
             throw new Exception("Class name '$className' is invalid");
@@ -63,11 +62,8 @@ class PHPRtfLite_Autoloader
 
         $classFile = self::$_baseDir . '/' . str_replace('_', '/', $className) . '.php';
 
-
         // check if file exists
         if (!file_exists($classFile)) {
-            var_dump($classFile);
-            var_dump(xdebug_get_function_stack());
             throw new Exception("File $classFile does not exist!");
         }
 
