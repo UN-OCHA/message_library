@@ -46,7 +46,7 @@ class message_library_views_handler_area_link_email_rtf extends views_handler_ar
       // The href need to open the email client
       $href_prefix = 'mailto:?body=' . t('Download the RTF from the server at the URL: ');
       $threat_seg = drupal_encode_path(implode(',', $threat_tids));
-      $href = url('message-librar-rtf/threat/' . $threat_seg, array('absolute' => TRUE));
+      $href = url('message-library-rtf/threat/' . $threat_seg, array('absolute' => TRUE));
 
       $output .= '<div class="download_email_email_rtf_box">'
         . l(t('Email as an RTF'), $href_prefix . $href)

@@ -314,8 +314,6 @@ class MyPHPRtfLite_Autoloader extends PHPRtfLite_Autoloader {
 
     // check if file exists
     if (!file_exists($classFile)) {
-      var_dump($classFile);
-      var_dump(xdebug_get_function_stack());
       throw new Exception("File $classFile does not exist!");
     }
 
