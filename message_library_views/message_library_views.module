@@ -27,9 +27,6 @@ function message_library_views_search_all_threat($cache_id, $query) {
     return $current_search[1];
   }
 
-  // [Legacy code].
-  $array_threat = array();
-
   $api_query = clone $query->getSearchApiQuery();
   $api_query->range(NULL, NULL);
   $result = $api_query->execute();
@@ -38,7 +35,7 @@ function message_library_views_search_all_threat($cache_id, $query) {
     // @see EntityFieldHandlerHelper::pre_render().
     $entities = entity_load($query->getIndex()->item_type, array_keys($result['results']));
 
-    $threat_tids = array();
+    $threat_terms = array();
 
     // Each message node
     foreach ($entities as $node) {
@@ -46,21 +43,23 @@ function message_library_views_search_all_threat($cache_id, $query) {
       if (!empty($node->field_message_threat['und'])) {
         foreach($node->field_message_threat['und'] as $item) {
           if (!empty($item['tid'])) {
-            $threat_tids[] = $item['tid'];
+            $threat_term_obj = taxonomy_term_load($item['tid']);
+            if (empty($threat_term_obj)) continue;
+            $threat_terms[$threat_term_obj->tid] = $threat_term_obj->name;
           }
         }
       }
     }
 
-    // [Legacy code].
-    $threat_tids = array_unique($threat_tids);
-    sort($threat_tids, SORT_NUMERIC);
+    $threat_terms = array_unique($threat_terms);
+    // Sort key threat's tid, numeric key ASC
+    ksort($threat_terms, SORT_NUMERIC);
 
     // Cache.
-    search_api_current_search($cache_id, $api_query, $threat_tids);
+    search_api_current_search($cache_id, $api_query, $threat_terms);
   }
 
-  return $threat_tids;
+  return $threat_terms;
 }
 
 

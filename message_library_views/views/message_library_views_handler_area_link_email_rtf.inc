@@ -37,7 +37,8 @@ class message_library_views_handler_area_link_email_rtf extends views_handler_ar
       if (!empty($total)) {
         $query = $this->query;
         if (!empty($query) && ($query instanceof SearchApiViewsQuery)) {
-          $threat_tids = message_library_views_search_all_threat($cache_id, $query);
+          $threat_terms = message_library_views_search_all_threat($cache_id, $query);
+          $threat_tids = array_keys($threat_terms);
         }
       }
     }

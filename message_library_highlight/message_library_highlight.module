@@ -8,19 +8,17 @@
  */
 
 /**
- * hook_init
+ * Implements hook_init()
  */
-function message_library_highlight_init()
-{
-	drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
+function message_library_highlight_init() {
+  drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
 }
 
 /**
- * hook_theme
+ * Implements hook_theme()
  */
-function message_library_highlight_theme($existing, $type, $theme, $path)
-{
-	return array(
+function message_library_highlight_theme($existing, $type, $theme, $path) {
+  return array(
     'search_highlight_links' => array(
       'template' => 'templates/search_highlight_links',
       'variables' => array(
@@ -28,111 +26,158 @@ function message_library_highlight_theme($existing, $type, $theme, $path)
         'next_link' => '',
       ),
     ),
-	);
+  );
 }
 
 /**
- * hook_views_api().
+ * Implements hook_views_api()
  */
-function message_library_highlight_views_api()
-{
+function message_library_highlight_views_api() {
   return array(
     'api' => 3,
   );
 }
 
 /**
- * hook_views_pre_execute
- *
- * @deprecated unvalid in drupal 8
+ * Implements hook_views_pre_execute()
  */
-function message_library_highlight_views_pre_execute(& $view)
-{
-	// any other view will use this function?
-	if ($view->name === 'message_library') {
-		$query = clone $view->query->getSearchApiQuery();
-		$res = $query->range()->execute(); // same order when you are viewing detail page
-		$messages = array();
-		if (!empty($res['results'])) {
-			$entities = entity_load($query->getIndex()->item_type, array_keys($res['results']));
+function message_library_highlight_views_pre_execute(& $view) {
+  // For the message library search view
+  if ($view->name === 'message_library') {
+    $search_text = '';
+    if (!empty($_SESSION['views']['message_library']['default']['ml_search_text'])) {
+      $search_text = $_SESSION['views']['message_library']['default']['ml_search_text'];
+    }
+    else {
+      if (!empty($view->exposed_input['ml_search_text'])) {
+        $search_text = trim($view->exposed_input['ml_search_text']);
+      }
+    }
 
-			foreach($entities as $entity) {
-				// get threat id
-				$threat = field_get_items('node', $entity, 'field_message_threat');
-				$threat_id = $threat[0]['tid']; // dont care about others
+    // Only continue when the user actually entered something
+    if (!empty($search_text)) {
+      $query = clone $view->query->getSearchApiQuery();
+      $res = $query->range()->execute(); // same order when you are viewing detail page
 
-				if (!isset($messages[$threat_id])) {
-					$messages[$threat_id] = array();
-				}
+      // Group all the message in the search result with the threat it belongs to
+      $messages = array();
 
-				$message = & $messages[$threat_id][$entity->nid];
-				$message = url('message-library/threat/' . $threat_id, array('fragment' => $entity->nid));
-			}
-		}
-		$search_text = isset($_SESSION['views']['message_library']['default']['ml_search_text']) && !empty($_SESSION['views']['message_library']['default']['ml_search_text']) ? $_SESSION['views']['message_library']['default']['ml_search_text'] : '';
-		$_SESSION['hl_messages'] = $search_text ? $messages : array();
-		$_SESSION['hl_words'] = $search_text ? preg_split('|\s+|', $search_text) : array();
-	}
-	
-	if ($view->name === 'messsage_library_threat') {
-		$thread_id = $view->args[0];
-		// if ($thread_id !== $_SESSION['hl_thread_id']) { // check exists
-			$_SESSION['hl_thread_id'] = $thread_id; // save
-			$messages = isset($_SESSION['hl_messages'][$thread_id]) ? $_SESSION['hl_messages'][$thread_id] : array();
-			krsort($messages);
+      if (!empty($res['results'])) {
+        $entities = entity_load($query->getIndex()->item_type, array_keys($res['results']));
+        foreach($entities as $entity) {
+          // get tids of the threat(s) the current message belongs to
+          $items = field_get_items('node', $entity, 'field_message_threat');
 
-			$_SESSION['hl_sorted_keys'] = array_keys($messages);
-			$_SESSION['hl_sorted_messages'] = array_values($messages);
-		// }
-	}
+          foreach ($items as $item) {
+            // Check whether the threat term is valid and get some detail info
+            $threat_term = taxonomy_term_load($item['tid']);
+            if (empty($threat_term)) continue;
+
+            if (!isset($messages[$item['tid']]['name'])) {
+              $messages[$item['tid']]['name'] = $threat_term->name;
+            }
+
+            // An container to store highlighted messages in threat
+            if (!isset($messages[$item['tid']]['messages'])) {
+              $messages[$item['tid']]['messages'] = array();
+            }
+
+            $messages[$item['tid']]['messages'][$entity->nid] = $entity->title;
+          }
+        }
+      }
+
+      dpm($messages);
+      if (!empty($messages)) {
+        $_SESSION['hl_messages'] = $messages;
+        // @todo: Not sure this is what the client want. Because it may
+        // hightlight the keyword segements in other irrelevant messages.
+        $_SESSION['hl_words'] = preg_split('|\s+|', $search_text);
+      }
+      else {
+        unset($_SESSION['hl_messages']);
+        unset($_SESSION['hl_words']);
+      }
+    }
+  }
+
+//   // A single threat (term) page
+//   if ($view->name === 'messsage_library_threat') {
+//     $threat_tid = !empty($view->args) ? reset($view->args) : '';
+//     if (!empty($threat_tid) && !empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
+//       $_SESSION['hl_threat_id'] = $threat_tid; // save
+//       $messages = isset($_SESSION['hl_messages'][$threat_tid]) ? $_SESSION['hl_messages'][$threat_tid] : array();
+//       krsort($messages);
+
+//       $_SESSION['hl_sorted_keys'] = array_keys($messages);
+//       $_SESSION['hl_sorted_messages'] = array_values($messages);
+//     }
+//   }
 }
 
 /**
- * hook_preprocess_node
+ * Implements hook_preprocess_node()
  */
-function message_library_highlight_preprocess_node(& $vars)
-{
-	$nid = $vars['nid'];
-	$key = array_search($nid, $_SESSION['hl_sorted_keys']);
-	if ($key !== false) {
-		$prev_link = $key > 0 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
-		$next_link = $key < (count($_SESSION['hl_sorted_messages']) - 1) ? $_SESSION['hl_sorted_messages'][$key + 1] : '';
-		$vars['prev_next_links'] = theme('search_highlight_links', array('prev_link' => $prev_link, 'next_link' => $next_link));
-		$vars['classes_array'][] = 'message_highlight';
-	}
+function message_library_highlight_preprocess_node(& $vars) {
+  // @todo: Only hightlight when it's actually from the search
+  $page_view = views_get_page_view();
+
+  if ($page_view->name == 'messsage_library_threat') {
+    // Get the threat tid of the term is being displayed
+    if (!empty($page_view->args) && !empty($page_view->args[0])) {
+      $threat_tid = $page_view->args[0];
+
+      // Check if there is any message should be hightlighted
+      if (!empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
+        dpm($_SESSION['hl_messages'][$threat_tid]);
+      }
+      else {
+        // No message should be hightlight at all
+      }
+    }
+
+    $nid = $vars['nid'];
+    if (!empty($_SESSION['hl_sorted_keys'])) {
+      $key = array_search($nid, $_SESSION['hl_sorted_keys']);
+
+      if ($key !== FALSE) {
+        $prev_link = $key > 0 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
+        $next_link = $key < (count($_SESSION['hl_sorted_messages']) - 1) ? $_SESSION['hl_sorted_messages'][$key + 1] : '';
+        $vars['prev_next_links'] = theme('search_highlight_links', array('prev_link' => $prev_link, 'next_link' => $next_link));
+        $vars['classes_array'][] = 'message_highlight';
+      }
+    }
+  }
 }
 
 /**
- * hook_preprocess_views_view_table
+ * Implements hook_preprocess_views_view_table()
  */
-function message_library_highlight_preprocess_views_view_table(& $vars)
-{
-	if ($vars['view']->name === 'message_library') {
-		foreach($vars['rows'] as & $row) {
-			$row['field_message_threat_field_threat_category'] = _search_highlight_content($row['field_message_threat_field_threat_category']);
-			$row['field_message_threat'] = _search_highlight_content($row['field_message_threat']);
-			$row['title_1'] = _search_highlight_content($row['title_1']);
-			$row['field_message_group_mess'] = _search_highlight_content($row['field_message_group_mess']);
-			$row['field_message_example_communic'] = _search_highlight_content($row['field_message_example_communic']);
-		}
-	}
+function message_library_highlight_preprocess_views_view_table(& $vars) {
+  if ($vars['view']->name === 'message_library') {
+    foreach($vars['rows'] as & $row) {
+      $row['field_message_threat_field_threat_category'] = _search_highlight_content($row['field_message_threat_field_threat_category']);
+      $row['field_message_threat'] = _search_highlight_content($row['field_message_threat']);
+      $row['title_1'] = _search_highlight_content($row['title_1']);
+      $row['field_message_group_mess'] = _search_highlight_content($row['field_message_group_mess']);
+      $row['field_message_example_communic'] = _search_highlight_content($row['field_message_example_communic']);
+    }
+  }
 }
 
 /**
- * hook_preprocess_views_view_unformatted
+ * Implements hook_preprocess_views_view_unformatted()
  */
-function message_library_highlight_preprocess_views_view_unformatted(& $vars)
-{
-	if ($vars['view']->name === 'messsage_library_threat') {
-		foreach($vars['rows'] as & $row) {
-			$row = _search_highlight_content($row);
-		}
-	}
+function message_library_highlight_preprocess_views_view_unformatted(& $vars) {
+  if ($vars['view']->name === 'messsage_library_threat') {
+    foreach($vars['rows'] as & $row) {
+      $row = _search_highlight_content($row);
+    }
+  }
 }
 
 // copy from previous version
-function _search_highlight_content($content)
-{
+function _search_highlight_content($content) {
   if (isset($_SESSION['hl_words']) && !empty($_SESSION['hl_words'])) {
     $highlights = $_SESSION['hl_words'];
     foreach ($highlights as $highlight) {
@@ -151,7 +196,6 @@ function _search_highlight_content($content)
   return $content;
 }
 
-function _search_highlight_format_term($term)
-{
+function _search_highlight_format_term($term) {
   return str_replace(array('(', ')'), array('\(', '\)'), $term);
 }

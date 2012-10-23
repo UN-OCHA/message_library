@@ -74,18 +74,12 @@ function message_library_prev_next_views_views_api() {
  * Implements hook_views_post_execute().
  */
 function message_library_prev_next_views_views_post_execute(&$view) {
-  // Check if the current view need to be handled
-  $items = array_filter(variable_get('message_library_prev_next_views_enabled', array()));
-  if (empty($items[$view->name])) return;
+  if (empty($view->name) || ($view->name !== 'message_library')) return;
 
   $query = $view->query;
   if (!empty($view) && ($query instanceof SearchApiViewsQuery)) {
     $cache_id = 'message_library_views';
     $array_threat = message_library_views_search_all_threat($cache_id, $query);
-    // Reset the numeric keys
-    $array_threat = !empty($array_threat) ?
-      array_values(array_unique($array_threat)) :
-      array();
   }
 
   // @todo: cache the whole view? necessary??
@@ -93,11 +87,14 @@ function message_library_prev_next_views_views_post_execute(&$view) {
   // $foo = serialize($view);
   // dpm(memory_get_usage() - $start_memory);
   // $_SESSION['message_library_prev_next_views_object'] = serialize($view);
-  $_SESSION['message_library_prev_next_views_threats'] = $array_threat;
+  $_SESSION['message_library_prev_next_views_threats'] = !empty($array_threat) ? $array_threat : array() ;
+
   // Store the views url so that the user can come back after viewing the result
   // items
   global $base_root;
   $_SESSION['message_library_prev_next_views_url'] = $base_root . request_uri();
+  dpm($_SESSION);
+
 }
 
 /**
