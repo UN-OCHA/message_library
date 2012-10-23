@@ -201,14 +201,14 @@ function message_library_rtf_generate_threat_rtf($tids) {
         }
 
         // Add message 'infomation type'
-        $it_items = field_get_items('node', $message, 'field_message_audience');
+        $it_items = field_get_items('node', $message, 'field_message_info_type');
         if (!empty($it_items)) {
-          $arg_tids = array();
+          $it_tids = array();
           foreach ($it_items as $item) {
-            $arg_tids[] = $item['tid'];
+            $it_tids[] = $item['tid'];
           }
 
-          $it_terms = taxonomy_term_load_multiple($arg_tids);
+          $it_terms = taxonomy_term_load_multiple($it_tids);
           if (!empty($it_items)) {
             $text = '<b><i>Information type: </i></b>';
             $it_segs = array();
