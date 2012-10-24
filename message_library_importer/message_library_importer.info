@@ -1,0 +1,11 @@
+name = Message Library Importer
+description = message library import feature
+core = 7.x
+package = Message Library
+version = 7.x-0.1
+project = message_library_importer
+dependencies[] = ctools
+dependencies[] = feeds
+features[ctools][] = feeds:feeds_importer_default:1
+features[features_api][] = api:1
+features[feeds_importer][] = message_import
