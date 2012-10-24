@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Message Library Importer feature.
+ */
+
+include_once 'message_library_importer.features.inc';
