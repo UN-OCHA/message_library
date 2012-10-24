@@ -1198,7 +1198,7 @@ function message_library_field_default_fields() {
             'diff_custom_settings' => array(),
           ),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 35,
+          'weight' => 34,
         ),
         'ical' => array(
           'label' => 'above',
@@ -1222,9 +1222,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'hs_taxonomy',
+        'module' => 'options',
         'settings' => array(),
-        'type' => 'taxonomy_hs',
+        'type' => 'options_select',
         'weight' => '12',
       ),
     ),

@@ -46,6 +46,11 @@ Setting up for development
       have field_message_threat migrated because the threat is changed from a CT
       to a vocabulary.)
 
+      shell> drush en message_library_migrate -y
+      shell> drush cc all
+      shell> drush mi TermAtRiskGroups,TermHazard,TermInformationType,TermIssues,TermSector,TermTargetAudience
+      shell> drush mi NodeMessageMigration
+
     - Import the threat terms, using a custom drush command:
 
       shell > drush prepopulate-ml-threat-terms
@@ -58,8 +63,3 @@ Setting up for development
 - Make sure solr is configured and working propertly
 
 - Make essential configuration at: `admin/config/search/search_api`
-
-
-
-
-

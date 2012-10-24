@@ -255,7 +255,7 @@ function message_library_facetapi_default_facet_settings() {
   $facet->searcher = 'search_api@message_library_index';
   $facet->realm = 'block';
   $facet->facet = 'field_message_audience';
-  $facet->enabled = TRUE;
+  $facet->enabled = FALSE;
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_links',
@@ -323,7 +323,7 @@ function message_library_facetapi_default_facet_settings() {
   $facet->searcher = 'search_api@message_library_index';
   $facet->realm = 'block';
   $facet->facet = 'field_message_group_risk';
-  $facet->enabled = TRUE;
+  $facet->enabled = FALSE;
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_links',
@@ -391,7 +391,7 @@ function message_library_facetapi_default_facet_settings() {
   $facet->searcher = 'search_api@message_library_index';
   $facet->realm = 'block';
   $facet->facet = 'field_message_info_type';
-  $facet->enabled = TRUE;
+  $facet->enabled = FALSE;
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_links',
@@ -425,7 +425,7 @@ function message_library_facetapi_default_facet_settings() {
   $facet->searcher = 'search_api@message_library_index';
   $facet->realm = 'block';
   $facet->facet = 'field_message_sensitivity';
-  $facet->enabled = TRUE;
+  $facet->enabled = FALSE;
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_links',
@@ -595,7 +595,7 @@ function message_library_facetapi_default_facet_settings() {
   $facet->searcher = 'search_api@message_library_index';
   $facet->realm = 'block';
   $facet->facet = 'field_message_threat';
-  $facet->enabled = TRUE;
+  $facet->enabled = FALSE;
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_links',

@@ -325,7 +325,7 @@ function drush_message_library_prepopulate_ml_message_threat() {
   // For each message, get the match message in D6
   foreach ($messages as $message) {
     drush_print("\n");
-    drush_print(dt('For D7 message [!title]', array('!title' => $message->title)));
+    drush_print(dt('For D7 message [!title (nid: !nid)]', array('!title' => $message->title, '!nid' => $message->nid)));
 
     $d6_message_nid = _message_library_get_message_map_source_nid($message->nid);
 
@@ -362,7 +362,10 @@ function drush_message_library_prepopulate_ml_message_threat() {
       }
     }
 
-    if (empty($rows)) continue;
+    if (empty($rows)) {
+      drush_log(dt('It\'s not pointing to any threat.'), 'warning');
+      continue;
+    }
 
     $d6_threat_row = reset($rows);
     $d6_threat_nid = $d6_threat_row['field_message_threat_nid'];
@@ -388,9 +391,9 @@ function drush_message_library_prepopulate_ml_message_threat() {
        drush_log(dt('Found the term name in D7.'), 'success');
 
        // Assign it to the D7 message
-       // @todo: It may point to multiple threats
        $d7_threat_term_tid = $d7_threat_term->tid;
        $message->field_message_threat['und']['0']['tid'] = $d7_threat_term_tid;
+       drush_print(dt('Term id !tid is assigned.', array('!tid' => $d7_threat_term_tid)));
        node_save($message);
      }
     }

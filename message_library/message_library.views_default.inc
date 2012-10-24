@@ -319,6 +319,12 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['status']['value'] = array(
     1 => '1',
   );
+  /* Filter criterion: Indexed Node: Threat */
+  $handler->display->display_options['filters']['field_message_threat_1']['id'] = 'field_message_threat_1';
+  $handler->display->display_options['filters']['field_message_threat_1']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['field_message_threat_1']['field'] = 'field_message_threat';
+  $handler->display->display_options['filters']['field_message_threat_1']['operator'] = 'not empty';
+  $handler->display->display_options['filters']['field_message_threat_1']['value'] = array();
 
   /* Display: Search Page */
   $handler = $view->new_display('page', 'Search Page', 'search_page');
