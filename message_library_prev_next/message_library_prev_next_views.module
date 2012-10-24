@@ -93,8 +93,6 @@ function message_library_prev_next_views_views_post_execute(&$view) {
   // items
   global $base_root;
   $_SESSION['message_library_prev_next_views_url'] = $base_root . request_uri();
-  dpm($_SESSION);
-
 }
 
 /**

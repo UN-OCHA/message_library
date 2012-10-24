@@ -3,8 +3,9 @@
  * @file
  * deal with highlight function in message library
  *
- * @author yarco <yarco@wiredcraft.com>
- * @date 2012/10/17
+ * @TODO:
+ * - How to maintain the search result, rebuild, destroy
+ * - Hightlight the necessary part.
  */
 
 /**
@@ -12,30 +13,38 @@
  */
 function message_library_highlight_init() {
   drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
+  dpm($_SESSION);
 }
 
-/**
- * Implements hook_theme()
+/*
+ * Theme function for a prev link
  */
-function message_library_highlight_theme($existing, $type, $theme, $path) {
-  return array(
-    'search_highlight_links' => array(
-      'template' => 'templates/search_highlight_links',
-      'variables' => array(
-        'prev_link' => '',
-        'next_link' => '',
-      ),
-    ),
-  );
+function theme_message_library_prev_message_link($dest) {
+  $output = '';
+  if (!empty($dest['tid']) && !empty($dest['nid'])) {
+    $output .= l(t('Previous highlight message'), 'message-library/threat/' . $dest['tid'], array(
+        'fragment' => $dest['nid'], 'attributes' => array('class' => 'highlight_link prev')));
+  }
+  return $output;
+}
+
+/*
+ * Theme function for a next link
+ */
+function theme_message_library_next_message_link($dest) {
+  $output = '';
+  if (!empty($dest['tid']) && !empty($dest['nid'])) {
+    $output .= l(t('Next highlight message'), 'message-library/threat/' . $dest['tid'], array(
+        'fragment' => $dest['nid'], 'attributes' => array('class' => 'highlight_link next')));
+  }
+  return $output;
 }
 
 /**
  * Implements hook_views_api()
  */
 function message_library_highlight_views_api() {
-  return array(
-    'api' => 3,
-  );
+  return array('api' => 3);
 }
 
 /**
@@ -87,7 +96,6 @@ function message_library_highlight_views_pre_execute(& $view) {
         }
       }
 
-      dpm($messages);
       if (!empty($messages)) {
         $_SESSION['hl_messages'] = $messages;
         // @todo: Not sure this is what the client want. Because it may
@@ -101,19 +109,36 @@ function message_library_highlight_views_pre_execute(& $view) {
     }
   }
 
-//   // A single threat (term) page
-//   if ($view->name === 'messsage_library_threat') {
-//     $threat_tid = !empty($view->args) ? reset($view->args) : '';
-//     if (!empty($threat_tid) && !empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
-//       $_SESSION['hl_threat_id'] = $threat_tid; // save
-//       $messages = isset($_SESSION['hl_messages'][$threat_tid]) ? $_SESSION['hl_messages'][$threat_tid] : array();
-//       krsort($messages);
+  // A single threat (term) page
+  if ($view->name === 'messsage_library_threat') {
+    // Make sure it's related to the search(the active search)
 
-//       $_SESSION['hl_sorted_keys'] = array_keys($messages);
-//       $_SESSION['hl_sorted_messages'] = array_values($messages);
-//     }
-//   }
+    // Get all the messages that should be hightlighted
+
+    // Hightlight them
+
+    // Insert proper links so that the user can navigate among the highlighted
+    // messages
+
+    // This need to know the prev threat page view's result, so that the
+    // prev/next links are displayed in a natural order.
+
+    // $threat_tid = !empty($view->args) ? reset($view->args) : '';
+    // if (!empty($threat_tid) && !empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
+    //   $_SESSION['hl_threat_id'] = $threat_tid; // save
+    //   $messages = isset($_SESSION['hl_messages'][$threat_tid]) ? $_SESSION['hl_messages'][$threat_tid] : array();
+    //   krsort($messages);
+
+    //   $_SESSION['hl_sorted_keys'] = array_keys($messages);
+    //   $_SESSION['hl_sorted_messages'] = array_values($messages);
+    // }
+  }
 }
+
+/**
+ * Implements hook_views_pre_render()
+ */
+
 
 /**
  * Implements hook_preprocess_node()
@@ -121,30 +146,28 @@ function message_library_highlight_views_pre_execute(& $view) {
 function message_library_highlight_preprocess_node(& $vars) {
   // @todo: Only hightlight when it's actually from the search
   $page_view = views_get_page_view();
+  $nid = $vars['nid'];
 
   if ($page_view->name == 'messsage_library_threat') {
-    // Get the threat tid of the term is being displayed
+    // Get the threat term's tid being displayed
     if (!empty($page_view->args) && !empty($page_view->args[0])) {
       $threat_tid = $page_view->args[0];
 
       // Check if there is any message should be hightlighted
       if (!empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
-        dpm($_SESSION['hl_messages'][$threat_tid]);
+        // Make sure this message is meant to be hightlighted
+        if (!empty($_SESSION['hl_messages'][$threat_tid]['messages']) &&
+            !empty($_SESSION['hl_messages'][$threat_tid]['messages'][$nid])) {
+          // Prepare the prev link
+          $prev_dest = _message_library_hightlight_get_prev_message($threat_tid, $nid);
+
+          // Prepare the next link
+          $next_dest = _message_library_hightlight_get_next_message($threat_tid, $nid);
+        }
       }
       else {
+        // @todo:
         // No message should be hightlight at all
-      }
-    }
-
-    $nid = $vars['nid'];
-    if (!empty($_SESSION['hl_sorted_keys'])) {
-      $key = array_search($nid, $_SESSION['hl_sorted_keys']);
-
-      if ($key !== FALSE) {
-        $prev_link = $key > 0 ? $_SESSION['hl_sorted_messages'][$key - 1] : '';
-        $next_link = $key < (count($_SESSION['hl_sorted_messages']) - 1) ? $_SESSION['hl_sorted_messages'][$key + 1] : '';
-        $vars['prev_next_links'] = theme('search_highlight_links', array('prev_link' => $prev_link, 'next_link' => $next_link));
-        $vars['classes_array'][] = 'message_highlight';
       }
     }
   }
@@ -199,3 +222,116 @@ function _search_highlight_content($content) {
 function _search_highlight_format_term($term) {
   return str_replace(array('(', ')'), array('\(', '\)'), $term);
 }
+
+/**
+ *
+ */
+function _message_library_hightlight_get_prev_message($threat_tid, $message_nid) {
+  $dest_tid = $dest_nid = '';
+
+  if (!empty($threat_tid)) {
+    // First try to find the previous message in the current threat group
+    $sorted_nids = _message_library_hightlight_sort_highlighted_message_by_threat_view($threat_tid);
+    // Get the previous highlighed message in the current threat
+    reset($sorted_nids);
+    while (current($sorted_nids) != NULL && current($sorted_nids) != $message_nid) {
+      next($sorted_nids);
+    }
+    $prev_message_nid = prev($sorted_nids);
+
+    // Found a previous message in the same threat group
+    if (!empty($prev_message_nid)) {
+      drupal_set_message(t('Found previous message for message !tid#!nid : !_tid#!_nid.', array(
+          '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $threat_tid, '!_nid' => $prev_message_nid)));
+
+      $dest_tid = $threat_tid;
+      $dest_nid = $message_nid;
+    }
+    // Can't found previous message in the current threat group, try to find it
+    // in the previous threat group
+    else {
+      drupal_set_message(t('Can\'t find previous message for message !tid#!nid on the current threat page.', array(
+          '!tid' => $threat_tid, '!nid' => $message_nid)));
+      // Get the prev threat
+      $prev_threat_tid = _message_library_hightlight_get_adjacent_threat_tid($threat_tid, 'prev');
+
+      // There is a threat group ahead available
+      if (!empty($prev_threat_tid)) {
+        // The message should be the last message in the previous threat group
+        // that is available
+        $sorted_nids = _message_library_hightlight_sort_highlighted_message_by_threat_view($prev_threat_tid);
+        dpm($sorted_nids);
+
+      }
+      // No threat group ahead, then this message is the first one in the whole
+      else {
+        // Not available
+        drupal_set_message(t('There is no threat group before threat !tid.', array('!tid' => $threat_tid)));
+      }
+    }
+  }
+  else {
+    // The $threat_tid is required,
+  }
+
+  return compact('dest_tid', 'dest_nid');
+}
+
+function _message_library_hightlight_get_next_message($threat_tid, $message_nid) {
+
+
+}
+
+function _message_library_hightlight_get_adjacent_threat_tid($tid, $op) {
+  if (!in_array($op, array('prev, next'))) {
+    // drupal_set_message('Finding ' . $op . ' of ' . $tid);
+    if (!empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$tid])) {
+      reset($_SESSION['hl_messages']);
+      while(key($_SESSION['hl_messages']) != null && key($_SESSION['hl_messages']) != $tid) {
+        next($_SESSION['hl_messages']);
+      }
+      ($op == 'prev') ? prev($_SESSION['hl_messages']) : next($_SESSION['hl_messages']);
+      return key($_SESSION['hl_messages']);
+    }
+  }
+  return NULL;
+}
+
+/**
+ * Extract the message node nids from the view 'message_library_threat'
+ */
+function _message_library_highlight_extract_threat_view_items($items) {
+  $nids = array();
+  foreach ($items as $item) {
+    if (!empty($item->nid)) {
+      $nids[] = $item->nid;
+    }
+  }
+  return $nids;
+}
+
+/**
+ * Sort the hightlight messages according the order in message_library_threat
+ *
+ * @return Array of message nids whose order is in accordance with the oder
+ *         appearing on the message_library_threat views
+ */
+function _message_library_hightlight_sort_highlighted_message_by_threat_view($tid) {
+  // All messages in a threat
+  $items = views_get_view_result('messsage_library_threat', 'main_page', $tid);
+  $message_nids = _message_library_highlight_extract_threat_view_items($items);
+
+  // All messages in a threat that should be hightlighted
+  $highlighted_message_nids = array();
+  if ( !empty($_SESSION['hl_messages'])
+    && !empty($_SESSION['hl_messages'][$tid])
+    && !empty($_SESSION['hl_messages'][$tid]['messages'])) {
+    $highlighted_message_nids = array_keys($_SESSION['hl_messages'][$tid]['messages']);
+  }
+
+  //dpm(compact('message_nids', 'highlighted_message_nids'));
+  $sorted = array();
+  $sorted = array_intersect($message_nids, $highlighted_message_nids);
+  return $sorted;
+}
+
