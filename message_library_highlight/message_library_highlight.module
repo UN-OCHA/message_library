@@ -3,9 +3,14 @@
  * @file
  * deal with highlight function in message library
  *
- * @TODO:
- * - How to maintain the search result, rebuild, destroy
- * - Hightlight the necessary part.
+ * This module provides the following features
+ *
+ * - Hightlight the search text being searching in the result
+ * - Allow navigation among the highlighted message
+ *
+ * - Also, this module provides some highlight irrelevant feature:
+ *   - Navigation among the threats in the search result
+ *   - Go back to the current search
  */
 
 /**
@@ -126,27 +131,6 @@ function message_library_highlight_views_pre_execute(& $view) {
 
   // A single threat (term) page
   if ($view->name === 'messsage_library_threat') {
-    // Make sure it's related to the search(the active search)
-
-    // Get all the messages that should be hightlighted
-
-    // Hightlight them
-
-    // Insert proper links so that the user can navigate among the highlighted
-    // messages
-
-    // This need to know the prev threat page view's result, so that the
-    // prev/next links are displayed in a natural order.
-
-    // $threat_tid = !empty($view->args) ? reset($view->args) : '';
-    // if (!empty($threat_tid) && !empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$threat_tid])) {
-    //   $_SESSION['hl_threat_id'] = $threat_tid; // save
-    //   $messages = isset($_SESSION['hl_messages'][$threat_tid]) ? $_SESSION['hl_messages'][$threat_tid] : array();
-    //   krsort($messages);
-
-    //   $_SESSION['hl_sorted_keys'] = array_keys($messages);
-    //   $_SESSION['hl_sorted_messages'] = array_values($messages);
-    // }
   }
 }
 
@@ -171,6 +155,9 @@ function message_library_highlight_preprocess_node(&$vars) {
         // Make sure this message is meant to be hightlighted
         if (!empty($_SESSION['hl_messages'][$threat_tid]['messages']) &&
             !empty($_SESSION['hl_messages'][$threat_tid]['messages'][$nid])) {
+          // Add necessary class so hightlight style can be applied
+          $vars['classes_array'][] = 'highlight';
+
           // Prepare the prev link
           $prev_dest = _message_library_hightlight_get_prev_message($threat_tid, $nid);
           $vars['prev_highlighted_message'] = theme('message_library_prev_message_link', $prev_dest);
