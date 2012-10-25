@@ -1,7 +1,0 @@
-name = Message Librray Prev/Next Views
-description = Provide an API for previous/next nodes for Views results
-package = Message Library
-core = 7.x
-version = 7.x-1.0-dev
-dependencies[] = views
-dependencies[] = message_library_prev_next
