@@ -28,6 +28,22 @@ Setting up for development
     shell> drush cc all
 
 - Prepare the taxonomies and content
+    - Setting up the migration databse
+
+      You need to the have a copy of the database of infoasaid.org set, and
+      add the connection info like the following:
+
+      ```
+       $databases['ml_migration']['default'] = array(
+         'driver' => 'mysql',
+         'database' => 'infoasaidorg',
+         'username' => 'root',
+         'password' => 'root',
+         'host' => 'localhost',
+         'prefix' => '',
+       );
+       ```
+
     - Prepare the following terms:
       * [At Risk Groups] (used by CT: messasge, field_message_group_risk)
       * [Target Audience] (used by CT: messasge, field_message_audience)
