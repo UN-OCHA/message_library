@@ -35,7 +35,16 @@
           print render($content);
         ?>
       </div>
-			<?php print render($prev_next_links); ?>
+
+      <div class="highlight-nav">
+        <?php if (!empty($prev_highlighted_message)): ?>
+          <?php print $prev_highlighted_message; ?>
+        <?php endif; ?>
+
+        <?php if (!empty($next_highlighted_message)): ?>
+          <?php print $next_highlighted_message; ?>
+        <?php endif; ?>
+      </div>
     </div>
   <?php endif; ?>
 </div>
