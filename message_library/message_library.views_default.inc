@@ -205,6 +205,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['sorts']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
   $handler->display->display_options['sorts']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['sorts']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
+  /* Sort criterion: Search: Relevance */
+  $handler->display->display_options['sorts']['search_api_relevance']['id'] = 'search_api_relevance';
+  $handler->display->display_options['sorts']['search_api_relevance']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['sorts']['search_api_relevance']['field'] = 'search_api_relevance';
   /* Filter criterion: Search: Fulltext search */
   $handler->display->display_options['filters']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
   $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_message_library_index';
@@ -218,7 +222,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['remember'] = TRUE;
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['remember_roles'] = array(
     2 => '2',
-    1 => 0,
+    1 => '1',
     6 => 0,
     5 => 0,
     4 => 0,
@@ -241,9 +245,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['label'] = 'Issues';
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['operator'] = 'field_message_threat_field_threat_category_op';
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['identifier'] = 'issue';
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['remember'] = TRUE;
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['remember_roles'] = array(
     2 => '2',
-    1 => 0,
+    1 => '1',
     6 => 0,
     5 => 0,
     4 => 0,
@@ -264,7 +269,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_group_risk']['expose']['remember'] = TRUE;
   $handler->display->display_options['filters']['field_message_group_risk']['expose']['remember_roles'] = array(
     2 => '2',
-    1 => 0,
+    1 => '1',
     6 => 0,
     5 => 0,
     4 => 0,
@@ -282,9 +287,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_audience']['expose']['label'] = 'Target audience';
   $handler->display->display_options['filters']['field_message_audience']['expose']['operator'] = 'field_message_audience_op';
   $handler->display->display_options['filters']['field_message_audience']['expose']['identifier'] = 'target_audience';
+  $handler->display->display_options['filters']['field_message_audience']['expose']['remember'] = TRUE;
   $handler->display->display_options['filters']['field_message_audience']['expose']['remember_roles'] = array(
     2 => '2',
-    1 => 0,
+    1 => '1',
     6 => 0,
     5 => 0,
     4 => 0,
@@ -305,7 +311,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat']['expose']['remember'] = TRUE;
   $handler->display->display_options['filters']['field_message_threat']['expose']['remember_roles'] = array(
     2 => '2',
-    1 => 0,
+    1 => '1',
     6 => 0,
     5 => 0,
     4 => 0,

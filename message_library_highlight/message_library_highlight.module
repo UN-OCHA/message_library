@@ -26,10 +26,13 @@ function message_library_highlight_init() {
 function message_library_highlight_theme() {
   return array(
     'message_library_prev_message_link' => array(
-        'variables' => array('dest_tid' => NULL, 'dest_nid' => NULL),
+       'variables' => array('dest_tid' => NULL, 'dest_nid' => NULL),
      ),
     'message_library_next_message_link' => array(
-        'variables' => array('dest_tid' => NULL, 'dest_nid' => NULL),
+      'variables' => array('dest_tid' => NULL, 'dest_nid' => NULL),
+     ),
+    'message_library_threat_nav_links' => array(
+      'variables' => array('next_tid' => NULL, 'prev_tid' => NULL, 'crt_search_link' => NULL),
      ),
   );
 }
@@ -61,6 +64,65 @@ function theme_message_library_next_message_link($vars) {
 }
 
 /**
+ * Theme function for the threat navigation.
+ * It will return 3 links:
+ * - One to the message library search page with the current arguments
+ * - One for the previous threat page in the search result
+ * - One for the next threat page in the search result
+ */
+function theme_message_library_threat_nav_links($vars) {
+  $output = '';
+  $links = array();
+  extract($vars);
+  if (!empty($_SESSION['message_library_result'])) {
+    $links[] = array(
+      'title' => t('Back to current selection'),
+      'href' => 'message-library',
+      'attributes' => array('class' => array('crt-selection')),
+    );
+  }
+
+  if (!empty($prev_tid)) {
+    $links[] = array(
+      'title' => t('Previous threat'),
+      'href' => 'message-library/threat/' . $prev_tid,
+      'attributes' => array('class' => array('prev-threat')),
+    );
+  }
+  if (!empty($next_tid)) {
+    $links[] = array(
+      'title' => t('Next threat'),
+      'href' => 'message-library/threat/' . $next_tid,
+      'attributes' => array('class' => array('next-threat')),
+    );
+  }
+
+  if (!empty($links)) {
+    $output .= theme('links', array('links' => $links));
+  }
+  return $output;
+}
+
+/**
+ * Implements hook_views_pre_render()
+ */
+function message_library_highlight_views_pre_render(&$view) {
+  if ($view->name == 'messsage_library_threat' && $view->current_display == 'attachment_header') {
+    $prev_tid = $next_tid = '';
+    if (!empty($view->args) && !empty($view->args[0])) {
+      $tid = reset($view->args);
+
+      // Get the previous threat's tid
+      $prev_tid = _message_library_hightlight_get_adjacent_threat_tid($tid, 'prev');
+
+      // Get the next threat's tid
+      $next_tid = _message_library_hightlight_get_adjacent_threat_tid($tid, 'next');
+    }
+    $view->attachment_before .= theme('message_library_threat_nav_links', compact('prev_tid', 'next_tid'));
+  }
+}
+
+/**
  * Implements hook_views_api()
  */
 function message_library_highlight_views_api() {
@@ -70,67 +132,58 @@ function message_library_highlight_views_api() {
 /**
  * Implements hook_views_pre_execute()
  */
-function message_library_highlight_views_pre_execute(& $view) {
-  // For the message library search view
+function message_library_highlight_views_pre_execute(&$view) {
+  // For the message_library view
   if ($view->name === 'message_library') {
-    $search_text = '';
-    if (!empty($_SESSION['views']['message_library']['default']['ml_search_text'])) {
-      $search_text = $_SESSION['views']['message_library']['default']['ml_search_text'];
-    }
-    else {
-      if (!empty($view->exposed_input['ml_search_text'])) {
-        $search_text = trim($view->exposed_input['ml_search_text']);
-      }
-    }
+    $search_text = !empty($view->exposed_input['ml_search_text']) ?
+      trim($view->exposed_input['ml_search_text']) : '';
 
-    // Only continue when the user actually entered something
-    if (!empty($search_text)) {
-      $query = clone $view->query->getSearchApiQuery();
-      $res = $query->range()->execute(); // same order when you are viewing detail page
+    $query = clone $view->query->getSearchApiQuery();
+    $res = $query->range()->execute(); // same order when you are viewing detail page
 
-      // Group all the message in the search result with the threat it belongs to
-      $messages = array();
+    // Group all the messages in the search result by the threat
+    $messages = array();
+    if (!empty($res['results'])) {
+      $entities = entity_load($query->getIndex()->item_type, array_keys($res['results']));
 
-      if (!empty($res['results'])) {
-        $entities = entity_load($query->getIndex()->item_type, array_keys($res['results']));
-        foreach($entities as $entity) {
-          // get tids of the threat(s) the current message belongs to
-          $items = field_get_items('node', $entity, 'field_message_threat');
+      foreach($entities as $entity) {
+        // Get the tid of the threat to which the current message belongs
+        $items = field_get_items('node', $entity, 'field_message_threat');
 
-          foreach ($items as $item) {
-            // Check whether the threat term is valid and get some detail info
-            $threat_term = taxonomy_term_load($item['tid']);
-            if (empty($threat_term)) continue;
+        foreach ($items as $item) {
+          // Check whether the threat term is valid and get some detail info
+          $threat_term = taxonomy_term_load($item['tid']);
+          if (empty($threat_term)) continue;
 
-            if (!isset($messages[$item['tid']]['name'])) {
-              $messages[$item['tid']]['name'] = $threat_term->name;
-            }
-
-            // An container to store highlighted messages in threat
-            if (!isset($messages[$item['tid']]['messages'])) {
-              $messages[$item['tid']]['messages'] = array();
-            }
-
-            $messages[$item['tid']]['messages'][$entity->nid] = $entity->title;
+          if (!isset($messages[$item['tid']]['name'])) {
+            $messages[$item['tid']]['name'] = $threat_term->name;
           }
+
+          if (!isset($messages[$item['tid']]['messages'])) {
+            $messages[$item['tid']]['messages'] = array();
+          }
+
+          $messages[$item['tid']]['messages'][$entity->nid] = $entity->title;
         }
       }
+    }
 
-      if (!empty($messages)) {
+    if (!empty($messages)) {
+      $_SESSION['message_library_result'] = $messages;
+
+      if (!empty($search_text)) {
         $_SESSION['hl_messages'] = $messages;
-        // @todo: Not sure this is what the client want. Because it may
-        // hightlight the keyword segements in other irrelevant messages.
         $_SESSION['hl_words'] = preg_split('|\s+|', $search_text);
       }
-      else {
-        unset($_SESSION['hl_messages']);
-        unset($_SESSION['hl_words']);
-      }
     }
-  }
 
-  // A single threat (term) page
-  if ($view->name === 'messsage_library_threat') {
+    if (empty($search_text) || empty($messages)) {
+      unset($_SESSION['hl_messages']);
+      unset($_SESSION['hl_words']);
+    }
+
+    global $base_root;
+    $_SESSION['message_library_active_selection'] = $base_root . request_uri();
   }
 }
 
@@ -255,7 +308,7 @@ function _message_library_hightlight_get_prev_message($threat_tid, $message_nid)
       // drupal_set_message(t('Can\'t find previous message for message !tid#!nid on the current threat page.', array(
       //    '!tid' => $threat_tid, '!nid' => $message_nid)));
       // Get the prev threat
-      $prev_threat_tid = _message_library_hightlight_get_adjacent_threat_tid($threat_tid, 'prev');
+      $prev_threat_tid = _message_library_hightlight_get_adjacent_highlight_threat_tid($threat_tid, 'prev');
 
       // @todo: This should keep searching backword
       // There is a threat group ahead available
@@ -319,7 +372,7 @@ function _message_library_hightlight_get_next_message($threat_tid, $message_nid)
       // drupal_set_message(t('Can\'t find next message for message !tid#!nid on the current threat page.', array(
       //    '!tid' => $threat_tid, '!nid' => $message_nid)));
       // Get the next threat
-      $next_threat_tid = _message_library_hightlight_get_adjacent_threat_tid($threat_tid, 'next');
+      $next_threat_tid = _message_library_hightlight_get_adjacent_highlight_threat_tid($threat_tid, 'next');
 
       // @todo: This should keep searching forward
       // There is a threat group ahead available
@@ -353,7 +406,11 @@ function _message_library_hightlight_get_next_message($threat_tid, $message_nid)
   return compact('dest_tid', 'dest_nid');
 }
 
-function _message_library_hightlight_get_adjacent_threat_tid($tid, $op) {
+/**
+ * Get the prev/next threat in the search result of the message library that
+ * should be highlighted
+ */
+function _message_library_hightlight_get_adjacent_highlight_threat_tid($tid, $op) {
   if (!in_array($op, array('prev, next'))) {
     // drupal_set_message('Finding ' . $op . ' of ' . $tid);
     if (!empty($_SESSION['hl_messages']) && !empty($_SESSION['hl_messages'][$tid])) {
@@ -363,6 +420,23 @@ function _message_library_hightlight_get_adjacent_threat_tid($tid, $op) {
       }
       ($op == 'prev') ? prev($_SESSION['hl_messages']) : next($_SESSION['hl_messages']);
       return key($_SESSION['hl_messages']);
+    }
+  }
+  return NULL;
+}
+
+/**
+ * Get the prev/next threat in the search result of the message library
+ */
+function _message_library_hightlight_get_adjacent_threat_tid($tid, $op) {
+  if (!in_array($op, array('prev, next'))) {
+    if (!empty($_SESSION['message_library_result']) && !empty($_SESSION['message_library_result'][$tid])) {
+      reset($_SESSION['message_library_result']);
+      while(key($_SESSION['message_library_result']) != null && key($_SESSION['message_library_result']) != $tid) {
+        next($_SESSION['message_library_result']);
+      }
+      ($op == 'prev') ? prev($_SESSION['message_library_result']) : next($_SESSION['message_library_result']);
+      return key($_SESSION['message_library_result']);
     }
   }
   return NULL;
