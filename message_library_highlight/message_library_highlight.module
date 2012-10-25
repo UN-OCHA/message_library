@@ -13,7 +13,6 @@
  */
 function message_library_highlight_init() {
   drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
-  dpm($_SESSION);
 }
 
 /**
@@ -175,12 +174,10 @@ function message_library_highlight_preprocess_node(&$vars) {
           // Prepare the prev link
           $prev_dest = _message_library_hightlight_get_prev_message($threat_tid, $nid);
           $vars['prev_highlighted_message'] = theme('message_library_prev_message_link', $prev_dest);
-          dpm($prev_dest);
 
           // Prepare the next link
           $next_dest = _message_library_hightlight_get_next_message($threat_tid, $nid);
           $vars['next_highlighted_message'] = theme('message_library_next_message_link', $next_dest);
-          dpm($next_dest);
         }
       }
       else {
@@ -259,8 +256,8 @@ function _message_library_hightlight_get_prev_message($threat_tid, $message_nid)
 
     // Found a previous message in the same threat group
     if (!empty($next_message_nid)) {
-      drupal_set_message(t('Found previous message for message !tid#!nid : !_tid#!_nid.', array(
-          '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $threat_tid, '!_nid' => $next_message_nid)));
+      // drupal_set_message(t('Found previous message for message !tid#!nid : !_tid#!_nid.', array(
+      //    '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $threat_tid, '!_nid' => $next_message_nid)));
 
       $dest_tid = $threat_tid;
       $dest_nid = $next_message_nid;
@@ -268,8 +265,8 @@ function _message_library_hightlight_get_prev_message($threat_tid, $message_nid)
     // Can't found previous message in the current threat group, try to find it
     // in the previous threat group
     else {
-      drupal_set_message(t('Can\'t find previous message for message !tid#!nid on the current threat page.', array(
-          '!tid' => $threat_tid, '!nid' => $message_nid)));
+      // drupal_set_message(t('Can\'t find previous message for message !tid#!nid on the current threat page.', array(
+      //    '!tid' => $threat_tid, '!nid' => $message_nid)));
       // Get the prev threat
       $prev_threat_tid = _message_library_hightlight_get_adjacent_threat_tid($threat_tid, 'prev');
 
@@ -287,14 +284,14 @@ function _message_library_hightlight_get_prev_message($threat_tid, $message_nid)
           $dest_nid = $next_message_nid;
 
           // @todo: If not found, keep looking backward
-          drupal_set_message(t('Found previous message for message !tid#!nid : !_tid#!_nid.', array(
-              '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $prev_threat_tid, '!_nid' => $next_message_nid)));
+          // drupal_set_message(t('Found previous message for message !tid#!nid : !_tid#!_nid.', array(
+          //    '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $prev_threat_tid, '!_nid' => $next_message_nid)));
         }
       }
       // No threat group ahead, then this message is the first one in the whole
       else {
         // Not available
-        drupal_set_message(t('There is no threat group before threat !tid.', array('!tid' => $threat_tid)));
+        // drupal_set_message(t('There is no threat group before threat !tid.', array('!tid' => $threat_tid)));
       }
     }
   }
@@ -323,8 +320,8 @@ function _message_library_hightlight_get_next_message($threat_tid, $message_nid)
 
     // Found a previous message in the same threat group
     if (!empty($next_message_nid)) {
-      drupal_set_message(t('Found next message for message !tid#!nid : !_tid#!_nid.', array(
-          '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $threat_tid, '!_nid' => $next_message_nid)));
+      // drupal_set_message(t('Found next message for message !tid#!nid : !_tid#!_nid.', array(
+      //    '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $threat_tid, '!_nid' => $next_message_nid)));
 
       $dest_tid = $threat_tid;
       $dest_nid = $next_message_nid;
@@ -332,8 +329,8 @@ function _message_library_hightlight_get_next_message($threat_tid, $message_nid)
     // Can't found next message in the current threat group, try to find it
     // in the next threat group
     else {
-      drupal_set_message(t('Can\'t find next message for message !tid#!nid on the current threat page.', array(
-          '!tid' => $threat_tid, '!nid' => $message_nid)));
+      // drupal_set_message(t('Can\'t find next message for message !tid#!nid on the current threat page.', array(
+      //    '!tid' => $threat_tid, '!nid' => $message_nid)));
       // Get the next threat
       $next_threat_tid = _message_library_hightlight_get_adjacent_threat_tid($threat_tid, 'next');
 
@@ -351,14 +348,14 @@ function _message_library_hightlight_get_next_message($threat_tid, $message_nid)
           $dest_nid = $next_message_nid;
 
           // @todo: If not found, keep looking backward
-          drupal_set_message(t('Found next message for message !tid#!nid : !_tid#!_nid.', array(
-              '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $next_threat_tid, '!_nid' => $next_message_nid)));
+          // drupal_set_message(t('Found next message for message !tid#!nid : !_tid#!_nid.', array(
+          //    '!tid' => $threat_tid, '!nid' => $message_nid, '!_tid' => $next_threat_tid, '!_nid' => $next_message_nid)));
         }
       }
       // No threat group ahead, then this message is the first one in the whole
       else {
         // Not available
-        drupal_set_message(t('There is no threat group after threat !tid.', array('!tid' => $threat_tid)));
+        // drupal_set_message(t('There is no threat group after threat !tid.', array('!tid' => $threat_tid)));
       }
     }
   }
