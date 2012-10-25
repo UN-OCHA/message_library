@@ -13,7 +13,6 @@
  */
 function message_library_highlight_init() {
   drupal_add_css(drupal_get_path('module', 'message_library_highlight') . '/css/highlight.css');
-  dpm($_SESSION);
 }
 
 /*
