@@ -51,6 +51,23 @@ function message_library_node_info() {
 }
 
 /**
+ * Implements hook_default_search_api_autocomplete_search().
+ */
+function message_library_default_search_api_autocomplete_search() {
+  $items = array();
+  $items['search_api_views_message_library'] = entity_import('search_api_autocomplete_search', '{
+    "machine_name" : "search_api_views_message_library",
+    "name" : "Message Library",
+    "index_id" : "message_library_index",
+    "type" : "search_api_views",
+    "enabled" : "1",
+    "options" : { "result count" : true, "results" : 1 },
+    "rdf_mapping" : []
+  }');
+  return $items;
+}
+
+/**
  * Implements hook_default_search_api_index().
  */
 function message_library_default_search_api_index() {
