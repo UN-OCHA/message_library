@@ -246,10 +246,15 @@ function message_library_highlight_preprocess_views_view_table(& $vars) {
 /**
  * Implements hook_preprocess_views_view_unformatted()
  */
-function message_library_highlight_preprocess_views_view_unformatted(& $vars) {
+function message_library_highlight_preprocess_views_view_unformatted(&$vars) {
   if ($vars['view']->name === 'messsage_library_threat') {
-    foreach($vars['rows'] as & $row) {
-      $row = _search_highlight_content($row);
+    $tid = !empty($vars['view']->args) && !empty($vars['view']->args[0]) ? $vars['view']->args[0] : '';
+    foreach($vars['rows'] as $key => &$row) {
+      $nid = !empty($vars['view']->result[$key]) && !empty($vars['view']->result[$key]->nid) ?
+        $vars['view']->result[$key]->nid : NULL;
+      if (!empty($tid) && !empty($nid) && _message_library_highlight_check_message_should_be_hightlighted($tid, $nid)) {
+        $row = _search_highlight_content($row);
+      }
     }
   }
 }
@@ -478,4 +483,18 @@ function _message_library_hightlight_sort_highlighted_message_by_threat_view($ti
   $sorted = array();
   $sorted = array_intersect($message_nids, $highlighted_message_nids);
   return $sorted;
+}
+
+/**
+ * A helper function to check whether a message on a threat page should be
+ * hightlighted.
+ */
+function _message_library_highlight_check_message_should_be_hightlighted($tid, $nid) {
+  if (!empty($_SESSION['hl_messages']) &&
+      !empty($_SESSION['hl_messages'][$tid]) &&
+      !empty($_SESSION['hl_messages'][$tid]['messages']) &&
+      !empty($_SESSION['hl_messages'][$tid]['messages'][$nid])) {
+    return TRUE;
+  }
+  return FALSE;
 }
