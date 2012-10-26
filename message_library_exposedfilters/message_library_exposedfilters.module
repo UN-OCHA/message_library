@@ -145,14 +145,15 @@ function _taxonomy_get_nested_terms($v_machine_name) {
   // Adapted from an answer on stackoverflow
   // @see: http://stackoverflow.com/questions/7046364/php-building-recursive-array-from-list
   $children = $nested_terms = array();
-  foreach($terms as $term){
-    foreach ($term->parents as $parent) {
-      $children[$parent] = !isset($children[$parent]) ? array() : $children[$parent];
-      $children[$parent][$term->tid] = array('id' => $term->tid,'name' => $term->name);
+  if (!empty($terms)) {
+    foreach($terms as $term){
+      foreach ($term->parents as $parent) {
+        $children[$parent] = !isset($children[$parent]) ? array() : $children[$parent];
+        $children[$parent][$term->tid] = array('id' => $term->tid,'name' => $term->name);
+      }
     }
+    $nested_terms = _recursive_append_children($children[0], $children);
   }
-  $nested_terms = _recursive_append_children($children[0], $children);
-
   return $nested_terms;
 }
 
