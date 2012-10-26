@@ -10,8 +10,6 @@ function message_library_notices_permission() {
   ));
 }
 
-
-
 /**
  * Implements hook_theme()
  */
@@ -28,9 +26,28 @@ function message_library_notices_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_forms()
+ *
+ * Map all message_library_notices_question_form_xxx() to form
+ * message_library_notices_question_form()
+ *
+ */
+function message_library_notices_forms($form_id, $args) {
+  $nids = message_library_get_all_very_sensitive_messages();
+  $base_form = 'message_library_notices_question_form';
+  if (!empty($nids)) {
+    foreach ($nids as $nid) {
+      $forms[$base_form . '_' . $nid]['callback'] = $base_form;
+    }
+  }
+  return $forms;
+}
+
+/**
  * Implements hook_preprcess_node()
  */
 function message_library_notices_preprocess_node(&$vars) {
+  message_library_get_all_very_sensitive_messages();
   if ($vars['type'] == 'message') {
     $items =  field_get_items('node', $vars['node'],'field_message_sensitivity');
     $sensitivity = (int) $items['0']['value'];
@@ -40,7 +57,6 @@ function message_library_notices_preprocess_node(&$vars) {
       drupal_add_css(drupal_get_path('module', 'message_library_notices') . '/message_library_notices.css');
 
       $output = '';
-
 
       $items = field_get_items('node', $vars['node'],'field_message_sensitivity_messag');
       $sen_message = $items['0']['safe_value'];
@@ -53,6 +69,11 @@ function message_library_notices_preprocess_node(&$vars) {
       // Very sensitive message also may have questions
       if ($sensitivity == 2) {
         $output .= theme('message_library_notices_sensitivity_questions', array('node' => $vars['node']));
+
+        // The sensitive message can only be shown to the user if he/she has
+        // confirmed all the questions listed.
+        global $user;
+        $vars['hide_very_sensitive_message'] = !message_library_notices_get_warning($vars['nid']);
       }
 
       if (!empty($output)) {
@@ -92,7 +113,7 @@ function message_library_notices_question_form($form, $form_stat, $node) {
     '#value' => $node->uid,
   );
 
-  $form['questions_nid'] = array(
+  $form['message_nid'] = array(
     '#type' => 'value',
     '#value' => $node->nid,
   );
@@ -137,7 +158,9 @@ function message_library_notices_question_form_validate($form, &$form_state) {
  */
 function message_library_notices_question_form_submit($form, &$form_state) {
   $values = $form_state['values'];
-  dpm($values);
+  if(!empty($values['message_nid'])) {
+    message_library_notices_save_warning($values['message_nid']);
+  }
 }
 
 /**
@@ -145,7 +168,7 @@ function message_library_notices_question_form_submit($form, &$form_state) {
  */
 function template_preprocess_message_library_notices_sensitivity_questions(&$vars) {
   $vars['question_form'] = drupal_get_form(
-      'message_library_notices_question_form', $vars['node']);
+      'message_library_notices_question_form_' . $vars['node']->nid, $vars['node']);
 }
 
 /* CRUD functions
@@ -156,8 +179,9 @@ function template_preprocess_message_library_notices_sensitivity_questions(&$var
  */
 function message_library_notices_save_warning($nid) {
   if (user_is_logged_in()) {
-    db_insert('message_library_notices_warning')
-      ->fields(array('messageid' => $nid,'uid' => $GLOBALS['user']->uid))
+    db_merge('message_library_notices_warning')
+      ->key(array('messageid' => $nid, 'uid' => $GLOBALS['user']->uid))
+      ->fields(array('messageid' => $nid, 'uid' => $GLOBALS['user']->uid))
       ->execute();
   }
   else {
@@ -166,7 +190,8 @@ function message_library_notices_save_warning($nid) {
 }
 
 /**
- * Getter for a warning
+ * Getter for a whether a user has understand all the risks of a very sensitive
+ * message
  */
 function message_library_notices_get_warning($nid) {
   if (user_is_logged_in()) {
@@ -216,6 +241,25 @@ function _mymodule_insert_after_first_element(&$a, $element) {
  * sensitive.
  */
 function message_library_notices_check_user_view_very_sensity_message($uid, $nid) {
-  $result = db_query('SELECT id FROM {message_library_notices_warning} WHERE uid = :uid AND nid = :nid', array(':uid' => $uid, ':nid' => $nid))->fetchField();
+  $result = db_query('SELECT id FROM {message_library_notices_warning} WHERE uid = :uid AND messageid = :nid', array(':uid' => $uid, ':nid' => $nid))->fetchField();
   return !empty($result) ? TRUE : FALSE;
+}
+
+/**
+ * Get the nids of all the messages that are very sensitive.
+ */
+function message_library_get_all_very_sensitive_messages() {
+  $nids = array();
+
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'message')
+    ->fieldCondition('field_message_sensitivity', 'value', 2);
+  $result = $query->execute();
+
+  if (!empty($result['node'])) {
+    $nids = array_keys($result['node']);
+  }
+  return $nids;
 }

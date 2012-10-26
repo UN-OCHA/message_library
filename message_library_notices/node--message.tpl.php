@@ -31,6 +31,9 @@
       <div class="content"<?php print $content_attributes; ?>>
         <?php
           hide($content['links']);
+          if (!empty($hide_very_sensitive_message)) {
+            hide($content['field_message_group_mess']);
+          }
           print render($content);
         ?>
       </div>
