@@ -24,10 +24,9 @@
     <div class="clearfix">
       <?php print $user_picture; ?>
 
-      <?php if (!empty($ml_sensitivity_questions)): ?>
-        <?php print $ml_sensitivity_questions; ?>
+      <?php if (!empty($sensitivity_warning)): ?>
+        <?php print $sensitivity_warning; ?>
       <?php endif; ?>
-
 
       <div class="content"<?php print $content_attributes; ?>>
         <?php

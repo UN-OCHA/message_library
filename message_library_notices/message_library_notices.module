@@ -27,7 +27,6 @@ function message_library_notices_theme($existing, $type, $theme, $path) {
   );
 }
 
-
 /**
  * Implements hook_preprcess_node()
  */
@@ -37,22 +36,38 @@ function message_library_notices_preprocess_node(&$vars) {
     $sensitivity = (int) $items['0']['value'];
 
     // For the message which is of type 'Sensitive' or 'Very sensitive'
-    if (in_array($sensitivity, array(1, 2))) {
-      // Get the content of 'Warning/Alert message'
-      $msg_items = field_get_items('node', $vars['node'],'field_message_sensitivity_messag');
-      $msg = $msg_items['0']['safe_value'];
+    if ($sensitivity == 1 || $sensitivity == 2) {
+      drupal_add_css(drupal_get_path('module', 'message_library_notices') . '/message_library_notices.css');
 
-      $vars['ml_sensitivity_warning'] =
-        theme('message_library_notices_sensitivity_warning',array('message' => $msg));
+      $output = '';
 
-      // Very sensitive messages probably have quesitions
-      if ($sensitivity == 2) {
-       $vars['ml_sensitivity_questions'] = theme('message_library_notices_sensitivity_questions',array('node' => $vars['node']));
+
+      $items = field_get_items('node', $vars['node'],'field_message_sensitivity_messag');
+      $sen_message = $items['0']['safe_value'];
+      if (!empty($sen_message)) {
+        // xxx: Move this to field settings
+        $sen_message = strip_tags(html_entity_decode($sen_message));
+        $output .= theme('message_library_notices_sensitivity_warning',array('message' => strip_tags($sen_message)));
       }
+
+      // Very sensitive message also may have questions
+      if ($sensitivity == 2) {
+        $output .= theme('message_library_notices_sensitivity_questions', array('node' => $vars['node']));
+      }
+
+      if (!empty($output)) {
+        // Wrapper it arround a div
+        $classes = array('sensitivity-warning');
+        ($sensitivity == 1) ? array_push($classes, 'sensitive') : array_push($classes, 'very-sensitive');
+        $prefix = '<div ' . drupal_attributes(array('class' => $classes)) . '>';
+        $suffix = '</div>';
+
+        $output = $prefix . $output . $suffix;
+      }
+      $vars['sensitivity_warning'] = $output;
     }
   }
 }
-
 
 /**
  * Implements theme_hook()
@@ -60,14 +75,13 @@ function message_library_notices_preprocess_node(&$vars) {
 function theme_message_library_notices_sensitivity_warning($vars) {
   $output = '';
   $form['temp_el'] = array(
-    '#prefix' => '<div class="iaa_notices_warning_sensitive">',
+    '#prefix' => '<div class="sensitive-message">',
     '#markup' => !empty($vars['message']) ? $vars['message'] : '',
     '#suffix' => '</div>',
   );
   $output .= drupal_render($form);
   return $output;
 }
-
 
 /**
  * Form
@@ -104,7 +118,6 @@ function message_library_notices_question_form($form, $form_stat, $node) {
   return $form;
 }
 
-
 /**
  * Validation handler for for #message_library_notices_question_form
  */
@@ -123,27 +136,17 @@ function message_library_notices_question_form_validate($form, &$form_state) {
  * Submission handler for form #message_library_notices_question_form
  */
 function message_library_notices_question_form_submit($form, &$form_state) {
-
+  $values = $form_state['values'];
+  dpm($values);
 }
-
 
 /**
  * Implements template_preprocess_hook()
  */
 function template_preprocess_message_library_notices_sensitivity_questions(&$vars) {
-  // Get the content of 'Warning/Alert message'
-  $msg_items = field_get_items('node', $vars['node'],
-                               'field_message_sensitivity_messag');
-  $msg = $msg_items['0']['safe_value'];
-  $vars['sensitivity_message'] = theme(
-      'message_library_notices_sensitivity_warning',
-      array('message' => $msg));
-
-  // Prepare questions for the template
   $vars['question_form'] = drupal_get_form(
       'message_library_notices_question_form', $vars['node']);
 }
-
 
 /* CRUD functions
  * -------------------------------------------------------------------------- */
@@ -161,7 +164,6 @@ function message_library_notices_save_warning($nid) {
     $_SESSION['iaa_notices_warning'][$nid] = TRUE;
   }
 }
-
 
 /**
  * Getter for a warning
@@ -184,7 +186,6 @@ function message_library_notices_get_warning($nid) {
   return !empty($result) ? TRUE : FALSE;
 }
 
-
 /**
  * Enable the node template discovered by Drupal.
  * @see: http://www.metachunk.com/blog/adding-module-path-drupal-7-theme-registry
@@ -200,7 +201,6 @@ function message_library_notices_theme_registry_alter(&$theme_registry) {
   }
 }
 
-
 /**
  * Helper function for re-ordering arrays (needed by theme_registry_alter)
  */
@@ -211,3 +211,11 @@ function _mymodule_insert_after_first_element(&$a, $element) {
   }
 }
 
+/**
+ * Check whether a user is allowed to view a specific message that's is very
+ * sensitive.
+ */
+function message_library_notices_check_user_view_very_sensity_message($uid, $nid) {
+  $result = db_query('SELECT id FROM {message_library_notices_warning} WHERE uid = :uid AND nid = :nid', array(':uid' => $uid, ':nid' => $nid))->fetchField();
+  return !empty($result) ? TRUE : FALSE;
+}

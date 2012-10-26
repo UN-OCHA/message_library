@@ -1,0 +1,13 @@
+.sensitivity-warning {
+  background: #DFFFD5;
+  color : #BF1E2E;
+  padding: 10px;
+}
+
+.sensitivity-warning.sensitive {
+  border: 1px solid #BF1E2E;
+}
+
+.sensitivity-warning.very-sensitive {
+  border: 2px solid #BF1E2E;
+}
