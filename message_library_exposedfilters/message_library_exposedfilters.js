@@ -89,6 +89,16 @@
         }).attr('selected', true);
         return;
       }
+
+      /* Auto submit the search form while the drop-down facets change
+       * -------------------------------------------------------------------- */
+      // Issues, At risk group, Threat, Target audience
+      var searchForm = $('#views-exposed-form-message-library-search-page');
+      var facets = searchForm.find('#edit-issue, #edit-at-risk-group, #edit-threat, #edit-target-audience');
+
+      facets.change(function(e) {
+        searchForm.submit();
+      });
     }
   }
 })(jQuery);
