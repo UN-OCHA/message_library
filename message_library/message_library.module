@@ -13,17 +13,17 @@ include_once 'message_library.features.inc';
 function message_library_form_alter(&$form, $form_state, $form_id) {
   if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
     // overrides <All> on the dropdown
-    if (!empty($form['audience']['#options'])) {
-      $form['audience']['#options']['All'] = t('<All target Audience>');
+    if (!empty($form['target_audience']['#options'])) {
+      $form['target_audience']['#options']['All'] = t('<All target Audience>');
     }
-    if (!empty($form['group_risk']['#options'])) {
-      $form['group_risk']['#options']['All'] = t('<All groups>');
+    if (!empty($form['at_risk_group']['#options'])) {
+      $form['at_risk_group']['#options']['All'] = t('<All groups>');
     }
-    if (!empty($form['issues']['#options'])) {
-      $form['issues']['#options']['All'] = t('<All issues>');
+    if (!empty($form['issue']['#options'])) {
+      $form['issue']['#options']['All'] = t('<All issues>');
     }
-    if (!empty($form['threat_title']['#options'])) {
-      $form['threat_title']['#options']['All'] = t('<All threats>');
+    if (!empty($form['threat']['#options'])) {
+      $form['threat']['#options']['All'] = t('<All threats>');
     }
 
     $form['search_api_views_fulltext']['#attributes'] = array('class' => array('ctools-auto-submit-exclude'));
@@ -66,3 +66,38 @@ function message_library_views_pre_execute(&$view) {
   }
 }
 
+/**
+ * Get all the threat terms under an issue
+ * @return An array of all the threat tids
+ */
+function message_library_get_threat_by_issue($tid) {
+  $terms = array();
+
+  // Get all the sub-terms of this term
+  $tids = array($tid);
+  $vocab = taxonomy_vocabulary_machine_name_load('issues');
+  if (!empty($vocab->vid)) {
+    $vid = $vocab->vid;
+
+    $items = taxonomy_get_tree($vid, $tid);
+    if (!empty($items)) {
+      foreach ($items as $item) {
+        if (empty($item->tid)) continue;
+        $tids[] = $item->tid;
+      }
+    }
+  }
+
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'taxonomy_term')
+    ->entityCondition('bundle', 'threat')
+    ->fieldCondition('field_threat_category', 'tid', $tids, 'IN');
+  $result = $query->execute();
+
+  if (!empty($result) && !empty($result['taxonomy_term'])) {
+    $terms = array_keys($result['taxonomy_term']);
+  }
+
+  return $terms;
+}

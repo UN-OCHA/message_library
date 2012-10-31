@@ -97,8 +97,79 @@
       var facets = searchForm.find('#edit-issue, #edit-at-risk-group, #edit-threat, #edit-target-audience');
 
       facets.change(function(e) {
-        searchForm.submit();
+        //searchForm.submit();
+        updateThreatOptionsByIssue();
       });
+
+      updateThreatOptionsByIssue();
+
+      // The options in the threat drop-down should be filter by the value in
+      // issue filter
+      function updateThreatOptionsByIssue() {
+        console.log('Invoked..');
+        var threatOptionsObj = Drupal.settings.messageLibraryExposedfilter.threatOptions;
+        // Sort the options alphanumerically first
+        var sortedOptions = [];
+        for(var option in threatOptionsObj) {
+          sortedOptions.push([option, threatOptionsObj[option]]);
+        }
+        sortedOptions.sort(function(a, b) {
+          var textA = a[1].toUpperCase();
+          var textB = b[1].toUpperCase();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+
+        var threatSelect = $('#edit-threat');
+        var issueSelect = $('#edit-issue');
+        var issueVal = issueSelect.val();
+
+        // - If no specific issue selected, display 'Select threat first' and
+        //   disable the threat selected element
+        if (issueVal == 'All') {
+          var optionEl = $('<option></option>').text(Drupal.t('Select Issue First')).attr('disabled','disabled');
+          threatSelect.empty().append(optionEl).attr('disabled', 'disabled');
+        }
+        // - If a specific Issue is selected, display all the relevant threat
+        //   options
+        else {
+          console.log(issueVal);
+          $.ajax({
+            type: 'GET',
+            url: 'message-library-filter-threat-by-issue/' + issueVal,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              // The option 'All' is required, for the ajax call may fail
+              var defaultOption = $('<option></option>').attr('value', 'All').text(Drupal.t('<All threats>'));
+              threatSelect.empty().removeAttr('disabled').append(defaultOption);
+
+              if (data) {
+                // Recalculate the select options
+                var newOptions = [];
+                $.each(sortedOptions, function(index, option) {
+                  var optionVal = option[0];
+                  if (data.hasOwnProperty(optionVal)) {
+                    //console.log(optionVal);
+                    newOptions.push(option);
+                  }
+                });
+
+                // Replace with new options
+                $.each(newOptions, function(key, value) {
+                  console.log(value);
+                  var optionEl = $('<option></option>').attr('value', value[0]).text(value[1]);
+                  console.log(optionEl);
+                  threatSelect.append(optionEl);
+                });
+              }
+            },
+            error: function(jqXHR, errorText) {
+              console.log('Error:', errorText);
+            }
+          });
+        }
+      }
+
     }
   }
 })(jQuery);

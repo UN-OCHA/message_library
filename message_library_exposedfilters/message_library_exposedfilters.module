@@ -1,6 +1,32 @@
 <?php
 
 /**
+ * Implements hook_menu()
+ */
+function message_library_exposedfilters_menu() {
+  $items = array();
+  $items['message-library-filter-threat-by-issue'] = array(
+    'title' => 'Filter threat by issue',
+    'page callback' => 'message_library_exposedfilter_filter_threat_by_issue_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Ajax page callback
+ */
+function message_library_exposedfilter_filter_threat_by_issue_callback($tid) {
+  $items = array();
+  if ($tid !== 'All') {
+    $items = message_library_get_threat_by_issue($tid);
+    $items = drupal_map_assoc($items);
+  }
+  return drupal_json_output($items);
+}
+
+/**
  * Implements hook_theme()
  */
 function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
@@ -128,6 +154,10 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
       ),
     )),
   );
+
+  // Add the threat options to js settings, so it can be access from the js side
+  drupal_add_js(array('messageLibraryExposedfilter' => array(
+    'threatOptions' => $form['threat']['#options'])), 'setting');
 }
 
 /*----------------- HELPER FUNCTIONS
@@ -240,4 +270,3 @@ function _get_issues_top_level_tid($v_name) {
   $result = $query->execute()->fetchCol();
   return reset($result);
 }
-
