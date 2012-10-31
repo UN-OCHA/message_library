@@ -122,6 +122,7 @@ features[user_permission][] = edit terms in issues
 features[user_permission][] = edit terms in sector
 features[user_permission][] = edit terms in target_audience
 features[user_permission][] = edit terms in threat
+features[user_permission][] = use search_api_autocomplete
 features[variable][] = comment_anonymous_message
 features[variable][] = comment_anonymous_threat
 features[variable][] = comment_default_mode_message

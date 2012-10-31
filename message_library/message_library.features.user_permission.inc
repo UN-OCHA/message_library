@@ -143,5 +143,16 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
+  // Exported permission: use search_api_autocomplete.
+  $permissions['use search_api_autocomplete'] = array(
+    'name' => 'use search_api_autocomplete',
+    'roles' => array(
+      0 => 'administrator',
+      1 => 'anonymous user',
+      2 => 'authenticated user',
+    ),
+    'module' => 'search_api_autocomplete',
+  );
+
   return $permissions;
 }
