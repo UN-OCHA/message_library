@@ -67,6 +67,25 @@ function message_library_views_pre_execute(&$view) {
 }
 
 /**
+ * Implements hook_page_alter()
+ */
+function message_library_page_alter(&$page) {
+  if (current_path() == 'message-library') {
+    drupal_set_breadcrumb(array(
+      l('Home', '<front>'),
+      l('Resources', 'resources'),
+      l('Communication Tools', 'resources/communication-tools'),
+    ));
+  }
+}
+
+/**
+ * Implements hook_menu_breadcrumb_alter()
+ */
+function message_library_menu_breadcrumb_alter(&$active_trail, $item) {
+  // @xxx: Why it doesn't work?
+}
+/**
  * Get all the threat terms under an issue
  * @return An array of all the threat tids
  */
