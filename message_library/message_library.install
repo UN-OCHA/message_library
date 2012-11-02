@@ -89,4 +89,27 @@ function message_library_install() {
 
     menu_link_save($ml_link);
   }
+
+
+  // Prepopulate a new term 'Communication material' under vocabulary 'Themes'
+  $vocab_themes = taxonomy_vocabulary_machine_name_load('themes');
+  if (!empty($vocab_themes->vid)) {
+
+    $term_name = 'Communication material';
+    $result = db_select('taxonomy_term_data', 'td')
+    ->fields('td', array('tid', 'name'))
+    ->condition('name', $term_name)
+    ->condition('vid', $vocab_themes->vid)
+    ->execute()
+    ->fetchObject();
+
+    if (empty($result)) {
+      // New term - 'Communication material'
+      $term = new stdClass();
+      $term->name = $term_name;
+      $term->vid = $vocab_themes->vid;
+      taxonomy_term_save($term);
+    }
+  }
+
 }
