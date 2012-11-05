@@ -185,7 +185,7 @@ function message_library_notices_save_warning($nid) {
       ->execute();
   }
   else {
-    $_SESSION['iaa_notices_warning'][$nid] = TRUE;
+    $_SESSION['message_library_notices_warning'][$nid] = TRUE;
   }
 }
 
