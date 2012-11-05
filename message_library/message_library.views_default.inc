@@ -473,6 +473,7 @@ function message_library_views_default_views() {
   /* Display: Attachment */
   $handler = $view->new_display('attachment', 'Attachment', 'attachment_header');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['group_by'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '1';
   $handler->display->display_options['pager']['options']['offset'] = '0';

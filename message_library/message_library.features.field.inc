@@ -1661,9 +1661,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'hs_taxonomy',
+        'module' => 'options',
         'settings' => array(),
-        'type' => 'taxonomy_hs',
+        'type' => 'options_buttons',
         'weight' => '32',
       ),
     ),
@@ -1738,9 +1738,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'hs_taxonomy',
+        'module' => 'options',
         'settings' => array(),
-        'type' => 'taxonomy_hs',
+        'type' => 'options_buttons',
         'weight' => '36',
       ),
     ),
