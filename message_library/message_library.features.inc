@@ -95,12 +95,13 @@ function message_library_default_search_api_index() {
         "field_message_threat" : { "type" : "integer", "entity_type" : "taxonomy_term" },
         "search_api_language" : { "type" : "string" },
         "field_message_threat:tid" : { "type" : "integer" },
-        "field_message_threat:name" : { "type" : "text" },
+        "field_message_threat:name" : { "type" : "string" },
         "field_message_threat:field_threat_category" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_hazard" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_sector" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_category:tid" : { "type" : "list\\u003Cinteger\\u003E" },
-        "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Ctext\\u003E" }
+        "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Ctext\\u003E" },
+        "search_api_aggregation_1" : { "type" : "text" }
       },
       "data_alter_callbacks" : {
         "search_api_alter_bundle_filter" : {
@@ -109,10 +110,22 @@ function message_library_default_search_api_index() {
           "settings" : { "default" : "0", "bundles" : { "message" : "message" } }
         },
         "search_api_alter_node_access" : { "status" : 0, "weight" : "0", "settings" : [] },
+        "search_api_alter_node_status" : { "status" : 0, "weight" : "0", "settings" : [] },
         "search_api_alter_add_hierarchy" : { "status" : 0, "weight" : "0", "settings" : { "fields" : [] } },
-        "search_api_alter_add_aggregation" : { "status" : 0, "weight" : "0", "settings" : [] },
+        "search_api_alter_add_viewed_entity" : { "status" : 0, "weight" : "0", "settings" : { "mode" : "full" } },
         "search_api_alter_add_url" : { "status" : 0, "weight" : "0", "settings" : [] },
-        "search_api_alter_add_viewed_entity" : { "status" : 0, "weight" : "0", "settings" : { "mode" : "full" } }
+        "search_api_alter_add_aggregation" : {
+          "status" : 1,
+          "weight" : "0",
+          "settings" : { "fields" : { "search_api_aggregation_1" : {
+                "name" : "threat_title_fulltext",
+                "type" : "fulltext",
+                "fields" : [ "field_message_threat:name" ],
+                "description" : "A Fulltext aggregation of the following fields: Threat \\u00bb Name."
+              }
+            }
+          }
+        }
       },
       "processors" : {
         "search_api_case_ignore" : {

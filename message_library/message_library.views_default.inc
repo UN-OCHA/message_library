@@ -39,10 +39,9 @@ function message_library_views_default_views() {
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
-    'nid_1' => 'nid_1',
-    'url' => 'url',
+    'field_message_threat_tid' => 'field_message_threat_tid',
     'nid' => 'nid',
-    'field_threat_category' => 'field_threat_category',
+    'field_message_threat_field_threat_category' => 'field_message_threat_field_threat_category',
     'field_message_threat' => 'field_message_threat',
     'title_1' => 'title_1',
     'field_message_group_risk' => 'field_message_group_risk',
@@ -53,12 +52,9 @@ function message_library_views_default_views() {
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
-    'nid_1' => array(
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
-    ),
-    'url' => array(
+    'field_message_threat_tid' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -70,12 +66,14 @@ function message_library_views_default_views() {
       'separator' => '',
       'empty_column' => 0,
     ),
-    'field_threat_category' => array(
+    'field_message_threat_field_threat_category' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
     'field_message_threat' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -201,14 +199,10 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_url']['table'] = 'search_api_index_message_library_index';
   $handler->display->display_options['fields']['field_message_url']['field'] = 'field_message_url';
   $handler->display->display_options['fields']['field_message_url']['exclude'] = TRUE;
-  /* Sort criterion: Threat: Term ID (indexed) */
-  $handler->display->display_options['sorts']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
-  $handler->display->display_options['sorts']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
-  $handler->display->display_options['sorts']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
-  /* Sort criterion: Search: Relevance */
-  $handler->display->display_options['sorts']['search_api_relevance']['id'] = 'search_api_relevance';
-  $handler->display->display_options['sorts']['search_api_relevance']['table'] = 'search_api_index_message_library_index';
-  $handler->display->display_options['sorts']['search_api_relevance']['field'] = 'search_api_relevance';
+  /* Sort criterion: Threat: Name (indexed) */
+  $handler->display->display_options['sorts']['field_message_threat_name']['id'] = 'field_message_threat_name';
+  $handler->display->display_options['sorts']['field_message_threat_name']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['sorts']['field_message_threat_name']['field'] = 'field_message_threat_name';
   /* Filter criterion: Search: Fulltext search */
   $handler->display->display_options['filters']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
   $handler->display->display_options['filters']['search_api_views_fulltext']['table'] = 'search_api_index_message_library_index';
@@ -231,8 +225,7 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['search_api_views_fulltext']['fields'] = array(
     'title' => 'title',
     'field_message_group_mess' => 'field_message_group_mess',
-    'field_message_threat:name' => 'field_message_threat:name',
-    'field_message_threat:field_threat_category:name' => 'field_message_threat:field_threat_category:name',
+    'search_api_aggregation_1' => 'search_api_aggregation_1',
   );
   /* Filter criterion: Threat: Issue (indexed) */
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['id'] = 'field_message_threat_field_threat_category';
