@@ -15,6 +15,13 @@ function message_library_exposedfilters_menu() {
 }
 
 /**
+ * Implements hook_init()
+ */
+function message_library_exposedfilters_init() {
+  //drupal_add_js('misc/jquery.cookie.js', 'file');
+}
+
+/**
  * Ajax page callback
  */
 function message_library_exposedfilter_filter_threat_by_issue_callback($tid) {
@@ -119,6 +126,8 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $form['ml_search_text']['#attributes']['placeholder'] = t('enter search terms');
   // Add necessary js and css files
   $path = drupal_get_path('module', 'message_library_exposedfilters');
+  //drupal_add_js('misc/jquery.cookie.js', 'file');
+  $form['#attached']['library'][]  = array('system', 'jquery.cookie');
   $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
   $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
 
