@@ -1,27 +1,6 @@
 <?php
 
 /**
- * Implements hook_taxonomy_term_delete()
- */
-function message_library_queue_taxonomy_term_delete($term) {
-
-}
-
-/**
- * Implements hook_taxonomy_term_insert()
- */
-function message_library_queue_taxonomy_term_insert($term) {
-
-}
-
-/**
- * Implements hook_init()
- */
-function message_library_queue_init() {
-  message_library_queue_reset_queue();
-}
-
-/**
  * Prepopulate the system with a basic queue:
  *
  * - A umbrella nodequeue - 'message_library_queue'
@@ -71,6 +50,78 @@ function message_library_queue_reset_queue() {
   }
 }
 
+/**
+ * Implements hook_taxonomy_term_delete()
+ *
+ * Every time a new threat term is deleted, automatically delete the subqueue
+ * for it
+ */
+function message_library_queue_taxonomy_term_delete($term) {
+  // Act on a new threat term deleted
+  $vocab = taxonomy_vocabulary_machine_name_load('threat');
+  if (!empty($vocab->vid) && !empty($term->vid) && ($term->vid == $vocab->vid)) {
+    // Check whether a queue exists for this term
+    $result = db_select('nodequeue_subqueue', 's')
+      ->fields('s')
+      ->condition('name', 'message_library_threat')
+      ->condition('reference', $term->tid)
+      ->execute()
+      ->fetchAllAssoc('sqid');
+
+    if (!empty($result)) {
+      foreach ($result as $item) {
+        if (!empty($item->sqid)) {
+          nodequeue_remove_subqueue($item->sqid);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_insert()
+ *
+ * Every time a new threat term is inserted, automatically create a new subqueue
+ * for it
+ */
+function message_library_queue_taxonomy_term_insert($term) {
+  // Act on a new threat term created
+  $vocab = taxonomy_vocabulary_machine_name_load('threat');
+  if (!empty($vocab->vid)) {
+    $threat_vid = $vocab->vid;
+    if (!empty($term->vid) && $term->vid == $threat_vid) {
+      message_library_queue_add_subqueue_for_term($term);
+    }
+  }
+}
+
+/**
+ * Add a subqueue for a threat
+ */
+function message_library_queue_add_subqueue_for_term($term) {
+  if (is_int($term)) {
+    $term = taxonomy_term_load($term);
+  }
+
+  $parent_queue = nodequeue_load('message_library_threat');
+  if (!empty($parent_queue)) {
+    $subqueue = nodequeue_add_subqueue($parent_queue, $term->name, $term->tid);
+    // Fill with messages
+    $message_nids = message_library_get_messages_by_threat_tid($term->tid);
+    foreach ($message_nids as $nid) {
+      nodequeue_subqueue_add($parent_queue, $subqueue, $nid);
+    }
+  }
+}
+
+/**
+ * Remove a subqueue for a threat
+ */
+function message_library_queue_remove_subqueue_for_term($term) {
+  if (is_int($term)) {
+    $term = taxonomy_term_load($term);
+  }
+}
 
 /**
  * Implements hook_nodequeue_delete()

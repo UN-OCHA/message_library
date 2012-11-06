@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Implements hook_install()
+ */
+function message_library_queue_install() {
+  message_library_queue_reset_queue();
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function message_library_queue_uninstall() {
+  nodequeue_delete('message_library_threat');
+}
