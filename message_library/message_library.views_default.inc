@@ -396,6 +396,14 @@ function message_library_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'node';
   $handler->display->display_options['row_options']['links'] = FALSE;
+  /* Relationship: Nodequeue: Queue */
+  $handler->display->display_options['relationships']['nodequeue_rel']['id'] = 'nodequeue_rel';
+  $handler->display->display_options['relationships']['nodequeue_rel']['table'] = 'node';
+  $handler->display->display_options['relationships']['nodequeue_rel']['field'] = 'nodequeue_rel';
+  $handler->display->display_options['relationships']['nodequeue_rel']['limit'] = 1;
+  $handler->display->display_options['relationships']['nodequeue_rel']['queues'] = array(
+    'message_library_threat' => 'message_library_threat',
+  );
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -449,6 +457,21 @@ function message_library_views_default_views() {
   $handler->display->display_options['footer']['link_email_rtf']['id'] = 'link_email_rtf';
   $handler->display->display_options['footer']['link_email_rtf']['table'] = 'message_library';
   $handler->display->display_options['footer']['link_email_rtf']['field'] = 'link_email_rtf';
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Nodequeue: Queue */
+  $handler->display->display_options['relationships']['nodequeue_rel']['id'] = 'nodequeue_rel';
+  $handler->display->display_options['relationships']['nodequeue_rel']['table'] = 'node';
+  $handler->display->display_options['relationships']['nodequeue_rel']['field'] = 'nodequeue_rel';
+  $handler->display->display_options['relationships']['nodequeue_rel']['limit'] = 1;
+  $handler->display->display_options['relationships']['nodequeue_rel']['queues'] = array(
+    'message_library_threat' => 'message_library_threat',
+  );
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  /* Sort criterion: Nodequeue: Position */
+  $handler->display->display_options['sorts']['position']['id'] = 'position';
+  $handler->display->display_options['sorts']['position']['table'] = 'nodequeue_nodes';
+  $handler->display->display_options['sorts']['position']['field'] = 'position';
+  $handler->display->display_options['sorts']['position']['relationship'] = 'nodequeue_rel';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   /* Contextual filter: Content: Has taxonomy term ID */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
@@ -461,6 +484,18 @@ function message_library_views_default_views() {
   $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: Nodequeue: Subqueue reference */
+  $handler->display->display_options['arguments']['reference']['id'] = 'reference';
+  $handler->display->display_options['arguments']['reference']['table'] = 'nodequeue_subqueue';
+  $handler->display->display_options['arguments']['reference']['field'] = 'reference';
+  $handler->display->display_options['arguments']['reference']['relationship'] = 'nodequeue_rel';
+  $handler->display->display_options['arguments']['reference']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['reference']['default_argument_type'] = 'php';
+  $handler->display->display_options['arguments']['reference']['default_argument_options']['code'] = 'return arg(2);';
+  $handler->display->display_options['arguments']['reference']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['reference']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['reference']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['reference']['limit'] = '0';
   $handler->display->display_options['path'] = 'message-library/threat/%';
 
   /* Display: Attachment */
@@ -570,6 +605,7 @@ function message_library_views_default_views() {
     t('‹ previous'),
     t('next ›'),
     t('last »'),
+    t('queue'),
     t('All'),
     t('%1'),
     t('Page'),
