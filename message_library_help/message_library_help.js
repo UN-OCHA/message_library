@@ -53,7 +53,6 @@
       });
 
       function mesasage_library_help_show_box(type) {
-        console.log('show:' + type );
         if (type == 'all') {
           ml_help_boxes.show();
         }
@@ -63,7 +62,6 @@
       }
 
       function mesasage_library_help_hide_box(type) {
-        console.log('hide:' + type );
         if (type == 'all') {
           ml_help_boxes.hide();
         }

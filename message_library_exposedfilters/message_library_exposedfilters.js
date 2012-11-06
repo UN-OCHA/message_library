@@ -12,8 +12,6 @@
         // #edit-audience
         // #edit-threat-title
 
-        console.log($(this));
-
         var var_names = {
           'edit-ml-views-ml-search-text': 'edit-ml-search-text',
           'edit-ml-views-issue': 'edit-issue',
@@ -72,8 +70,6 @@
 
         var alphaListOptions  = $('#edit-issue-alpha option').clone();
         var nestedListOptions = $('#edit-issue-nested option').clone();
-        //console.log(alphaListOptions);
-        //console.log(nestedListOptions);
 
         if (mode == 'alpha') {
           switcherLink.html(Drupal.t('Alphabetically'));
@@ -145,7 +141,6 @@
                 $.each(sortedOptions, function(index, option) {
                   var optionVal = option[0];
                   if (data.hasOwnProperty(optionVal)) {
-                    //console.log(optionVal);
                     newOptions.push(option);
                   }
                 });
@@ -158,7 +153,7 @@
               }
             },
             error: function(jqXHR, errorText) {
-              console.log('Error:', errorText);
+              // @todo:
             }
           });
         }
