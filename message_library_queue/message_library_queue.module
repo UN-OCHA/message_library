@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * Implements hook_taxonomy_term_delete()
+ */
+function message_library_queue_taxonomy_term_delete($term) {
+
+}
+
+/**
+ * Implements hook_taxonomy_term_insert()
+ */
+function message_library_queue_taxonomy_term_insert($term) {
+
+}
+
+/**
+ * Implements hook_init()
+ */
+function message_library_queue_init() {
+  message_library_queue_reset_queue();
+}
+
+/**
+ * Prepopulate the system with a basic queue:
+ *
+ * - A umbrella nodequeue - 'message_library_queue'
+ * - Many subqueues under it, each subqueue represents a threat term
+ * - Fill each subqueue with the messages for that threat
+ */
+function message_library_queue_reset_queue() {
+  $queue_name = 'message_library_threat';
+  nodequeue_delete($queue_name);
+
+  // Create the nodequeue
+  $nodequeue = new stdClass();
+  $nodequeue->name = 'message_library_threat';
+  $nodequeue->title = 'Message Library Threat';
+  $nodequeue->subqueue_title = '';
+  $nodequeue->size = 0;
+  $nodequeue->link = 'Add message';
+  $nodequeue->link_remove = 'Remove message';
+  $nodequeue->owner = 'nodequeue';
+  $nodequeue->show_in_links = 1;
+  $nodequeue->show_in_tab = 1;
+  $nodequeue->show_in_ui = 1;
+  $nodequeue->reference = '0';
+  $nodequeue->reverse = 0;
+  $nodequeue->i18n = 0;
+  $nodequeue->roles = array();
+  $nodequeue->types = array('message');
+  nodequeue_save($nodequeue);
+
+  // Create the sub-nodequeues
+  $vocab = taxonomy_vocabulary_machine_name_load('threat');
+  if (!empty($vocab)) {
+    $vid = $vocab->vid;
+    $terms = taxonomy_get_tree($vid, 0, NULL, TRUE);
+
+    if (!empty($terms)) {
+      foreach ($terms as $term) {
+        $subqueue = nodequeue_add_subqueue($nodequeue, $term->name, $term->tid);
+
+        // Fill the sub-nodequeues with messages
+        $message_nids = message_library_get_messages_by_threat_tid($term->tid);
+        foreach ($message_nids as $nid) {
+          nodequeue_subqueue_add($nodequeue, $subqueue, $nid);
+        }
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements hook_nodequeue_delete()
+ */
+function message_library_queue_nodequeue_delete($name) {
+  $result = db_query("DELETE FROM {nodequeue_types} WHERE name = ':name'", array(':name' => $name));
+}

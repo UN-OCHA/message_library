@@ -120,3 +120,28 @@ function message_library_get_threat_by_issue($tid) {
 
   return $terms;
 }
+
+/**
+ * Get all of the messages under a threat
+ *
+ * @return A collection of the nde ids of the messages
+ */
+function message_library_get_messages_by_threat_tid($tid) {
+  $nids = array();
+
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'message')
+    ->fieldCondition('field_message_threat', 'tid', $tid)
+    ->execute();
+
+  if (!empty($result) && !empty($result['node'])) {
+    $nids = array_keys($result['node']);
+    if (!empty($nids)) {
+      $nids = array_unique($nids);
+    }
+  }
+
+  return $nids;
+}
