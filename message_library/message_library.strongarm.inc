@@ -342,5 +342,26 @@ Click on the "Show" button to learn about a feature. The best browsers to use wh
   $strongarm->value = 1;
   $export['node_submitted_threat'] = $strongarm;
 
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_message_library_ml_message_pattern';
+  $strongarm->value = '';
+  $export['pathauto_message_library_ml_message_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_message_library_ml_threat_pattern';
+  $strongarm->value = 'message-library/threat/[term:name]';
+  $export['pathauto_message_library_ml_threat_pattern'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'pathauto_message_library_pattern';
+  $strongarm->value = 'message-library/threat/[term:name]';
+  $export['pathauto_message_library_pattern'] = $strongarm;
+
   return $export;
 }

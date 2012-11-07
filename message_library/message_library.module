@@ -70,11 +70,22 @@ function message_library_views_pre_execute(&$view) {
  * Implements hook_page_alter()
  */
 function message_library_page_alter(&$page) {
+  // Set breadcrumb for the Message Library
   if (current_path() == 'message-library') {
     drupal_set_breadcrumb(array(
       l('Home', '<front>'),
       l('Resources', 'resources'),
       l('Communication Tools', 'resources/communication-tools'),
+    ));
+  }
+
+  // Set breadcrumb for the TOU page
+  if (current_path() == 'message-library-cgi') {
+    drupal_set_breadcrumb(array(
+        l('Home', '<front>'),
+        l('Resources', 'resources'),
+        l('Communication Tools', 'resources/communication-tools'),
+        l('Message Library', 'message-library'),
     ));
   }
 }
@@ -145,3 +156,157 @@ function message_library_get_messages_by_threat_tid($tid) {
 
   return $nids;
 }
+
+/**
+ * Implements hook_pathauto()
+ */
+function message_library_pathauto($op) {
+  switch ($op) {
+    case 'settings':
+      $settings = array();
+      $settings['module'] = 'message_library';
+      $settings['token_type'] = 'term';
+      $settings['groupheader'] = t('Message library paths');
+      $settings['patterndescr'] = t('Default path pattern (applies to all Message Library threat terms).');
+      $settings['patterndefault'] = 'message-library/threat/[term:name]';
+      $settings['batch_update_callback'] = 'message_library_pathauto_bulk_update_batch_process';
+
+      // Threat
+      $settings['patternitems']['ml_threat'] = t('Pattern for all Message Library threat terms.');
+      // Message
+      $settings['patternitems']['ml_message'] = t('Pattern for all Message Library message nodes.');
+
+      return (object) $settings;
+    default:
+      break;
+  }
+}
+
+/**
+ * Implements hook_path_alias_types()
+ *
+ * Used primarily by the bulk delete form.
+ */
+function message_library_path_alias_types() {
+  $objects['message-library/threat/'] = t("Message library threat terms");
+  return $objects;
+}
+
+/**
+ * Implements hook_taxonomy_term_insert().
+ */
+function message_library_taxonomy_term_insert($term) {
+  if (message_library_is_threat_term($term)) {
+    message_library_threat_term_update_alias($term, 'insert');
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_update().
+ */
+function message_library_taxonomy_term_update($term) {
+  if (message_library_is_threat_term($term)) {
+    message_library_threat_term_update_alias($term, 'update');
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_delete().
+ */
+function message_library_taxonomy_term_delete($term) {
+  if (message_library_is_threat_term($term)) {
+    $source = 'message-library/threat/' . $term->tid;
+    pathauto_path_delete_all($source);
+  }
+}
+
+/**
+ * Callback for creating proper alias for threat page
+ */
+function message_library_threat_term_update_alias(stdClass $term, $op, array $options = array()) {
+  $module = 'message_library';
+  $source = 'message-library/threat/' . $term->tid;
+  module_load_include('inc', 'pathauto');
+  $alias = pathauto_create_alias($module, $op, $source, array('term' => $term), 'ml_threat');
+  dpm('Alias:');
+  dpm($alias);
+
+  if (!empty($alias)) {
+    drupal_set_message(t('Alias created for term :term : :alias.', array(':term' => $term->name, ':alias' => $alias)));
+  }
+  else {
+    drupal_set_message(t('Failed to create alias for term :term.', array(':term' => $term->name)), 'error');
+  }
+}
+
+/**
+ * Check whehter a term belongs to vocabulary 'Threat'
+ */
+function message_library_is_threat_term($term) {
+  if (!is_object($term) && is_numeric($term)) {
+    $term = taxonomy_term_load($term);
+  }
+  $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+  if (!empty($threat_vocab->vid) && !empty($term->vid) && $threat_vocab->vid == $term->vid) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Batch processing callback; Generate aliases for message library content.
+ */
+function message_library_pathauto_bulk_update_batch_process(&$context) {
+  if (!isset($context['sandbox']['current'])) {
+    $context['sandbox']['count'] = 0;
+    $context['sandbox']['current'] = 0;
+  }
+
+  $threat_tids = array();
+  $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+  if (!empty($threat_vocab->vid)) {
+    $terms = taxonomy_get_tree($threat_vocab->vid);
+    if (!empty($terms)) {
+      foreach ($terms as $term) {
+        if (!empty($term->tid)) {
+          $threat_tids[] = $term->tid;
+        }
+      }
+    }
+  }
+
+  if (!empty($threat_tids)) {
+    $context['sandbox']['total'] = count($threat_tids);
+  }
+  else {
+    $context['finished'] = 1;
+    return;
+  }
+
+  message_library_threat_term_update_alias_mutiple($threat_tids, 'bulkupdate');
+  $context['sandbox']['count'] += count($threat_tids);
+  $context['sandbox']['current'] = max($threat_tids);
+  $context['message'] = t('Updated alias for term @tid.', array('@tid' => end($threat_tids)));
+
+  if ($context['sandbox']['count'] != $context['sandbox']['total']) {
+    $context['finished'] = $context['sandbox']['count'] / $context['sandbox']['total'];
+  }
+}
+
+/**
+ * Update the URL aliases for multiple threat terms
+ */
+function message_library_threat_term_update_alias_mutiple(array $tids, $op, array $options = array()) {
+  $options += array('message' => FALSE);
+
+  $terms = taxonomy_term_load_multiple($tids);
+  foreach ($terms as $term) {
+    message_library_threat_term_update_alias($term, $op, $options);
+  }
+
+  if (!empty($options['message'])) {
+    drupal_set_message(format_plural(count($tids), 'Updated URL alias for 1 threat term.', 'Updated URL aliases for @count threat terms.'));
+  }
+}
+
+
