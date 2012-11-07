@@ -228,15 +228,13 @@ function message_library_threat_term_update_alias(stdClass $term, $op, array $op
   $source = 'message-library/threat/' . $term->tid;
   module_load_include('inc', 'pathauto');
   $alias = pathauto_create_alias($module, $op, $source, array('term' => $term), 'ml_threat');
-  dpm('Alias:');
-  dpm($alias);
 
-  if (!empty($alias)) {
-    drupal_set_message(t('Alias created for term :term : :alias.', array(':term' => $term->name, ':alias' => $alias)));
-  }
-  else {
-    drupal_set_message(t('Failed to create alias for term :term.', array(':term' => $term->name)), 'error');
-  }
+  // if (!empty($alias)) {
+  //   drupal_set_message(t('Alias created for term :term : :alias.', array(':term' => $term->name, ':alias' => $alias)));
+  // }
+  // else {
+  //   drupal_set_message(t('Failed to create alias for term :term.', array(':term' => $term->name)), 'error');
+  // }
 }
 
 /**
@@ -308,5 +306,3 @@ function message_library_threat_term_update_alias_mutiple(array $tids, $op, arra
     drupal_set_message(format_plural(count($tids), 'Updated URL alias for 1 threat term.', 'Updated URL aliases for @count threat terms.'));
   }
 }
-
-
