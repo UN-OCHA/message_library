@@ -3,3 +3,4 @@ description = Manage the message order for a threat.
 package = Message Library
 core = 7.x
 version = 7.x-1.0-dev
+dependencies[] = nodequeue

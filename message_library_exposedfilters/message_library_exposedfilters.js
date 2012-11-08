@@ -1,17 +1,12 @@
 (function ($) {
   Drupal.behaviors.messageLibraryExposedFilters = {
     attach: function (context, settings) {
-      /* Handle 'Reset Search' buttons
-       * -------------------------------------------------------------------- */
-      // Handle 'remove' link beside each search facet, this will remove the
-      // correponding facet and resubmit the exposed widget form
-      $('.ml-views-facets').click(function() {
-        // #edit-search-api-views-fulltext
-        // #edit-issues
-        // #edit-group-risk
-        // #edit-audience
-        // #edit-threat-title
+      // Handle the 'remove' links for search facets, this will reset the
+      // correponding facet and should trigger the re-submit for the exposed
+      // widget form
+      var exposedForm = $('#views-exposed-form-message-library-search-page');
 
+      $('.ml-views-facets').click(function() {
         var var_names = {
           'edit-ml-views-ml-search-text': 'edit-ml-search-text',
           'edit-ml-views-issue': 'edit-issue',
@@ -26,13 +21,13 @@
 
         if (exposedElement.attr('type') == 'text') {
           exposedElement.val('');
+          exposedForm.trigger('submit');
         }
         else {
           exposedElement.attr('selectedIndex', 0);
+          exposedElement.trigger('change');
         }
 
-        var exposedForm = $('#views-exposed-form-message-library-search-page');
-        exposedForm.submit();
         return false;
       });
 
@@ -92,9 +87,10 @@
       var searchForm = $('#views-exposed-form-message-library-search-page');
       var facets = searchForm.find('#edit-issue, #edit-at-risk-group, #edit-threat, #edit-target-audience');
 
-      facets.change(function(e) {
-        searchForm.submit();
-      });
+      // This form is auto-submitted, which is configured in the views
+//      facets.change(function(e) {
+//        searchForm.submit();
+//      });
 
       updateThreatOptionsByIssue();
 

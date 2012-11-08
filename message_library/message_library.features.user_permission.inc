@@ -143,9 +143,9 @@ function message_library_user_default_permissions() {
     'module' => 'taxonomy',
   );
 
-  // Exported permission: use search_api_autocomplete.
-  $permissions['use search_api_autocomplete'] = array(
-    'name' => 'use search_api_autocomplete',
+  // Exported permission: use search_api_autocomplete for search_api_views_message_library.
+  $permissions['use search_api_autocomplete for search_api_views_message_library'] = array(
+    'name' => 'use search_api_autocomplete for search_api_views_message_library',
     'roles' => array(
       0 => 'administrator',
       1 => 'anonymous user',
