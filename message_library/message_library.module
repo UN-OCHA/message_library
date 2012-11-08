@@ -82,10 +82,20 @@ function message_library_page_alter(&$page) {
   // Set breadcrumb for the TOU page
   if (current_path() == 'message-library-cgi') {
     drupal_set_breadcrumb(array(
-        l('Home', '<front>'),
-        l('Resources', 'resources'),
-        l('Communication Tools', 'resources/communication-tools'),
-        l('Message Library', 'message-library'),
+      l('Home', '<front>'),
+      l('Resources', 'resources'),
+      l('Communication Tools', 'resources/communication-tools'),
+      l('Message Library', 'message-library'),
+    ));
+  }
+
+  $view = views_get_page_view();
+  if (!empty($view) && !empty($view->name) && $view->name == 'messsage_library_threat') {
+    drupal_set_breadcrumb(array(
+      l('Home', '<front>'),
+      l('Resources', 'resources'),
+      l('Communication Tools', 'resources/communication-tools'),
+      l('Message Library', 'message-library'),
     ));
   }
 }
