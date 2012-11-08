@@ -107,7 +107,23 @@ function theme_message_library_notices_sensitivity_warning($vars) {
 /**
  * Form
  */
-function message_library_notices_question_form($form, $form_stat, $node) {
+function message_library_notices_question_form($form, $form_state, $node) {
+  // Save the current threat
+  $view = views_get_page_view();
+  $view_args = $view->args;
+
+  if (is_array($view_args) && !empty($view_args)) {
+    $threat_tid = reset($view_args);
+  }
+  else {
+    $threat_tid = arg(2);
+  }
+
+  $form['threat_tid'] = array(
+    '#type' => 'value',
+    '#value' => !empty($threat_tid) ? (int) $threat_tid : NULL,
+  );
+
   $form['questions_uid'] = array(
     '#type' => 'value',
     '#value' => $node->uid,
@@ -160,6 +176,10 @@ function message_library_notices_question_form_submit($form, &$form_state) {
   $values = $form_state['values'];
   if(!empty($values['message_nid'])) {
     message_library_notices_save_warning($values['message_nid']);
+  }
+
+  if (!empty($values['threat_tid']) && $values['message_nid']) {
+    $form_state['redirect'] = array('message-library/threat/' . $values['threat_tid'], array('fragment' => $values['message_nid']));
   }
 }
 
