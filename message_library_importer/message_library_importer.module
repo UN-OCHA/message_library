@@ -9,23 +9,21 @@ include_once 'message_library_importer.features.inc';
 /**
  * hook_feeds_processor_targets_alter
  */
-function message_library_importer_feeds_processor_targets_alter(& $targets, $entity_type, $bundle_name)
-{
-	if ($bundle_name === 'message') {
-		foreach(field_info_instances($entity_type, $bundle_name) as $name => $instance) {
-			$info = field_info_field($name);
+function message_library_importer_feeds_processor_targets_alter(& $targets, $entity_type, $bundle_name) {
+  if ($bundle_name === 'message') {
+    foreach(field_info_instances($entity_type, $bundle_name) as $name => $instance) {
+      $info = field_info_field($name);
 
-			if (in_array($info['type'], array('file', 'image'))) {
-				$targets[$name]['callback'] = 'message_library_importer_feeds_set_target_file';
-			} else if ($info['type'] === 'link_field') {
-				$targets[$name . ':url']['callback'] = 'message_library_importer_feeds_set_target_link_url';
-			}
-		}
-	}
+      if (in_array($info['type'], array('file', 'image'))) {
+        $targets[$name]['callback'] = 'message_library_importer_feeds_set_target_file';
+      } else if ($info['type'] === 'link_field') {
+        $targets[$name . ':url']['callback'] = 'message_library_importer_feeds_set_target_link_url';
+      }
+    }
+  }
 }
 
-function message_library_importer_feeds_set_target_file($source, $entity, $target, $value)
-{
+function message_library_importer_feeds_set_target_file($source, $entity, $target, $value) {
   if (empty($value)) {
     return;
   }
@@ -33,11 +31,11 @@ function message_library_importer_feeds_set_target_file($source, $entity, $targe
 
   // Make sure $value is an array of objects of type FeedsEnclosure.
   if (!is_array($value)) {
-		$all = explode('|', $value);
-		$value = explode(';', $all[0]);
-		if (isset($all[1])) {
-			$titles = explode(";", $all[1]);
-		}
+    $all = explode('|', $value);
+    $value = explode(';', $all[0]);
+    if (isset($all[1])) {
+      $titles = explode(";", $all[1]);
+    }
   }
   foreach ($value as $k => $v) {
     if (!($v instanceof FeedsEnclosure)) {
@@ -70,9 +68,9 @@ function message_library_importer_feeds_set_target_file($source, $entity, $targe
   foreach ($value as $v) {
     if ($file = $v->getFile($destination)) {
       $field['und'][$i] = (array)$file;
-			if (isset($titles[$i]) && $titles[$i] != '') {
-				$field['und'][$i]['description'] = $titles[$i];
-			}
+      if (isset($titles[$i]) && $titles[$i] != '') {
+        $field['und'][$i]['description'] = $titles[$i];
+      }
       $field['und'][$i]['display'] = 1; // @todo: Figure out how to properly populate this field.
       if ($info['cardinality'] == 1) {
         break;
@@ -83,33 +81,32 @@ function message_library_importer_feeds_set_target_file($source, $entity, $targe
   $entity->{$target} = $field;
 }
 
-function message_library_importer_feeds_set_target_link_url($source, $entity, $target, $value)
-{
-	list($key, $subkey) = explode(':', $target, 2);
+function message_library_importer_feeds_set_target_link_url($source, $entity, $target, $value) {
+  list($key, $subkey) = explode(':', $target, 2);
 
-	// hack a bit...
-	$instance_info = field_info_instance('node', $key, 'message');
-	$info = field_info_field($key);
+  // hack a bit...
+  $instance_info = field_info_instance('node', $key, 'message');
+  $info = field_info_field($key);
 
-	// let's go
-	if (!empty($value)) {
-		$all = explode('|', $value);
-		$value = explode(';', $all[0]);
-		if (isset($all[1])) {
-			$titles = explode(";", $all[1]);
-		}
-	}
+  // let's go
+  if (!empty($value)) {
+    $all = explode('|', $value);
+    $value = explode(';', $all[0]);
+    if (isset($all[1])) {
+      $titles = explode(";", $all[1]);
+    }
+  }
 
-	$i = 0;
-	$field = isset($entity->{$key}) ? $entity->{$key} : array();
+  $i = 0;
+  $field = isset($entity->{$key}) ? $entity->{$key} : array();
   foreach ($value as $v) {
-		$field['und'][$i]['url'] = $v;
-		if (isset($titles[$i]) && $titles[$i] != '') {
-			$field['und'][$i]['title'] = $titles[$i];
-		}
-		$field['und'][$i]['attributes'] = array();
+    $field['und'][$i]['url'] = $v;
+    if (isset($titles[$i]) && $titles[$i] != '') {
+      $field['und'][$i]['title'] = $titles[$i];
+    }
+    $field['und'][$i]['attributes'] = array();
     $i++;
   }
 
-	$entity->{$key} = $field;
+  $entity->{$key} = $field;
 }
