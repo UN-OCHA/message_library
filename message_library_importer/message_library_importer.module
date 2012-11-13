@@ -1,13 +1,12 @@
 <?php
 /**
  * @file
- * Code for the Message Library Importer feature.
  */
 
 include_once 'message_library_importer.features.inc';
 
 /**
- * hook_feeds_processor_targets_alter
+ * Implements hook_feeds_processor_targets_alter
  */
 function message_library_importer_feeds_processor_targets_alter(& $targets, $entity_type, $bundle_name) {
   if ($bundle_name === 'message') {
@@ -16,7 +15,8 @@ function message_library_importer_feeds_processor_targets_alter(& $targets, $ent
 
       if (in_array($info['type'], array('file', 'image'))) {
         $targets[$name]['callback'] = 'message_library_importer_feeds_set_target_file';
-      } else if ($info['type'] === 'link_field') {
+      }
+      else if ($info['type'] === 'link_field') {
         $targets[$name . ':url']['callback'] = 'message_library_importer_feeds_set_target_link_url';
       }
     }
