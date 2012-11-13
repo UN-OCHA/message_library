@@ -37,7 +37,7 @@ function message_library_importer_feeds_importer_default() {
       'config' => array(
         'content_type' => 'message',
         'expire' => '-1',
-        'author' => 0,
+        'author' => '1',
         'mappings' => array(
           0 => array(
             'source' => 'Message Nid',
@@ -120,8 +120,10 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
         ),
-        'update_existing' => '2',
+        'update_existing' => '1',
         'input_format' => 'plain_text',
+        'authorize' => 1,
+        'skip_hash_check' => 0,
       ),
     ),
     'content_type' => '',
