@@ -13,10 +13,13 @@ function message_library_init() {
 }
 
 /**
- * Implements hoo_enabled()
+ * Implements hook_modules_enabled()
  */
-function message_library_enabled($modules) {
+function message_library_modules_enabled($modules) {
   if (in_array('message_library', $modules)) {
+    // features_revert(array('message_library' => array('views_view')));
+    // menu_router_build();
+    // drupal_flush_all_caches();
     message_library_prepopulate_themes_terms();
     message_library_set_up_menu_links();
   }
@@ -362,21 +365,29 @@ function message_library_set_up_menu_links() {
       menu_link_save($com_tools_link);
 
       // Create a menu link 'Message Library' under 'Communication Tools'
-      $link_title = 'Message Library';
-      $link_path = 'message-library';
-      // Rinse
-      $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
-      foreach ($result as $link) {
-        _menu_delete_item($link);
+      if (!empty($com_tools_link['mlid'])) {
+        $link_title = 'Message Library';
+        $link_path = 'message-library';
+        // Rinse
+        $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
+        foreach ($result as $link) {
+          _menu_delete_item($link);
+        }
+        // Repeat
+        $ml_link = array(
+          'link_path' => $link_path,
+          'link_title' => $link_title,
+          'menu_name' => 'main-menu',
+          'plid' => $com_tools_link['mlid'],
+          'router_path' => 'message-library',
+        );
+        if (!menu_link_save($ml_link, array(), $com_tools_link)) {
+          watchdog('message_library', 'Failed to create the menu link for Message Library.');
+        }
       }
-      // Repeat
-      $ml_link = array(
-        'link_path' => $link_path,
-        'link_title' => $link_title,
-        'menu_name' => 'main-menu',
-        'plid' => $com_tools_link['mlid'],
-      );
-      menu_link_save($ml_link);
+      else {
+        watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link not found.", WATCHDOG_WARNING);
+      }
     }
     else {
       watchdog('message_library', "Can\'t create menu links for Comminication Tools, the page for it doesn\'t exist.", WATCHDOG_WARNING);
@@ -431,12 +442,11 @@ function message_library_ensure_communication_tools_page() {
     ->execute();
 
   $node_existed = !empty($result['node']);
-  if (!empty($result['node'])) {
-    node_delete_multiple(array_keys($result['node']));
-  }
+  // if (!empty($result['node'])) {
+  //   node_delete_multiple(array_keys($result['node']));
+  // }
 
-  //if (!$node_existed) {
-  if (TRUE) {
+  if (!$node_existed) {
     $node = new stdClass();
     $node->uid = 1;
     $node->status = 1;
@@ -463,6 +473,9 @@ function message_library_ensure_communication_tools_page() {
       'source' => 'node/' . $node->nid,
     ));
     if (empty($path)) {
+      // Delete all aliases associated with this node.
+      path_delete(array('source' => 'node/' . $node->nid));
+
       $path = array(
         'source' => 'node/' . $node->nid,
         'alias' => 'resources/communication-tools',
