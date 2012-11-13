@@ -6,6 +6,23 @@
 include_once 'message_library.features.inc';
 
 /**
+ * Implements hook_init()
+ */
+function message_library_init() {
+
+}
+
+/**
+ * Implements hoo_enabled()
+ */
+function message_library_enabled($modules) {
+  if (in_array('message_library', $modules)) {
+    message_library_prepopulate_themes_terms();
+    message_library_set_up_menu_links();
+  }
+}
+
+/**
  * Implementation of hook_form_alter()
  *
  * Change the default placeholders for the (-Any-) options on the exposed filter
@@ -315,4 +332,160 @@ function message_library_threat_term_update_alias_mutiple(array $tids, $op, arra
   if (!empty($options['message'])) {
     drupal_set_message(format_plural(count($tids), 'Updated URL alias for 1 threat term.', 'Updated URL aliases for @count threat terms.'));
   }
+}
+
+/**
+ * Setting up the necessary menu links for the message library
+ */
+function message_library_set_up_menu_links() {
+  $resource_link = message_library_get_menu_link_resources();
+
+  if (!empty($resource_link)) {
+    // Create a link that points to the node 'Communication Tools'
+    $node = message_library_ensure_communication_tools_page();
+
+    if (!empty($node)) {
+      $link_title = 'Communication Tools';
+      $link_path = 'resources/communication-tools';
+      // Rinse
+      $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
+      foreach ($result as $link) {
+        _menu_delete_item($link);
+      }
+      // Repeat
+      $com_tools_link = array(
+        'link_path' => $link_path,
+        'link_title' => $link_title,
+        'menu_name' => 'main-menu',
+        'plid' => $resource_link['mlid'],
+      );
+      menu_link_save($com_tools_link);
+
+      // Create a menu link 'Message Library' under 'Communication Tools'
+      $link_title = 'Message Library';
+      $link_path = 'message-library';
+      // Rinse
+      $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
+      foreach ($result as $link) {
+        _menu_delete_item($link);
+      }
+      // Repeat
+      $ml_link = array(
+        'link_path' => $link_path,
+        'link_title' => $link_title,
+        'menu_name' => 'main-menu',
+        'plid' => $com_tools_link['mlid'],
+      );
+      menu_link_save($ml_link);
+    }
+    else {
+      watchdog('message_library', "Can\'t create menu links for Comminication Tools, the page for it doesn\'t exist.", WATCHDOG_WARNING);
+    }
+  }
+  else {
+    watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link Resources is not found.", WATCHDOG_WARNING);
+  }
+}
+
+/**
+ * Prepopulating some necessary terms under 'Themes'
+ */
+function message_library_prepopulate_themes_terms() {
+  // Prepopulate a new term 'Localized messaging material' under vocabulary
+  // 'Themes'
+  // @see: http://atrium.wiredcraft.com/internews/node/4749#comment-6593
+  $vocab_themes = taxonomy_vocabulary_machine_name_load('themes');
+  if (!empty($vocab_themes->vid)) {
+
+    $term_name = 'Localized messaging material';
+    $result = db_select('taxonomy_term_data', 'td')
+      ->fields('td', array('tid', 'name'))
+      ->condition('name', $term_name)
+      ->condition('vid', $vocab_themes->vid)
+      ->execute()
+      ->fetchObject();
+
+    if (empty($result)) {
+      // New term - 'Communication material'
+      $term = new stdClass();
+      $term->name = $term_name;
+      $term->vid = $vocab_themes->vid;
+      taxonomy_term_save($term);
+    }
+  }
+}
+
+/**
+ * Helper function - Ensure a node for menu link 'Communication Tool' exist
+ *
+ * @return The object of the node created or found in the system.
+ */
+function message_library_ensure_communication_tools_page() {
+  // First check whether the noe(page) 'Communication Tools' already exists,
+  // create a new one if not existed; reuse if existed already.
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('title', 'Communication Tools')
+    ->propertyCondition('type', 'page')
+    ->execute();
+
+  $node_existed = !empty($result['node']);
+  if (!empty($result['node'])) {
+    node_delete_multiple(array_keys($result['node']));
+  }
+
+  //if (!$node_existed) {
+  if (TRUE) {
+    $node = new stdClass();
+    $node->uid = 1;
+    $node->status = 1;
+    $node->title = 'Communication Tools';
+    $node->type = 'page';
+    $node->language = 'und';
+    $node->body['und'][0]['value'] = '<p><strong>Message Library</strong></p><p>Welcome to the message library. This is an online searchable database of messages that acts as a reference for those wanting to disseminate critical information to affected populations in an emergency.It has been developed in collaboration with a number of different clusters/sectors in humanitarian response including Health, Water, Sanitation and Hygiene (WASH), Nutrition, Food Security, Protection (Child Protection, Gender-based Violence, Mine Risk Education), Education and Camp Coordination Camp Management. The message library can be used both as a disaster preparedness tool and following the outbreak of an emergency. If used in the correct way, the library should help improve communication with crisis-affected populations.&nbsp;</p><p><a href="./message-library">Click here </a>to access the message library and associated guidance.</p>';
+    $node->body['und'][0]['format'] = 'filtered_html';
+    $node->path = array(
+      'alias' => 'resources/communication-tools',
+      // Disable pathauto for this page
+      'pathauto' => '',
+    );
+    node_save($node);
+  }
+  else {
+    // Get the node nid
+    $nid = reset($result['node'])->nid;
+    $node = node_load($nid);
+
+    // Check if the path alias is properly set, set it if missing
+    $path = path_load(array(
+      'alias' => 'resources/communication-tools',
+      'source' => 'node/' . $node->nid,
+    ));
+    if (empty($path)) {
+      $path = array(
+        'source' => 'node/' . $node->nid,
+        'alias' => 'resources/communication-tools',
+      );
+      path_save($path);
+    }
+  }
+
+  return !empty($node->nid) ? $node : NULL;
+}
+
+/**
+ * Get the menu link - 'Resources'
+ */
+function message_library_get_menu_link_resources() {
+  $main_menu_links = menu_load_links('main-menu');
+  $resource_link = array();
+  foreach ($main_menu_links as $link) {
+    if ($link['link_title'] == 'Resources') {
+      $resource_link = $link;
+      break;
+    }
+  }
+
+  return $resource_link;
 }

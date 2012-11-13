@@ -1,115 +1,57 @@
 <?php
 
 /**
- * Implements hook_install()
+ * Implements hook_enable()
+ *
+ * Perform necessary actions after the module is enabled
  */
-function message_library_install() {
-  // Get all the menu links in 'Main menu' and find 'Resources'
-  $main_menu_links = menu_load_links('main-menu');
-  $resource_link = array();
-  foreach ($main_menu_links as $link) {
-    if ($link['link_title'] == 'Resources') {
-      $resource_link = $link;
-      break;
-    }
-  }
+function message_library_enable() {
 
-  // Create a link that points to the node 'Communication Tools'
-  if (!empty($resource_link)) {
-    // First check whether the page 'Communication Tools' already exists, create
-    //  a new one if not existed; reuse if existed already.
-    $query = new EntityFieldQuery();
-    $result = $query
-      ->entityCondition('entity_type', 'node')
-      ->propertyCondition('title', 'Communication Tools')
-      ->propertyCondition('type', 'page')
-      ->execute();
+}
 
-    $node_existed = !empty($result['node']);
+/**
+ * Implements hook_uninstall()
+ */
+function message_library_uninstall() {
 
-    if (!$node_existed) {
-      $node = new stdClass();
-      $node->uid = 1;
-      $node->status = 1;
-      $node->title = 'Communication Tools';
-      $node->type = 'page';
-      $node->language = 'und';
-      $node->body['und'][0]['value'] = '<p><strong>Message Library</strong></p><p>Welcome to the message library. This is an online searchable database of messages that acts as a reference for those wanting to disseminate critical information to affected populations in an emergency.It has been developed in collaboration with a number of different clusters/sectors in humanitarian response including Health, Water, Sanitation and Hygiene (WASH), Nutrition, Food Security, Protection (Child Protection, Gender-based Violence, Mine Risk Education), Education and Camp Coordination Camp Management. The message library can be used both as a disaster preparedness tool and following the outbreak of an emergency. If used in the correct way, the library should help improve communication with crisis-affected populations.&nbsp;</p><p><a href="./message-library">Click here </a>to access the message library and associated guidance.</p>';
-      $node->body['und'][0]['format'] = 'filtered_html';
+}
 
-      node_save($node);
-    }
-    else {
-      // Get the node nid
-      $nid = reset($result['node'])->nid;
-      $node = node_load($nid);
-    }
+/**
+ * Implements hook_requirements()
+ */
+function message_library_requirements($phase) {
+  $requirements = array();
+  // Ensure translations don't break during installation.
+  $t = get_t();
 
-    // Set a path alias
-    $path = array(
-      'source' => 'node/' . $node->nid,
-      'alias' => 'resources/communication-tools',
-    );
-    path_save($path);
+  if ($phase == 'runtime') {
+    // Check if the 'Message Library' menu link is created under the
+    // menu link 'Commnication Tools'
 
-    // Now, we are confident the content exist, create a menu link for
-    // 'Communication Tools'
+    // Menu link - Commnication Tools
     $link_title = 'Communication Tools';
     $link_path = 'resources/communication-tools';
-    // Prevent duplocate creation
-    $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
-    foreach ($result as $link) {
-      _menu_delete_item($link);
-    }
+    $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title))->fetchAll();
+    $communication_tools_link = reset($result);
 
-    $com_tools_link = array(
-      'link_path' => $link_path,
-      'link_title' => $link_title,
-      'menu_name' => 'main-menu',
-      'plid' => $resource_link['mlid'],
-    );
-
-    menu_link_save($com_tools_link);
-
-    // Create a menu link 'Message Library' under 'Communication Tools'
-    $link_title = 'Message Library';
+    // Menu link - Message Library
     $link_path = 'message-library';
-    // Prevent duplocate creation
-    $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title));
-    foreach ($result as $link) {
-      _menu_delete_item($link);
+    $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path", array(':link_path' => $link_path))->fetchAll();
+    $message_library_link = reset($result);
+
+    $error_msg = '';
+
+    if (empty($message_library_link)) {
+      $error_msg .= $t('The menu link for Message Library is not set properly.');
     }
 
-    $ml_link = array(
-      'link_path' => $link_path,
-      'link_title' => $link_title,
-      'menu_name' => 'main-menu',
-      'plid' => $com_tools_link['mlid'],
-    );
-
-    menu_link_save($ml_link);
-  }
-
-
-  // Prepopulate a new term 'Communication material' under vocabulary 'Themes'
-  $vocab_themes = taxonomy_vocabulary_machine_name_load('themes');
-  if (!empty($vocab_themes->vid)) {
-
-    $term_name = 'Localized messaging material';
-    $result = db_select('taxonomy_term_data', 'td')
-    ->fields('td', array('tid', 'name'))
-    ->condition('name', $term_name)
-    ->condition('vid', $vocab_themes->vid)
-    ->execute()
-    ->fetchObject();
-
-    if (empty($result)) {
-      // New term - 'Communication material'
-      $term = new stdClass();
-      $term->name = $term_name;
-      $term->vid = $vocab_themes->vid;
-      taxonomy_term_save($term);
+    if (!empty($error_msg)) {
+      $requirements['message_library']['title'] = $t('Message Library');
+      $requirements['message_library']['value'] = 'Menu links are not set properly';
+      $requirements['message_library']['description'] = $error_msg;
+      $requirements['message_library']['severity'] = REQUIREMENT_WARNING;
     }
   }
 
+  return $requirements;
 }

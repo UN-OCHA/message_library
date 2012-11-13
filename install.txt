@@ -1,12 +1,19 @@
-Setting up for development
---------------------------
+Setting up for development(based on Humanitarianresponse Platform 7.x-1.8)
+--------------------------------------------------------------------------
 
-- Install the site
-    scp ~/humanitarianresponse-7.x-1.7.tar.gz wiredcraft@chat.dev.wiredcraft.com:/var/www/in.dev.wiredcraft.com
-    shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanintarian_response --site-name="Humanitarian Response" --account-pass=admin -y
+- Download and install Humantarianresponse platform, using the 'Emergency Site'
+  installation profile.
+    - The relevant components can be found at: [Humanitarian Response Features](http://features.humanitarianresponse.info/)
+    - The distribution can be found at [here](http://features.humanitarianresponse.info/distribution/humanitarianresponse_platform)
+
+    Example commands:
+
+    ```
+    shell> drush si emergency_site --db-url=mysql://root:root@localhost/humanitarian_response --site-name="Humanitarian Response" --account-pass=admin -y
     shell> drush si emergency_site --db-url=mysql://internews:XvMnw2#a@127.0.0.1/in_dev_wiredcraft_com --site-name="Humanitarian Response" --account-pass=admin -y
+    ```
 
-- Download message library related modules
+- Download and enable Message Library related modules
 
     shell> cd sites/all/modules/
     shell> git clone git@github.com:Wiredcraft/message_library.git message_library
@@ -18,14 +25,12 @@ Setting up for development
 
 - Download or enable other helping modules
 
-    shell> drush en diff -y
-    shell> drush dl devel --dev; drush en devel_generate -y
+    shell> drush dl devel --dev -y
+    shell> drush en diff,devel_generate -y
 
 - Enable relevant modules and features
 
-    shell> drush en message_library
-    shell> drush fr message_library -y
-    shell> drush cc all
+    shell> drush en message_library -y; drush fr message_library -y; drush cc all
 
 - Prepare the taxonomies and content
     - Setting up the migration databse

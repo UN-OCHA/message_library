@@ -35,6 +35,7 @@ function message_library_notices_theme($existing, $type, $theme, $path) {
 function message_library_notices_forms($form_id, $args) {
   $nids = message_library_get_all_very_sensitive_messages();
   $base_form = 'message_library_notices_question_form';
+  $forms = array();
   if (!empty($nids)) {
     foreach ($nids as $nid) {
       $forms[$base_form . '_' . $nid]['callback'] = $base_form;
