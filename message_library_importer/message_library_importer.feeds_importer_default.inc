@@ -23,6 +23,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -117,21 +118,6 @@ function message_library_importer_feeds_importer_default() {
           15 => array(
             'source' => 'Websites',
             'target' => 'field_message_url:url',
-            'unique' => FALSE,
-          ),
-          16 => array(
-            'source' => 'Threat Hazard',
-            'target' => 'field_threat_hazard',
-            'unique' => FALSE,
-          ),
-          17 => array(
-            'source' => 'Threat Issue',
-            'target' => 'field_threat_category',
-            'unique' => FALSE,
-          ),
-          18 => array(
-            'source' => 'Threat Sector',
-            'target' => 'field_threat_sector',
             'unique' => FALSE,
           ),
         ),
@@ -238,7 +224,28 @@ function message_library_importer_feeds_importer_default() {
       'plugin_key' => 'FeedsTermProcessor',
       'config' => array(
         'vocabulary' => 'hazard',
-        'mappings' => array(),
+        'mappings' => array(
+          0 => array(
+            'source' => 'Term ID',
+            'target' => 'guid',
+            'unique' => 1,
+          ),
+          1 => array(
+            'source' => 'Term Name',
+            'target' => 'name',
+            'unique' => FALSE,
+          ),
+          2 => array(
+            'source' => 'Term description',
+            'target' => 'description',
+            'unique' => FALSE,
+          ),
+          3 => array(
+            'source' => 'Parent Term Name',
+            'target' => 'parent',
+            'unique' => FALSE,
+          ),
+        ),
         'update_existing' => '2',
         'input_format' => 'plain_text',
         'skip_hash_check' => 0,
@@ -266,6 +273,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -279,7 +287,28 @@ function message_library_importer_feeds_importer_default() {
       'plugin_key' => 'FeedsTermProcessor',
       'config' => array(
         'vocabulary' => 'information_type',
-        'mappings' => array(),
+        'mappings' => array(
+          0 => array(
+            'source' => 'Term ID',
+            'target' => 'guid',
+            'unique' => 1,
+          ),
+          1 => array(
+            'source' => 'Term Name',
+            'target' => 'name',
+            'unique' => FALSE,
+          ),
+          2 => array(
+            'source' => 'Term description',
+            'target' => 'description',
+            'unique' => FALSE,
+          ),
+          3 => array(
+            'source' => 'Parent Term Name',
+            'target' => 'parent',
+            'unique' => FALSE,
+          ),
+        ),
         'update_existing' => '2',
         'input_format' => 'plain_text',
         'skip_hash_check' => 0,
@@ -307,6 +336,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -320,7 +350,28 @@ function message_library_importer_feeds_importer_default() {
       'plugin_key' => 'FeedsTermProcessor',
       'config' => array(
         'vocabulary' => 'issues',
-        'mappings' => array(),
+        'mappings' => array(
+          0 => array(
+            'source' => 'Term ID',
+            'target' => 'guid',
+            'unique' => FALSE,
+          ),
+          1 => array(
+            'source' => 'Term Name',
+            'target' => 'name',
+            'unique' => FALSE,
+          ),
+          2 => array(
+            'source' => 'Term description',
+            'target' => 'description',
+            'unique' => FALSE,
+          ),
+          3 => array(
+            'source' => 'Parent Term Name',
+            'target' => 'parent',
+            'unique' => FALSE,
+          ),
+        ),
         'update_existing' => '2',
         'input_format' => 'plain_text',
         'skip_hash_check' => 0,
@@ -472,6 +523,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -485,7 +537,33 @@ function message_library_importer_feeds_importer_default() {
       'plugin_key' => 'FeedsTermProcessor',
       'config' => array(
         'vocabulary' => 'threat',
-        'mappings' => array(),
+        'mappings' => array(
+          0 => array(
+            'source' => 'Threat Nid',
+            'target' => 'guid',
+            'unique' => 1,
+          ),
+          1 => array(
+            'source' => 'Title',
+            'target' => 'name',
+            'unique' => FALSE,
+          ),
+          2 => array(
+            'source' => 'Threat Hazard',
+            'target' => 'field_threat_hazard',
+            'unique' => FALSE,
+          ),
+          3 => array(
+            'source' => 'Threat Issue',
+            'target' => 'field_threat_category',
+            'unique' => FALSE,
+          ),
+          4 => array(
+            'source' => 'Threat Sector',
+            'target' => 'field_threat_sector',
+            'unique' => FALSE,
+          ),
+        ),
         'update_existing' => '2',
         'input_format' => 'plain_text',
         'skip_hash_check' => 0,
