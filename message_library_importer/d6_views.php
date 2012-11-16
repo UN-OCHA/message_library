@@ -1,3 +1,9 @@
+<?php
+
+/**
+ * message_library_node_export
+ */
+
 $view = new view;
 $view->name = 'message_library_node_export';
 $view->description = 'A hub for other message library instances to synchronize data. ';
@@ -770,7 +776,7 @@ $handler->override_option('style_options', array(
   ),
   'default' => '-1',
 ));
-$handler = $view->new_display('feed', 'Message(CSV)', 'message_csv');
+$handler = $view->new_display('feed', 'Message', 'message_csv');
 $handler->override_option('style_plugin', 'views_csv');
 $handler->override_option('style_options', array(
   'mission_description' => FALSE,
@@ -802,7 +808,7 @@ $handler->override_option('tab_options', array(
 ));
 $handler->override_option('displays', array());
 $handler->override_option('sitename_title', FALSE);
-$handler = $view->new_display('feed', 'Threat(CSV)', 'threat_csv');
+$handler = $view->new_display('feed', 'Threat', 'threat_csv');
 $handler->override_option('relationships', array());
 $handler->override_option('fields', array(
   'nid' => array(
@@ -1060,3 +1066,661 @@ $handler->override_option('tab_options', array(
 ));
 $handler->override_option('displays', array());
 $handler->override_option('sitename_title', FALSE);
+
+/**
+ * message_library_term_export
+ */
+$view = new view;
+$view->name = 'message_library_term_export';
+$view->description = '';
+$view->tag = '';
+$view->base_table = 'term_data';
+$view->core = 6;
+$view->api_version = '2';
+$view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+$handler = $view->new_display('default', 'Defaults', 'default');
+$handler->override_option('relationships', array(
+  'parent' => array(
+    'label' => 'Parent',
+    'required' => 0,
+    'id' => 'parent',
+    'table' => 'term_hierarchy',
+    'field' => 'parent',
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('fields', array(
+  'tid' => array(
+    'label' => 'Term ID',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'set_precision' => FALSE,
+    'precision' => 0,
+    'decimal' => '.',
+    'separator' => '',
+    'format_plural' => 0,
+    'format_plural_singular' => '1',
+    'format_plural_plural' => '@count',
+    'prefix' => '',
+    'suffix' => '',
+    'exclude' => 0,
+    'id' => 'tid',
+    'table' => 'term_data',
+    'field' => 'tid',
+    'relationship' => 'none',
+  ),
+  'name' => array(
+    'label' => 'Term Name',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'link_to_taxonomy' => 0,
+    'exclude' => 0,
+    'id' => 'name',
+    'table' => 'term_data',
+    'field' => 'name',
+    'relationship' => 'none',
+  ),
+  'description' => array(
+    'label' => 'Term description',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'exclude' => 0,
+    'id' => 'description',
+    'table' => 'term_data',
+    'field' => 'description',
+    'relationship' => 'none',
+  ),
+  'name_1' => array(
+    'label' => 'Parent Term Name',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'link_to_taxonomy' => 0,
+    'exclude' => 0,
+    'id' => 'name_1',
+    'table' => 'term_data',
+    'field' => 'name',
+    'relationship' => 'parent',
+  ),
+  'tid_1' => array(
+    'label' => 'Parent Term ID',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'set_precision' => FALSE,
+    'precision' => 0,
+    'decimal' => '.',
+    'separator' => '',
+    'format_plural' => 0,
+    'format_plural_singular' => '1',
+    'format_plural_plural' => '@count',
+    'prefix' => '',
+    'suffix' => '',
+    'exclude' => 0,
+    'id' => 'tid_1',
+    'table' => 'term_data',
+    'field' => 'tid',
+    'relationship' => 'parent',
+  ),
+  'weight' => array(
+    'label' => 'Weight',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'exclude' => 0,
+    'id' => 'weight',
+    'table' => 'term_data',
+    'field' => 'weight',
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('filters', array(
+  'vid' => array(
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+  ),
+));
+$handler->override_option('access', array(
+  'type' => 'none',
+));
+$handler->override_option('cache', array(
+  'type' => 'none',
+));
+$handler->override_option('items_per_page', 0);
+$handler->override_option('style_plugin', 'table');
+$handler->override_option('style_options', array(
+  'grouping' => '',
+  'override' => 1,
+  'sticky' => 0,
+  'order' => 'asc',
+  'summary' => '',
+  'columns' => array(
+    'tid' => 'tid',
+    'name' => 'name',
+    'description' => 'description',
+    'name_1' => 'name_1',
+    'tid_1' => 'tid_1',
+  ),
+  'info' => array(
+    'tid' => array(
+      'separator' => '',
+    ),
+    'name' => array(
+      'sortable' => 0,
+      'separator' => '',
+    ),
+    'description' => array(
+      'separator' => '',
+    ),
+    'name_1' => array(
+      'sortable' => 0,
+      'separator' => '',
+    ),
+    'tid_1' => array(
+      'separator' => '',
+    ),
+  ),
+  'default' => '-1',
+));
+$handler = $view->new_display('feed', 'At Risk Group', 'feed_1');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      2 => '2',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/at-risk-group');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Target Audience', 'feed_2');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      1 => '1',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/target-audience');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Hazard', 'feed_3');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      11 => '11',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/hazard');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Information Type', 'feed_4');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      14 => '14',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/information-type');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Issues', 'feed_5');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      12 => '12',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/issues');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Sector', 'feed_6');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      3 => '3',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/sector');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+$handler = $view->new_display('feed', 'Target Audience', 'feed_7');
+$handler->override_option('filters', array(
+  'vid' => array(
+    'operator' => 'in',
+    'value' => array(
+      1 => '1',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'vid',
+    'table' => 'term_data',
+    'field' => 'vid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('style_plugin', 'views_csv');
+$handler->override_option('style_options', array(
+  'mission_description' => FALSE,
+  'description' => '',
+  'attach_text' => 'CSV',
+  'provide_file' => 0,
+  'filename' => 'view-%view.csv',
+  'parent_sort' => 0,
+  'seperator' => ',',
+  'quote' => 1,
+  'trim' => 0,
+  'header' => 1,
+));
+$handler->override_option('row_plugin', '');
+$handler->override_option('path', 'message-library-export/target-audience');
+$handler->override_option('menu', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+$handler->override_option('displays', array());
+$handler->override_option('sitename_title', FALSE);
+
