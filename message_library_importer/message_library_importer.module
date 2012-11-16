@@ -37,9 +37,19 @@ function message_library_importer_feeds_processor_targets_alter(&$targets, $enti
  * Invoked after a feed source has been parsed, before it will be processed.
  */
 function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
-  // The order matters, it will decide whether the parent/child relationship
-  // will be properly set up.
-  if($source->id == 'message_library_term_issues' && !empty($result->items)) {
+  // The order of the terms to be processed matters, it will decide whether
+  // the parent/child relationship will be properly set up. We do some custom
+  // processing here to put the term with the highest hierarchy to the top of
+  // list, the the lowest to the bottom.
+  $checklist = array(
+    'message_library_term_at_risk_group',
+    'message_library_term_hazard',
+    'message_library_term_information_type',
+    'message_library_term_issues',
+    'message_library_term_sector',
+    'message_library_term_target_audience',
+  );
+  if(in_array($source->id, $checklist) && !empty($result->items)) {
     $term_tree = message_library_importer_parsed_term_items_build_tree($result->items, 0);
     $sorted_tids = (message_library_importer_parsed_term_items_extract_tids($term_tree));
 

@@ -149,6 +149,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -179,8 +180,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term Name',
-            'target' => 'parent',
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -211,6 +212,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -241,8 +243,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term Name',
-            'target' => 'parent',
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -304,8 +306,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term Name',
-            'target' => 'parent',
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -354,7 +356,7 @@ function message_library_importer_feeds_importer_default() {
           0 => array(
             'source' => 'Term ID',
             'target' => 'guid',
-            'unique' => FALSE,
+            'unique' => 1,
           ),
           1 => array(
             'source' => 'Term Name',
@@ -367,8 +369,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term Name',
-            'target' => 'parent',
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -399,6 +401,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -429,8 +432,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term Name',
-            'target' => 'parent',
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -461,6 +464,7 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
+        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -493,6 +497,11 @@ function message_library_importer_feeds_importer_default() {
           3 => array(
             'source' => 'Weight',
             'target' => 'weight',
+            'unique' => FALSE,
+          ),
+          4 => array(
+            'source' => 'Parent Term ID',
+            'target' => 'parentguid',
             'unique' => FALSE,
           ),
         ),
@@ -564,9 +573,9 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
         ),
-        'update_existing' => '2',
+        'update_existing' => '1',
         'input_format' => 'plain_text',
-        'skip_hash_check' => 0,
+        'skip_hash_check' => 1,
       ),
     ),
     'content_type' => '',
