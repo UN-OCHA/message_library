@@ -74,7 +74,7 @@ function message_library_views_default_views() {
       'empty_column' => 0,
     ),
     'field_message_threat' => array(
-      'sortable' => 1,
+      'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
@@ -324,16 +324,18 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat_1']['operator'] = 'not empty';
   $handler->display->display_options['filters']['field_message_threat_1']['value'] = array();
   $handler->display->display_options['filters']['field_message_threat_1']['group'] = 1;
+  /* Filter criterion: Indexed Node: Content type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'message' => 'message',
+  );
 
   /* Display: Search Page */
   $handler = $view->new_display('page', 'Search Page', 'search_page');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['path'] = 'message-library';
-
-  /* Display: Edit Page */
-  $handler = $view->new_display('page', 'Edit Page', 'edit_page');
-  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
-  $handler->display->display_options['path'] = 'edit-message-library';
 
   /* Display: Feed */
   $handler = $view->new_display('page', 'Feed', 'feed');
@@ -371,7 +373,6 @@ function message_library_views_default_views() {
     t('Quick Search'),
     t('Issues'),
     t('Search Page'),
-    t('Edit Page'),
     t('Feed'),
   );
   $export['message_library'] = $view;
