@@ -54,6 +54,10 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
     // Threat -> Issues
     // Threat -> Sector
   }
+
+  if ($source->id == 'message_library_node_message') {
+    array_walk($result->items, 'message_library_import_map_sensitivity_value');
+  }
 }
 
 /**
@@ -61,7 +65,6 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
  * This hook is invoked before a feed item is saved.
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
-
 }
 
 /**
@@ -101,4 +104,20 @@ function message_library_importer_parsed_term_items_extract_tids($children) {
 
 function message_library_importer_map_term_names_to_ids(&$item, $index) {
   $item = $item;
+}
+
+function message_library_import_map_sensitivity_value(&$value, $index) {
+  $mapping = array(
+    'Not sensitive' => 0,
+    'Sensitive' => 1,
+    'Very sensitive' => 2,
+  );
+
+  if (!empty($value['sensitivity'])) {
+    $old_label = $value['sensitivity'];
+
+    if (array_key_exists($old_label, $mapping)) {
+      $value['sensitivity'] = $mapping[$old_label];
+    }
+  }
 }

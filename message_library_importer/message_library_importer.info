@@ -19,6 +19,7 @@ features[feeds_importer][] = message_library_term_issues
 features[feeds_importer][] = message_library_term_sector
 features[feeds_importer][] = message_library_term_target_audience
 features[feeds_importer][] = message_library_term_threat
+features[feeds_tamper][] = message_library_node_message-alert_questions-explode_quesitons
 features[feeds_tamper][] = message_library_node_message-at_risk_group-explode_arg_terms_by_comma
 features[feeds_tamper][] = message_library_node_message-information_type-explode_it_terms_by_comma
 features[feeds_tamper][] = message_library_node_message-target_audience-explode_ta_terms_by_comma
