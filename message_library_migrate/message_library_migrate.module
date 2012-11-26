@@ -1,6 +1,9 @@
 <?php
 /**
  * @file
+ *
+ * THIS MODULE IS NOT USEFUL ANYMORE, THE DATA MIGRATION IS NOW IN THE MODULE
+ * `message_library_importer` USING 'feeds' module
  */
 
 /**
