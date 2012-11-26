@@ -9,26 +9,7 @@ include_once 'message_library_importer.features.inc';
  * Implements hook_feeds_processor_targets_alter()
  */
 function message_library_importer_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
-  return;
-  if ($entity_type == 'node' && $bundle_name == 'message') {
-    foreach(field_info_instances($entity_type, $bundle_name) as $name => $instance) {
-
-      // Attach then fields on the threat term
-      $info = field_info_field($name);
-      $threat_info = field_info_instances('taxonomy_term', 'threat');
-
-      foreach ($threat_info as $name => $instance) {
-        $info = field_info_field($name);
-        if ($info['type'] == 'taxonomy_term_reference') {
-          $targets[$name] = array(
-            'name' => 'Threat » ' . check_plain($instance['label']),
-            'callback' => 'taxonomy_feeds_set_target',
-            'description' => t('The @label field of the node.', array('@label' => $instance['label'])),
-          );
-        }
-      }
-    }
-  }
+  // dpm(func_get_args());
 }
 
 /**
@@ -37,6 +18,8 @@ function message_library_importer_feeds_processor_targets_alter(&$targets, $enti
  * Invoked after a feed source has been parsed, before it will be processed.
  */
 function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
+  if (empty($result->items)) return;
+
   // The order of the terms to be processed matters, it will decide whether
   // the parent/child relationship will be properly set up. We do some custom
   // processing here to put the term with the highest hierarchy to the top of
@@ -49,7 +32,8 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
     'message_library_term_sector',
     'message_library_term_target_audience',
   );
-  if(in_array($source->id, $checklist) && !empty($result->items)) {
+
+  if (in_array($source->id, $checklist)) {
     $term_tree = message_library_importer_parsed_term_items_build_tree($result->items, 0);
     $sorted_tids = (message_library_importer_parsed_term_items_extract_tids($term_tree));
 
@@ -64,105 +48,24 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
 
     $result->items = $sorted_terms;
   }
+
+  if ($source->id == 'message_library_term_threat') {
+    // Threat -> Hazard
+    // Threat -> Issues
+    // Threat -> Sector
+  }
 }
 
 /**
  * Implemements hook_feeds_presave()
+ * This hook is invoked before a feed item is saved.
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
-}
 
-function message_library_importer_feeds_set_target_file($source, $entity, $target, $value) {
-  return;
-  if (empty($value)) {
-    return;
-  }
-  module_load_include('inc', 'file');
-
-  // Make sure $value is an array of objects of type FeedsEnclosure.
-  if (!is_array($value)) {
-    $all = explode('|', $value);
-    $value = explode(';', $all[0]);
-    if (isset($all[1])) {
-      $titles = explode(";", $all[1]);
-    }
-  }
-  foreach ($value as $k => $v) {
-    if (!($v instanceof FeedsEnclosure)) {
-      if (is_string($v)) {
-        $value[$k] = new FeedsEnclosure($v, 'application/octet-stream');
-      }
-      else {
-        unset($value[$k]);
-      }
-    }
-  }
-  if (empty($value)) {
-    return;
-  }
-
-  // Determine file destination.
-  // @todo This needs review and debugging.
-  list($entity_id, $vid, $bundle_name) = entity_extract_ids($entity->feeds_item->entity_type, $entity);
-  $instance_info = field_info_instance($entity->feeds_item->entity_type, $target, $bundle_name);
-  $info = field_info_field($target);
-  $data = array();
-  if (!empty($entity->uid)) {
-    $data[$entity->feeds_item->entity_type] = $entity;
-  }
-  $destination = file_field_widget_uri($info, $instance_info, $data);
-
-  // Populate entity.
-  $i = 0;
-  $field = isset($entity->$target) ? $entity->$target : array();
-  foreach ($value as $v) {
-    if ($file = $v->getFile($destination)) {
-      $field['und'][$i] = (array)$file;
-      if (isset($titles[$i]) && $titles[$i] != '') {
-        $field['und'][$i]['description'] = $titles[$i];
-      }
-      $field['und'][$i]['display'] = 1; // @todo: Figure out how to properly populate this field.
-      if ($info['cardinality'] == 1) {
-        break;
-      }
-      $i++;
-    }
-  }
-  $entity->{$target} = $field;
-}
-
-function message_library_importer_feeds_set_target_link_url($source, $entity, $target, $value) {
-  list($key, $subkey) = explode(':', $target, 2);
-
-  // hack a bit...
-  $instance_info = field_info_instance('node', $key, 'message');
-  $info = field_info_field($key);
-
-  // let's go
-  if (!empty($value)) {
-    $all = explode('|', $value);
-    $value = explode(';', $all[0]);
-    if (isset($all[1])) {
-      $titles = explode(";", $all[1]);
-    }
-  }
-
-  $i = 0;
-  $field = isset($entity->{$key}) ? $entity->{$key} : array();
-  foreach ($value as $v) {
-    $field['und'][$i]['url'] = $v;
-    if (isset($titles[$i]) && $titles[$i] != '') {
-      $field['und'][$i]['title'] = $titles[$i];
-    }
-    $field['und'][$i]['attributes'] = array();
-    $i++;
-  }
-
-  $entity->{$key} = $field;
 }
 
 /**
- * Callback for group the parsed terms by hierarchy
+ * Callback for grouping the parsed terms by hierarchy
  */
 function message_library_importer_parsed_term_items_build_tree($items, $parent) {
   $result = array();
@@ -193,4 +96,9 @@ function message_library_importer_parsed_term_items_extract_tids($children) {
     }
   }
   return $result;
+}
+
+
+function message_library_importer_map_term_names_to_ids(&$item, $index) {
+  $item = $item;
 }
