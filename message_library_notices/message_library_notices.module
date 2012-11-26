@@ -69,12 +69,19 @@ function message_library_notices_preprocess_node(&$vars) {
 
       // Very sensitive message also may have questions
       if ($sensitivity == 2) {
-        $output .= theme('message_library_notices_sensitivity_questions', array('node' => $vars['node']));
+        // If the user has previous confirmed all the alert questions, don't
+        // show it again
+        if (!message_library_notices_get_warning($vars['nid'])) {
+          $output .= theme('message_library_notices_sensitivity_questions', array('node' => $vars['node']));
+        }
+        else {
+          $output = '';
+        }
 
-        // The sensitive message can only be shown to the user if he/she has
-        // confirmed all the questions listed.
+        // The message content can only be shown to the user if he/she has
+        // confirmed all the alert questions listed.
         global $user;
-        $vars['hide_very_sensitive_message'] = !message_library_notices_get_warning($vars['nid']);
+        $vars['hide_message_content'] = !message_library_notices_get_warning($vars['nid']);
       }
 
       if (!empty($output)) {
