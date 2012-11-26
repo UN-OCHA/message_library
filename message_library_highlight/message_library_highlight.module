@@ -149,6 +149,7 @@ function message_library_highlight_views_pre_execute(&$view) {
       foreach($entities as $entity) {
         // Get the tid of the threat to which the current message belongs
         $items = field_get_items('node', $entity, 'field_message_threat');
+        if (empty($items)) continue;
 
         foreach ($items as $item) {
           // Check whether the threat term is valid and get some detail info
