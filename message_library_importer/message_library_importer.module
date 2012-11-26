@@ -56,7 +56,7 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
   }
 
   if ($source->id == 'message_library_node_message') {
-    array_walk($result->items, 'message_library_import_map_sensitivity_value');
+    array_walk($result->items, 'message_library_import_map_message_node_field');
   }
 }
 
@@ -106,7 +106,11 @@ function message_library_importer_map_term_names_to_ids(&$item, $index) {
   $item = $item;
 }
 
-function message_library_import_map_sensitivity_value(&$value, $index) {
+/**
+ * Callback for mapping fields
+ */
+function message_library_import_map_message_node_field(&$value, $index) {
+  // Sensitivity field
   $mapping = array(
     'Not sensitive' => 0,
     'Sensitive' => 1,
@@ -118,6 +122,21 @@ function message_library_import_map_sensitivity_value(&$value, $index) {
 
     if (array_key_exists($old_label, $mapping)) {
       $value['sensitivity'] = $mapping[$old_label];
+    }
+
+    // 'Alert Questions' - The feeds tamper remove the quesition mark and
+    // add a empty option. Fix it here.
+    if ($value['sensitivity'] == 2 && !empty($value['alert questions'])) {
+      foreach ($value['alert questions'] as $key => $question) {
+        if (empty($question)) {
+          unset($value['alert questions'][$key]);
+        }
+        else {
+          if (substr_compare($question, '?', -1) != 0) {
+            $value['alert questions'][$key] .= '?';
+          }
+        }
+      }
     }
   }
 }
