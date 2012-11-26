@@ -783,9 +783,9 @@ function message_library_field_default_fields() {
       'module' => 'list',
       'settings' => array(
         'allowed_values' => array(
-          0 => 'Not sensitive',
-          1 => 'Sensitive',
-          2 => 'Very sensitive',
+          0 => 'No guidance required',
+          1 => 'Guidance required / Sensitive',
+          2 => 'Highly sensitive',
         ),
         'allowed_values_function' => '',
       ),
@@ -827,7 +827,7 @@ function message_library_field_default_fields() {
       ),
       'entity_type' => 'node',
       'field_name' => 'field_message_sensitivity',
-      'label' => 'Sensitivity',
+      'label' => 'Guidance',
       'required' => 1,
       'settings' => array(
         'user_register_form' => FALSE,
@@ -1661,9 +1661,9 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'options',
+        'module' => 'hs_taxonomy',
         'settings' => array(),
-        'type' => 'options_buttons',
+        'type' => 'taxonomy_hs',
         'weight' => '32',
       ),
     ),
@@ -1752,6 +1752,7 @@ function message_library_field_default_fields() {
   t('At risk group');
   t('At risk group comment');
   t('Examples of Communication around this issue');
+  t('Guidance');
   t('Hazard');
   t('Information Type');
   t('Issue');
@@ -1759,7 +1760,6 @@ function message_library_field_default_fields() {
   t('Message');
   t('Remote Media');
   t('Sector');
-  t('Sensitivity');
   t('Sensitivity Causes');
   t('Source');
   t('Target audience');
