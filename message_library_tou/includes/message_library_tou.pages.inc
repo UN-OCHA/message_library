@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Message Library TOU form
  */
@@ -33,15 +32,6 @@ function message_library_tou_cgi_form($form, &$form_state) {
     '#title' => t('I accept'),
   );
 
-  // Register button, so that never see cgi again
-  if (!user_is_logged_in()) {
-    $form['cgi_login'] = array(
-      '#type' => 'checkbox',
-      '#id' => 'iaa_notices_warning_cgi_login',
-      '#title' => t('I want to register'),
-    );
-  }
-
   // Submit button
   $form['submit'] = array(
     '#type' => 'submit',
@@ -54,7 +44,6 @@ function message_library_tou_cgi_form($form, &$form_state) {
   return $form;
 }
 
-
 /**
  * Validation handler for form '#message_library_tou_cgi_form'
  */
@@ -66,7 +55,6 @@ function message_library_tou_cgi_form_validate($form, &$form_state) {
   }
 }
 
-
 /**
  * Submit handler for form '#message_library_tou_cgi_form'
  */
@@ -74,15 +62,14 @@ function message_library_tou_cgi_form_submit($form, &$form_state) {
   $values = $form_state['values'];
 
   // For guest user who decide to login/register
-  if (!user_is_logged_in() && !empty($values['cgi_login'])) {
-    //$form_state['redirect'] = 'user/login';
-    $form_state['redirect'] = array('user/login',
-        array('query' => array(
-          'destination' => $values['cgi_destination'])
-        ));
-    // @todo: Display a login form in a modal window
-    return;
-  }
+  // if (!user_is_logged_in() && !empty($values['cgi_login'])) {
+  //   //$form_state['redirect'] = 'user/login';
+  //   $form_state['redirect'] = array('user/login',
+  //       array('query' => array(
+  //         'destination' => $values['cgi_destination'])
+  //       ));
+  //   return;
+  // }
 
   // For the guests who don't want to register, store in the session
   // For the authenticated user, store in the database, this TOU will only be
