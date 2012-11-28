@@ -17,7 +17,9 @@ function message_library_init() {
  */
 function message_library_flush_caches() {
   // Add an workaround here, so that the menu entry is set properly
-  message_library_check_menu_entries();
+  if (!message_library_check_menu_entries()) {
+    message_library_set_up_menu_links();
+  }
 }
 
 /**
