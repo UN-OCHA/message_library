@@ -219,14 +219,15 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['search_api_views_fulltext']['expose']['remember_roles'] = array(
     2 => '2',
     1 => '1',
-    6 => 0,
-    5 => 0,
-    4 => 0,
-    3 => 0,
+    218860149 => 0,
+    200153887 => 0,
+    52310416 => 0,
+    30037204 => 0,
   );
   $handler->display->display_options['filters']['search_api_views_fulltext']['fields'] = array(
     'title' => 'title',
     'field_message_group_mess' => 'field_message_group_mess',
+    'field_message_threat:field_threat_category:name' => 'field_message_threat:field_threat_category:name',
     'search_api_aggregation_1' => 'search_api_aggregation_1',
   );
   /* Filter criterion: Threat: Issue (indexed) */

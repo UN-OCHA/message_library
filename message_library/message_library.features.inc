@@ -117,11 +117,18 @@ function message_library_default_search_api_index() {
         "search_api_alter_add_aggregation" : {
           "status" : 1,
           "weight" : "0",
-          "settings" : { "fields" : { "search_api_aggregation_1" : {
+          "settings" : { "fields" : {
+              "search_api_aggregation_1" : {
                 "name" : "threat_title_fulltext",
                 "type" : "fulltext",
                 "fields" : [ "field_message_threat:name" ],
                 "description" : "A Fulltext aggregation of the following fields: Threat \\u00bb Name."
+              },
+              "search_api_aggregation_2" : {
+                "name" : "issue_title_fulltext",
+                "type" : "fulltext",
+                "fields" : [ "field_message_threat:field_threat_category:name" ],
+                "description" : "A Fulltext aggregation of the following fields: Threat \\u00bb Issue \\u00bb Name."
               }
             }
           }
