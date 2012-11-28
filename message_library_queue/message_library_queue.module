@@ -8,6 +8,13 @@
  */
 
 /**
+ * Implements hook_flush_caches()
+ */
+function message_library_queue_flush_caches() {
+  message_library_queue_reset_queue();
+}
+
+/**
  * Prepopulate the system with a basic queue:
  *
  * - A umbrella nodequeue - 'message_library_queue'
@@ -134,5 +141,12 @@ function message_library_queue_remove_subqueue_for_term($term) {
  * Implements hook_nodequeue_delete()
  */
 function message_library_queue_nodequeue_delete($name) {
-  $result = db_query("DELETE FROM {nodequeue_types} WHERE name = ':name'", array(':name' => $name));
+  // XXX: Don't know why the nodequeue_delete() doesn't clear the data
+  if ($name == 'message_library_threat') {
+    db_query("DELETE FROM {nodequeue_types} WHERE name = ':name'", array(':name' => $name));
+    db_query("DELETE FROM {nodequeue_subqueue} WHERE name = ':name'", array(':name' => $name));
+    db_query("DELETE FROM {nodequeue_nodes} WHERE name = ':name'", array(':name' => $name));
+    db_query("DELETE FROM {nodequeue_queue} WHERE name = ':name'", array(':name' => $name));
+    db_query("DELETE FROM {nodequeue_roles} WHERE name = ':name'", array(':name' => $name));
+  }
 }
