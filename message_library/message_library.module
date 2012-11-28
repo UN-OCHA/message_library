@@ -13,13 +13,18 @@ function message_library_init() {
 }
 
 /**
+ * Implements hook_flush_caches()
+ */
+function message_library_flush_caches() {
+  // Add an workaround here, so that the menu entry is set properly
+  message_library_check_menu_entries();
+}
+
+/**
  * Implements hook_modules_enabled()
  */
 function message_library_modules_enabled($modules) {
   if (in_array('message_library', $modules)) {
-    // features_revert(array('message_library' => array('views_view')));
-    // menu_router_build();
-    // drupal_flush_all_caches();
     message_library_prepopulate_themes_terms();
     message_library_set_up_menu_links();
   }
@@ -501,4 +506,31 @@ function message_library_get_menu_link_resources() {
   }
 
   return $resource_link;
+}
+
+/**
+ * A helper function to check whether the menu entries is set correctly
+ *
+ * @return TRUE if everything is working well, or FALSE if it's not
+ */
+function message_library_check_menu_entries() {
+  // Menu link - Commnication Tools
+  $link_title = 'Communication Tools';
+  $link_path = 'resources/communication-tools';
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path AND link_title = :link_title", array(':link_path' => $link_path, ':link_title' => $link_title))->fetchAll();
+  $communication_tools_link = reset($result);
+
+  // Menu link - Message Library
+  $link_path = 'message-library';
+  $result = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path", array(':link_path' => $link_path))->fetchAll();
+  $message_library_link = reset($result);
+
+  // Both menu entries should exist and the 'Message Library' menu link should
+  // be created under the menu link 'Commnication Tools'
+  if (!empty($communication_tools_link) && !empty($message_library_link) &&
+    $message_library_link->plid == $communication_tools_link->mlid) {
+    return TRUE;
+  }
+
+  return FALSE;
 }

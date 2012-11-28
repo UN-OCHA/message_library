@@ -41,8 +41,8 @@ function message_library_requirements($phase) {
 
     $error_msg = '';
 
-    if (empty($message_library_link)) {
-      $error_msg .= $t('The menu link for Message Library is not set properly.');
+    if (!message_library_check_menu_entries()) {
+      $error_msg .= $t('The menu link for Message Library is not set properly. Please flush the cache.');
     }
 
     if (!empty($error_msg)) {
