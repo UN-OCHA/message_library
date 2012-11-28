@@ -2,3 +2,133 @@ a.ml-views-facets {
   cursor: pointer;
 }
 
+#views-exposed-form-message-library-search-page fieldset .views-widget {
+  height: 45px;
+  width: 200px;
+  position: relative;
+}
+
+#views-exposed-form-message-library-search-page fieldset .views-widget .form-item.form-type-select {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#views-exposed-form-message-library-search-page fieldset .views-widget select {
+  width : 200px;
+}
+
+#views-exposed-form-message-library-search-page fieldset {
+  padding-bottom: 15px;
+}
+
+#views-exposed-form-message-library-search-page .fieldset-wrapper {
+  margin-left : 10px;
+}
+
+/* Styles for the instructions(help) */
+a#ml_help_all_toggle {
+  float: right;
+  padding: 0 40px;
+  background: url('./image/info.png') no-repeat right center;
+  color: #B91222;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: italic;
+}
+
+a#ml_help_general_toggle,
+a#ml_help_criteria_toggle,
+a#ml_help_quick_search_toggle {
+  background-image: url('./image/info.png');
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  font-color: #B91222;
+  color:  #B91222;
+  padding: 28px 0 0 0;
+  position: relative;
+  top: 7px;
+  left: 80px;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+}
+
+#ml-view-crt-criteria-title {
+  color: #B91222;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#boxes-box-ml_help_general,
+#boxes-box-ml_help_quick_search,
+#boxes-box-ml_help_criteria {
+  background-color: #FEFFEC;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+#boxes-box-ml_help_general p,
+#boxes-box-ml_help_quick_search p,
+#boxes-box-ml_help_criteria p {
+ margin-bottom: 0;
+}
+
+/* Styles for the whole Message Library */
+
+body.message-library h1.title {
+  background: #EEE;
+  color: #B91222;
+  line-height: 40px;
+  font-weight: bold;
+  padding: 0 5px;
+}
+
+h2#ml-view-quick-search-title {
+  color: #B91222;
+}
+
+#views-exposed-form-message-library-search-page a.fieldset-title {
+  color: #B91222;
+  font-weight: normal;
+}
+
+#views-exposed-form-message-library-search-page .ml-text-box {
+  float: left;
+}
+
+#views-exposed-form-message-library-search-page .ml-search-button {
+  float: left;
+}
+
+#views-exposed-form-message-library-search-page .views-reset-button {
+  float: left;
+}
+
+/* Simple search */
+#views-exposed-form-message-library-search-page .simple-search #edit-ml-search-text {
+
+}
+
+#views-exposed-form-message-library-search-page .simple-search input {
+  margin-top: 0;
+}
+
+#views-exposed-form-message-library-search-page .simple-search #edit-ml-search-text {
+  width: 420px;
+}
+
+#views-exposed-form-message-library-search-page .simple-search .ml-text-box {
+  margin-right: 15px;
+}
+
+#views-exposed-form-message-library-search-page .simple-search .views-submit-button,
+#views-exposed-form-message-library-search-page .simple-search .views-reset-button {
+  padding-top: 0;
+}
+
+/* Advanced search */
+
+
+

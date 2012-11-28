@@ -41,6 +41,8 @@
         <?php endif;?>
 
         <div class="clearfix"></div>
+
+        <div class="simple-search">
         <?php $text_widget = $widgets['filter-search_api_views_fulltext']; ?>
         <?php if (!empty($text_widget)): ?>
           <?php if (!empty($widget->label)): ?>
@@ -66,12 +68,13 @@
             <?php print $reset_button; ?>
           </div>
        <?php endif; ?>
+       </div>
     </div>
 
     <!-- Advanced search, collapsed by default -->
     <div class="clearfix"></div>
 
-    <fieldset class="collapsible <?php if (!empty($advanced_search_collapsed)) print 'collapsed'; ?> clearfix">
+    <fieldset class="collapsible advanced-search <?php if (!empty($advanced_search_collapsed)) print 'collapsed'; ?> clearfix">
       <legend>
         <span class="fieldset-legend"><?php print t('Advanced Search'); ?></span>
       </legend>

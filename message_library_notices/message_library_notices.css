@@ -1,13 +1,25 @@
 .sensitivity-warning {
   background: #DFFFD5;
   color : #BF1E2E;
-  padding: 10px;
+  padding: 10px 0 10px 60px;
+  margin: 5px;
 }
 
 .sensitivity-warning.sensitive {
   border: 1px solid #BF1E2E;
+  background: url('./image/warning.png') 16px 16px no-repeat #DFFFD5;
 }
 
 .sensitivity-warning.very-sensitive {
   border: 2px solid #BF1E2E;
+  background: url('./image/alert.png') 16px 16px no-repeat #DFFFD5;
 }
+
+.sensitivity-warning.very-sensitive input.form-submit {
+  color: #BF1E2E;
+}
+
+.sensitivity-warning.very-sensitive .sensitive-message {
+  font-weight: bold;
+}
+
