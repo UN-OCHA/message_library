@@ -35,6 +35,9 @@ function message_library_context_default_contexts() {
         ),
       ),
     ),
+    'theme_html' => array(
+      'class' => 'message-library',
+    ),
   );
   $context->condition_mode = 0;
 
