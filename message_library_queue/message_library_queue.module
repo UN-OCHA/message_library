@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ *
+ * The intention of the module is that it provides a place to possibly arrange
+ * the order of all the message nodes under a threat.
+ */
+
+/**
  * Prepopulate the system with a basic queue:
  *
  * - A umbrella nodequeue - 'message_library_queue'
