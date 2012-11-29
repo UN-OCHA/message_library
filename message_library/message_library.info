@@ -32,6 +32,7 @@ dependencies[] = search_api
 dependencies[] = search_api_autocomplete
 dependencies[] = strongarm
 dependencies[] = taxonomy
+dependencies[] = textformatter
 dependencies[] = views
 features[box][] = message_library_about
 features[conditional_fields][] = node:message

@@ -31,6 +31,9 @@ projects[nodequeue][download][revision] = 70c0602854643f3f488a20e8f9a88942b07d14
 ; Issue #997104
 projects[nodequeue][patch][] = http://drupal.org/files/nodequeue_undefined_property_997104_7.patch
 
+; [Text list formatter]
+projects[textformatter][type] = module
+projects[textformatter][version] = 1.3
 
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
