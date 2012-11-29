@@ -79,10 +79,6 @@ function message_library_exposedfilters_views_pre_render(&$view) {
     }
   }
 
-  // Add help box
-  $box = module_invoke('boxes', 'block_view', 'ml_help_criteria');
-  $vars['ml_help_criteria'] = $box['content'];
-
   // Add a summary text like '800 records matched criteria.', just as the one
   // displayed in the footer
   $vars['total_rows'] = !empty($view->total_rows) ? $view->total_rows : 0;
@@ -113,6 +109,10 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
       break;
     }
   }
+
+  // Add help box
+  $box = module_invoke('boxes', 'block_view', 'ml_help_criteria');
+  $vars['ml_help_criteria'] = $box['content'];
 }
 
 /**
