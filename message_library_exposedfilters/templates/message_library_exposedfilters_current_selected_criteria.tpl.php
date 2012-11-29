@@ -66,6 +66,11 @@ EOT;
     </div>
   <?php else: ?>
     <h4 id="ml-view-crt-criteria-title">Currently Selected Criteria</h4>
+
+    <?php if(!empty($ml_help_criteria)) : ?>
+      <?php print $ml_help_criteria; ?>
+    <?php endif;?>
+
     <?php if (!empty($total_rows)): ?>
       <div class="criteria-inline">
         <div class="nb-result">
@@ -127,13 +132,5 @@ EOT;
       <a href="/message-library">(remove)</a>
     </div>
     <?php endif; ?>
-
-    <?php if (!empty($search_criteria_help)): ?>
-      <?php print $search_criteria_help; ?>
-    <?php endif; ?>
-  <?php endif;?>
-
-  <?php if(!empty($ml_help_criteria)) : ?>
-    <?php print $ml_help_criteria; ?>
   <?php endif;?>
 </div>
