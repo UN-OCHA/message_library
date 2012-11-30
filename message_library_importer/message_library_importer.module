@@ -126,6 +126,12 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
  * This hook is invoked before a feed item is saved.
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
+  $entity->field_message_source = array();
+  if (!empty($item['source'])) {
+    foreach ($item['source'] as $link) {
+      $entity->field_message_source[LANGUAGE_NONE][] = $link;
+    }
+  }
 }
 
 /**
@@ -197,6 +203,20 @@ function message_library_import_map_message_node_field(&$value, $index) {
             $value['alert questions'][$key] .= '?';
           }
         }
+      }
+    }
+  }
+
+  // Process 'Source' field
+  if (!empty($value['source'])) {
+    $json_raw = $value['source'];
+    $json_raw = str_replace("'", '"', $json_raw);
+    $result = json_decode($json_raw, true);
+
+    if (!empty($result)) {
+      $value['source'] = array();
+      foreach ($result as $key => $link) {
+        $value['source'][$key] = $link;
       }
     }
   }
