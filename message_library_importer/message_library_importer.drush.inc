@@ -16,6 +16,10 @@ function message_library_importer_drush_command() {
     'description' => 'Sync Message Library from remote csv feeds.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
+  $items['message-library-wipe-content'] = array(
+    'description' => 'Wipe all the content created by the importers of Message Library.',
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+  );
   return $items;
 }
 
@@ -24,39 +28,79 @@ function message_library_importer_drush_command() {
  */
 function drush_message_library_importer_message_library_import() {
   $items = array(
-    'message_library_term_hazard' => 'hazard',
-    'message_library_term_issues' => 'issues',
-    'message_library_term_sector' => 'sector',
-    'message_library_node_message' => 'message',
-
-    'message_library_term_information_type' => 'information-type',
-    'message_library_term_at_risk_group' => 'at-risk-group',
-    'message_library_term_target_audience' => 'target-audience',
-    'message_library_term_threat' => 'threat',
+    'message_library_term_hazard' => array('vacab_type' => 'hazard','feed_url_suffix' => 'hazard'),
+    'message_library_term_issues' => array('vacab_type' => 'issues','feed_url_suffix' => 'issues'),
+    'message_library_term_sector' =>  array('vacab_type' => 'sector','feed_url_suffix' => 'sector'),
+    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'issues'),
+    'message_library_term_information_type' =>  array('vacab_type' => 'information_type','feed_url_suffix' => 'information-type'),
+    'message_library_term_at_risk_group' => array('vacab_type' => 'at_risk_groups','feed_url_suffix' => 'at-risk-group'),
+    'message_library_term_target_audience' =>  array('vacab_type' => 'target_audience','feed_url_suffix' => 'target-audience'),
+    'message_library_term_threat' =>  array('vacab_type' => 'threat','feed_url_suffix' => 'threat'),
   );
 
-  foreach ($items as $feed_name => $filename) {
-    $feed_source = feeds_source($feed_name);
-
-    if (!$feed_source instanceof FeedsSource) {
-      drush_log(dt('Can\'t load feeds importer for !feed_name', array('!feed_name' => $feed_name)), 'error');
-      continue;
+  // The base url of the feeds url on the D6 master instance
+  $feeds_url = 'http://infoasaid.org/message-library-export/';
+  foreach ($items as $feed_name => $item) {
+    drush_print(drush_html_to_text('<br/><hr>'));
+    if (!empty($item['content_type'])) {
+      $type_name = node_type_get_name($item['content_type']);
+      drush_print(dt("Importing [!type_name] nodes <importer: !feed_name> ...", array('!feed_name' => $feed_name, '!type_name' => $type_name)));
     }
-    $config = $feed_source->getConfig();
-    $feeds_url = 'http://infoasaid.org/message-library-export/';
-    $config['FeedsHTTPFetcher']['source'] = $feeds_url . $filename;
-    $feed_source->setConfig($config);
-    $feed_source->save();
+    elseif (!empty($item['vacab_type'])) {
+      $vocab = taxonomy_vocabulary_machine_name_load($item['vacab_type']);
+      $type_name = !(empty($vocab)) ? $vocab->name : $item['vacab_type'];
+      drush_print(dt("Importing [!type_name] terms <importer: !feed_name> ...", array('!feed_name' => $feed_name, '!type_name' => $type_name,)));
+    }
+    drush_print(drush_html_to_text('<hr>'));
 
-    // Set the batch operations.
-    $batch = array(
-      'title' => dt('Importing !feed_name', array('!feed_name' => $feed_name)),
-      'operations' => array(
-        array('feeds_batch', array('import', $feed_name, 0)),
-      ),
+    drush_invoke_process('@self', 'feeds-import',
+      array('feed-name' => $feed_name),
+      array('http' => $feeds_url . $item['feed_url_suffix']));
+
+  }
+}
+
+/**
+ * Drush command callback
+ *
+ * This command need the devel_generate module be enabled.
+ */
+function drush_message_library_importer_message_library_wipe_content() {
+  // Clear all the content of type: Message
+  $content_types = array('message');
+
+  foreach ($content_types as $type) {
+    drush_print(drush_html_to_text('<br/><hr><br/>Deleting node in content type: Message ...<br/><hr>'));
+    drush_invoke_process('@self', 'generate-content',
+      array('number_nodes' => 0),
+      array('kill' => TRUE, 'types' => $type)
     );
-    batch_set($batch);
   }
 
-  drush_backend_batch_process();
+  // Clear all the terms of vocabulary:
+  // - 'At Risk Group'
+  // - 'Target Audience'
+  // - 'Information Type'
+  // - ’Hazard'
+  // - 'Issues'
+  // - 'Sector'
+  // - 'Threat'
+  $vocabularies = array(
+    'at_risk_groups',
+    'hazard',
+    'information_type',
+    'issues',
+    'sector',
+    'target_audience',
+    'threat',
+  );
+
+  foreach ($vocabularies as $vocab) {
+    $vocab_obj = taxonomy_vocabulary_machine_name_load($vocab);
+    $vocab_name = !empty($vocab_obj) ? $vocab_obj->name :  'Unknown vocabulary';
+    drush_print(drush_html_to_text('<br/><hr><br/>' . dt('Deleting terms in vocabulary: !vocab_name ...', array('!vocab_name' => $vocab_name)) . '<br/><hr>'));
+    drush_invoke_process('@self', 'generate-terms',
+      array('machine_name' => $vocab, 'number_terms' => 0),
+      array('kill' => TRUE));
+  }
 }

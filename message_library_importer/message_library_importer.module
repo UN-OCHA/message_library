@@ -6,67 +6,6 @@
 include_once 'message_library_importer.features.inc';
 
 /**
- * Implements hook_cron()
- */
-function message_library_importer_cron() {
-  return;
-  $queue = DrupalQueue::get('message_library_importer');
-
-  $items = array(
-    'message_library_term_hazard' => 'hazard',
-    'message_library_term_issues' => 'issues',
-    'message_library_term_sector' => 'sector',
-    'message_library_node_message' => 'message',
-
-    'message_library_term_information_type' => 'information-type',
-    'message_library_term_at_risk_group' => 'at-risk-group',
-    'message_library_term_target_audience' => 'target-audience',
-    'message_library_term_threat' => 'threat',
-  );
-
-  foreach ($items as $importer_id => $filename) {
-    $queue->createItem(compact('importer_id', 'filename'));
-  }
-
-  while ($item = $queue->claimItem()) {
-    message_library_importer_import_from_remote_csv($item);
-  }
-}
-
-/**
- * Implements hook_cron_queue_info()
- */
-function message_library_importer_cron_queue_info() {
-  return;
-  $queues = array();
-  $queues['message_library_importer'] = array(
-    'worker callback' => 'message_library_importer_import_from_remote_csv',
-    'time' => 60,
-  );
-  return $queues;
-}
-
-function message_library_importer_import_from_remote_csv($item) {
-  $FeedsSource = feeds_source($item->data['importer_id']);
-  $config = $FeedsSource->getConfig();
-
-  if (empty($config['FeedsHTTPFetcher']['source'])) {
-    $config['FeedsHTTPFetcher']['source'] = 'http://infoasaid.org/message-library-export/' . $item->data['filename'];
-    $FeedsSource->setConfig($config);
-    $FeedsSource->save();
-  }
-
-  $batch = array(
-    'title' => dt('Importing !feed_name', array('!feed_name' => $feed_name)),
-    'operations' => array(
-      array('feeds_batch', array('import', $feed_name, $feed_nid)),
-    ),
-  );
-  batch_set($batch);
-  $FeedsSource->startImport();
-}
-
-/**
  * Implements hook_feeds_processor_targets_alter()
  */
 function message_library_importer_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
