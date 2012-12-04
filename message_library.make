@@ -35,6 +35,14 @@ projects[nodequeue][patch][] = http://drupal.org/files/nodequeue_undefined_prope
 projects[textformatter][type] = module
 projects[textformatter][version] = 1.3
 
+; [Features]
+projects[features][type] = module
+projects[features][version] = 1.0
+projects[features][patch][] = http://drupal.org/files/features-date-1279928-15.patch
+projects[features][patch][] = http://drupal.org/files/features_static_caches-1063204-32.patch
+; Drush integration(http://drupal.org/node/608408)
+projects[features][patch][] = http://drupal.org/files/608408-feeds_drush_vd7-71.patch
+
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make
