@@ -117,7 +117,7 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
   }
 
   if ($source->id == 'message_library_node_message') {
-    array_walk($result->items, 'message_library_import_map_message_node_field');
+    array_walk($result->items, '_message_library_importer_map_message_node_field');
   }
 }
 
@@ -126,6 +126,7 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
  * This hook is invoked before a feed item is saved.
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
+  // Set the right target for field 'field_message_source'
   $entity->field_message_source = array();
   if (!empty($item['source'])) {
     foreach ($item['source'] as $link) {
@@ -168,15 +169,10 @@ function message_library_importer_parsed_term_items_extract_tids($children) {
   return $result;
 }
 
-
-function message_library_importer_map_term_names_to_ids(&$item, $index) {
-  $item = $item;
-}
-
 /**
  * Callback for mapping fields
  */
-function message_library_import_map_message_node_field(&$value, $index) {
+function _message_library_importer_map_message_node_field(&$value, $index) {
   // Sensitivity field
   $mapping = array(
     'Not sensitive' => 0,
@@ -207,16 +203,26 @@ function message_library_import_map_message_node_field(&$value, $index) {
     }
   }
 
-  // Process 'Source' field
-  if (!empty($value['source'])) {
-    $json_raw = $value['source'];
-    $json_raw = str_replace("'", '"', $json_raw);
-    $result = json_decode($json_raw, true);
+  // Process link fields, Source and Websites
+  $link_fields = array(
+    'source',
+    'examples of communication around this issue'
+  );
 
-    if (!empty($result)) {
-      $value['source'] = array();
-      foreach ($result as $key => $link) {
-        $value['source'][$key] = $link;
+  foreach ($link_fields as $link_field) {
+    if (!empty($value[$link_field])) {
+      $json_raw = $value[$link_field];
+      // The json string must use double quotes, and the exported csv have double
+      // quotes as wrappe. So the double string of the json string is turned into
+      // single quotes in the master instance's csv export preprocessor
+      $json_raw = str_replace("'", '"', $json_raw);
+      $result = json_decode($json_raw, true);
+
+      if (!empty($result)) {
+        $value[$link_field] = array();
+        foreach ($result as $key => $link) {
+          $value[$link_field][$key] = $link;
+        }
       }
     }
   }

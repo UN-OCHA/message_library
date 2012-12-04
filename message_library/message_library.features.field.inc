@@ -273,13 +273,32 @@ function message_library_field_default_fields() {
         'description_field' => 1,
         'file_directory' => '',
         'file_extensions' => 'jpg pdf png gif doc docx mp3 mp4 avi flv',
-        'max_filesize' => '',
+        'max_filesize' => '50 MB',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
         'active' => 1,
         'module' => 'file',
         'settings' => array(
+          'filefield_sources' => array(
+            'filefield_sources' => array(
+              'attach' => 0,
+              'clipboard' => 0,
+              'reference' => 0,
+              'remote' => 'remote',
+            ),
+            'source_attach' => array(
+              'absolute' => '0',
+              'attach_mode' => 'move',
+              'path' => 'file_attach',
+            ),
+            'source_imce' => array(
+              'imce_mode' => 0,
+            ),
+            'source_reference' => array(
+              'autocomplete' => '0',
+            ),
+          ),
           'progress_indicator' => 'throbber',
         ),
         'type' => 'file_generic',
@@ -606,7 +625,7 @@ function message_library_field_default_fields() {
   $fields['node-message-field_message_info_type'] = array(
     'field_config' => array(
       'active' => '1',
-      'cardinality' => '1',
+      'cardinality' => '-1',
       'deleted' => '0',
       'entity_types' => array(),
       'field_name' => 'field_message_info_type',
@@ -1253,9 +1272,9 @@ function message_library_field_default_fields() {
         'title' => 'optional',
         'title_maxlength' => '128',
         'title_value' => '',
-        'url' => 0,
+        'url' => 'optional',
         'user_register_form' => FALSE,
-        'validate_url' => 1,
+        'validate_url' => 0,
       ),
       'widget' => array(
         'active' => 0,
