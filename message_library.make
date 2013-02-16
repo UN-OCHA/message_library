@@ -43,6 +43,10 @@ projects[features][patch][] = http://drupal.org/files/features_static_caches-106
 ; Drush integration(http://drupal.org/node/608408)
 projects[features][patch][] = http://drupal.org/files/608408-feeds_drush_vd7-71.patch
 
+; [Link]
+projects[link][type] = module
+projects[link][version] = 1.1
+
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make

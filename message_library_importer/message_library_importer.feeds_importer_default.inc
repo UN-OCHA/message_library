@@ -23,7 +23,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -123,13 +122,13 @@ function message_library_importer_feeds_importer_default() {
         ),
         'update_existing' => '1',
         'input_format' => 'plain_text',
-        'authorize' => 1,
-        'skip_hash_check' => 0,
+        'authorize' => 0,
+        'skip_hash_check' => 1,
       ),
     ),
     'content_type' => '',
     'update' => 0,
-    'import_period' => '0',
+    'import_period' => '-1',
     'expire_period' => 3600,
     'import_on_create' => 1,
     'process_in_background' => 0,
@@ -149,7 +148,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -212,7 +210,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -275,7 +272,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -338,7 +334,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -401,7 +396,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -464,7 +458,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -532,7 +525,6 @@ function message_library_importer_feeds_importer_default() {
         'auto_detect_feeds' => FALSE,
         'use_pubsubhubbub' => FALSE,
         'designated_hub' => '',
-        'request_timeout' => NULL,
       ),
     ),
     'parser' => array(
@@ -555,7 +547,7 @@ function message_library_importer_feeds_importer_default() {
           1 => array(
             'source' => 'Title',
             'target' => 'name',
-            'unique' => FALSE,
+            'unique' => 1,
           ),
           2 => array(
             'source' => 'Threat Hazard',

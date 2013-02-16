@@ -66,11 +66,14 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
   // Set the right target for field 'field_message_source'
-  $entity->field_message_source = array();
-  if (!empty($item['source'])) {
-    foreach ($item['source'] as $link) {
-      $entity->field_message_source[LANGUAGE_NONE][] = $link;
-    }
+  // Only for message nodes
+  // @link: [Link project issue - support hook_entity_property_info()] (http://drupal.org/node/1079782)
+  if ($entity->nid && $entity->type && $entity->type == 'message' && !empty($item['source'])) {
+    $wrapper = entity_metadata_wrapper('node', $entity);
+    // XXX: Make sure the $item['source'] is valid
+    $wrapper->field_message_source->set(array()); // Maybe this line is not necessary for resetting the field
+    $wrapper->field_message_source->set($item['source']);
+    $wrapper->save();
   }
 }
 

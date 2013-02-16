@@ -28,14 +28,22 @@ function message_library_importer_drush_command() {
  */
 function drush_message_library_importer_message_library_import() {
   $items = array(
+    // These 3 vocabularies are required by `threat` terms
+    // @see: admin/structure/taxonomy/threat/fields
     'message_library_term_hazard' => array('vacab_type' => 'hazard','feed_url_suffix' => 'hazard'),
     'message_library_term_issues' => array('vacab_type' => 'issues','feed_url_suffix' => 'issues'),
     'message_library_term_sector' =>  array('vacab_type' => 'sector','feed_url_suffix' => 'sector'),
-    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'issues'),
+
+    // Import threat (after the above 3 vocabularies imported)
+    'message_library_term_threat' =>  array('vacab_type' => 'threat','feed_url_suffix' => 'threat'),
     'message_library_term_information_type' =>  array('vacab_type' => 'information_type','feed_url_suffix' => 'information-type'),
     'message_library_term_at_risk_group' => array('vacab_type' => 'at_risk_groups','feed_url_suffix' => 'at-risk-group'),
     'message_library_term_target_audience' =>  array('vacab_type' => 'target_audience','feed_url_suffix' => 'target-audience'),
-    'message_library_term_threat' =>  array('vacab_type' => 'threat','feed_url_suffix' => 'threat'),
+
+
+    // Import message (after the above 4 vocabularies imported)
+    // @see: admin/structure/types/manage/message/fields
+    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'issues'),
   );
 
   // The base url of the feeds url on the D6 master instance
@@ -56,6 +64,60 @@ function drush_message_library_importer_message_library_import() {
     drush_invoke_process('@self', 'feeds-import',
       array('feed-name' => $feed_name),
       array('http' => $feeds_url . $item['feed_url_suffix']));
+  }
+
+  // @TODO: There are some empty terms created, just a quick fix for now, remove
+  // those empty terms.
+  _message_library_importer_remove_empty_terms_and_content();
+}
+
+/**
+ * Remove the empty tersm and content
+ */
+function _message_library_importer_remove_empty_terms_and_content() {
+  // The vocabulary to check
+  $vocabs = array(
+    'hazard',
+    'issues',
+    'sector',
+    'information_type',
+    'at_risk_groups',
+    'target_audience',
+    'threat'
+  );
+
+  // The content types to check
+  $cts = array(
+    'message',
+  );
+
+  foreach($vocabs as $vocab_name) {
+    $vocab_obj = taxonomy_vocabulary_machine_name_load($vocab_name);
+    if (empty($vocab_obj)) {
+      continue;
+    }
+
+    $terms = taxonomy_get_tree($vocab_obj->vid, 0, NULL, TRUE);
+    foreach ($terms as $term) {
+      if (empty($term->name)) {
+        // Check if there are some node referencing it
+        $nodes = taxonomy_select_nodes($term->tid);
+        // drush_print_r($nodes);
+        if (empty($nodes)) {
+          drush_log(dt('Found an empty term [tid: @tid] which has no nodes referencing it. Deleting...', array('@tid' => $term->tid)), 'warning');
+          $rs = taxonomy_term_delete($term->tid);
+          if ($rs == SAVED_DELETED) {
+            drush_log(dt('Term [tid: @tid] has been removed successfully.', array('@tid' => $term->tid)), 'success');
+          }
+          else {
+            drush_log(dt('Term [tid: @tid] hasn\'t been removed successfully.', array('@tid' => $term->tid)), 'error');
+          }
+        }
+        else {
+          drush_log(dt('Found an empty term [tid: @tid] which has some nodes referencing it.', array('@tid' => $term->tid)), 'warning');
+        }
+      }
+    }
 
   }
 }
