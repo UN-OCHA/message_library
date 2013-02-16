@@ -39,6 +39,9 @@ function message_library_rtf_libraries_info() {
 
 /**
  * Callback
+ *
+ * To debug the process of RTF document generation, you could comment out the
+ * line `$rtf->sendRtf('message library');` to stop the RTF download
  */
 function message_library_rtf_generate_threat_rtf($tids) {
   $tids = urldecode($tids);
@@ -50,17 +53,17 @@ function message_library_rtf_generate_threat_rtf($tids) {
   $rtf = new MyPHPRtfLite();
 
   // Settings
-  $arial28 = new PHPRtfLite_Font(28, 'Arial', '#B91222');
-  $arial18 = new PHPRtfLite_Font(18, 'Arial', '#B91222');
-  $arial14 = new PHPRtfLite_Font(14, 'Arial', '#000000');
-  $arial12 = new PHPRtfLite_Font(12, 'Arial', '#000000');
-  $arial12Link = new PHPRtfLite_Font(12, 'Arial', '#000000');
-  $arial10Black = new PHPRtfLite_Font(10, 'Arial', '#000000');
-  $times12 = new PHPRtfLite_Font(12, 'Times new Roman');
-  $font_link = new PHPRtfLite_Font(12, 'Arial', '#B91222');
+  $arial28       = new PHPRtfLite_Font(28, 'Arial', '#B91222');
+  $arial18       = new PHPRtfLite_Font(18, 'Arial', '#B91222');
+  $arial14       = new PHPRtfLite_Font(14, 'Arial', '#000000');
+  $arial12       = new PHPRtfLite_Font(12, 'Arial', '#000000');
+  $arial12Link   = new PHPRtfLite_Font(12, 'Arial', '#000000');
+  $arial10Black  = new PHPRtfLite_Font(10, 'Arial', '#000000');
+  $times12       = new PHPRtfLite_Font(12, 'Times new Roman');
+  $font_link     = new PHPRtfLite_Font(12, 'Arial', '#B91222');
 
   $par_format = new PHPRtfLite_ParFormat();
-  $par_list = new PHPRtfLite_ParFormat();
+  $par_list   = new PHPRtfLite_ParFormat();
   $par_list->setIndentLeft(1);
 
   // add section
@@ -69,36 +72,30 @@ function message_library_rtf_generate_threat_rtf($tids) {
   $terms = taxonomy_term_load_multiple($tids);
   $j = 0;
   foreach ($terms as $key => $term) {
+    $threat_wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+
     // Give some space between threat
     if ($j != 0) {
       $sect->addEmptyParagraph();
     }
     // Add threat title
-    $sect->writeText($term->name . '<br>', $arial28, $par_format);
+    $sect->writeText(check_plain($term->name) . '<br>', $arial28, $par_format);
 
     // Add threat issue
     // note: field_get_items fail due to some bug!
-    $issue_tids = array();
-    if (!empty($term->field_threat_category[LANGUAGE_NONE])) {
-      foreach ($term->field_threat_category[LANGUAGE_NONE] as $item) {
-        if (!empty($item['tid'])) {
-          $issue_tids[] = $item['tid'];
-        }
+    $thret_issues_strs = array();
+    foreach ($threat_wrapper->field_threat_category->getIterator() as $delta => $issue_wrapper) {
+      $title = check_plain($issue_wrapper->name->value());
+      if (empty($title) || in_array($title, $thret_issues_strs)) {
+        continue;
       }
-      $issue_tids = array_unique($issue_tids);
+      $thret_issues_strs[] = $title;
     }
-    if (!empty($issue_tids)) {
-      $issues_terms = taxonomy_term_load_multiple($issue_tids);
 
+    if (count($thret_issues_strs)) {
       $text = '<b><i>Issue: </b></i>';
-      if (!empty($issues_terms)) {
-        $issues_parts = array();
-        foreach ($issues_terms as $issue_term) {
-          $issues_parts[] = $issue_term->name;
-        }
-        $text .= implode(', ', $issues_parts) . '<br>';
-        $sect->writeText($text, $times12, $par_format);
-      }
+      $text .= implode(', ', $thret_issues_strs) . '<br>';
+      $sect->writeText($text, $times12, $par_format);
     }
 
     // Add threat messages
