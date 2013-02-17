@@ -1,9 +1,13 @@
 <?php
 
-$path = drupal_get_path('module', 'message_library_rtf');
+define('MESSAGE_GUIDANCE_NOT_SENSITIVE', 0);
+define('MESSAGE_GUIDANCE_SENSITIVE', 1);
+define('MESSAGE_GUIDANCE_VERY_SENSITIVE', 2);
 
+$path = drupal_get_path('module', 'message_library_rtf');
 require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite.php';
 require_once  $path . '/libraries/phprtflite/lib/PHPRtfLite/Autoloader.php';
+
 /**
  * Implements hook_menu().
  */
@@ -20,6 +24,8 @@ function message_library_rtf_menu() {
 
 /**
  * Implements hook_libraries_info()
+ *
+ * This is not being used, and not probably imcomplete
  */
 function message_library_rtf_libraries_info() {
   $libraries['phprtflite'] = array(
@@ -38,7 +44,7 @@ function message_library_rtf_libraries_info() {
 }
 
 /**
- * Callback
+ * Callback for RTF document generation
  *
  * To debug the process of RTF document generation, you could comment out the
  * line `$rtf->sendRtf('message library');` to stop the RTF download
@@ -78,11 +84,15 @@ function message_library_rtf_generate_threat_rtf($tids) {
     if ($j != 0) {
       $sect->addEmptyParagraph();
     }
-    // Add threat title
+
+    # ============================
+    # ====  Add threat title  ====
+    # ============================
     $sect->writeText(check_plain($term->name) . '<br>', $arial28, $par_format);
 
-    // Add threat issue
-    // note: field_get_items fail due to some bug!
+    # ============================
+    # ====  Add threat issue  ====
+    # ============================
     $thret_issues_strs = array();
     foreach ($threat_wrapper->field_threat_category->getIterator() as $delta => $issue_wrapper) {
       $title = check_plain($issue_wrapper->name->value());
@@ -98,185 +108,235 @@ function message_library_rtf_generate_threat_rtf($tids) {
       $sect->writeText($text, $times12, $par_format);
     }
 
-    // Add threat messages
+    # ===============================
+    # ====  Add threat messages  ====
+    # ===============================
     $message_nids = _message_library_get_threat_messages($term->tid);
     if (!empty($message_nids)) {
       $messages = node_load_multiple($message_nids);
       $i = 0;
       foreach ($messages as $message) {
-        // Add message title
+        // Create an entity wrapper for easier data
+        $message_wrapper = entity_metadata_wrapper('node', $message);
+
+        # -----------------------
+        # ---- Message Title ----
+        # -----------------------
         $text = ($i == 0) ? '' : '<br>';
         $text .= ($i+1) . '. ' . $message->title . '<br>';
         $sect->writeText($text, $arial18, $par_format);
 
-        // Add message sensitive message or relevant question based on sensitivity
-        $sen_level = field_get_items('node', $message, 'field_message_sensitivity');
-        $sen_level = reset($sen_level);
-        $sen_level = $sen_level['value'];
+        // Get the 'Guidance'(Sensitivity) of the message
+        // - 0 | No guidance required / (Not Sensitive)
+        // - 1 | Guidance required / Sensitive
+        // - 2 | Highly sensitive
+        // @see: admin/structure/types/manage/message/fields/field_message_sensitivity
+        $guidance_level = (int) $message_wrapper->field_message_sensitivity->value();
 
-        // for sensitive message
-        if ($sen_level == 1 && !empty($message->field_message_sensitivity_messag['und'][0])) {
-          $sen_message = $message->field_message_sensitivity_messag['und'][0]['value'];
-          $sen_message = '<br><i>' . strtoupper(trim($sen_message)) . '</i><br><br>';
-          $sect->writeText($sen_message, $arial12, $par_format);
-        }
-        // for very sensitive message
-        if ($sen_level == 2 && !empty($message->field_message_sensitivity_messag['und'][0])) {
-          $sen_message = $message->field_message_sensitivity_messag['und'][0]['value'];
-          $sen_message = '<br><i>' . strtoupper(trim($sen_message)) . '</i><br><br>';
-          $sect->writeText($sen_message, $arial12, $par_format);
+        if (in_array($guidance_level, array(MESSAGE_GUIDANCE_SENSITIVE, MESSAGE_GUIDANCE_VERY_SENSITIVE))) {
+          # ---------------------------
+          # ---- Sensitive Message ----
+          # ---------------------------
+          $sen_message = $message_wrapper->field_message_sensitivity_messag->value();
+          if (!empty($sen_message)) {
+            $text = '<br><i>' . strtoupper(trim($sen_message)) . '</i><br><br>';
+            $sect->writeText($text, $arial12, $par_format);
+          }
 
-          if (!empty($message->field_message_sensitivity_questi['und'])) {
-            $sen_questions = $message->field_message_sensitivity_questi['und'];
-            foreach ($sen_questions as $question) {
-              $sect->writeText($question, $times12, $par_format);
+          # -------------------------------------------------------
+          # ---- Alert questions (for very sensitive messages) ----
+          # -------------------------------------------------------
+          // @TODO: Some empty value filled into this field, investigate what's
+          // wrong, now just some quick workaround
+          if ($guidance_level == MESSAGE_GUIDANCE_VERY_SENSITIVE) {
+            $sen_questions = $message_wrapper->field_message_sensitivity_questi->value();
+            $sen_questions = array_filter($sen_questions);
+
+            if (!empty($sen_questions)) {
+              foreach ($sen_questions as $question) {
+                $sect->writeText($question, $times12, $par_format);
+              }
             }
           }
         }
 
-        // Add message description
-        if (!empty($message->field_message_group_mess['und'][0]['value'])) {
-          $text = $message->field_message_group_mess['und'][0]['value'];
-          $text = trim($text) . '<br>';
+        # ------------------------------------
+        # ---- Message description (body) ----
+        # ------------------------------------
+        $message_desc = trim($message_wrapper->field_message_group_mess->value());
+        if (!empty($message_desc)) {
+          $text = $message_desc . '<br>';
           $sect->writeText($text, $times12, $par_format);
         }
 
-        // Add message 'at risk group'
-        $arg_items = field_get_items('node', $message, 'field_message_group_risk');
-        if (!empty($arg_items)) {
-          $arg_tids = array();
-          foreach ($arg_items as $item) {
-            $arg_tids[] = $item['tid'];
-          }
-
-          $arg_terms = taxonomy_term_load_multiple($arg_tids);
-          if (!empty($arg_items)) {
-            $text = '<b><i>At risk group: </i></b>';
-            $arg_segs = array();
-
-            foreach ($arg_terms as $term) {
-              $arg_segs[] = $term->name;
-            }
-            $text .= implode(', ', $arg_segs);
-            $sect->writeText($text, $times12, $par_format);
+        # -----------------------
+        # ---- At risk group ----
+        # -----------------------
+        $arg_items = array();
+        foreach($message_wrapper->field_message_group_risk->getIterator() as $delta => $term_wrapper) {
+          $term_name = $term_wrapper->name->value();
+          if (!empty($term_name) && !in_array($term_name, $arg_items)) {
+            $arg_items[] = $term_name;
           }
         }
 
-        // Add message 'at risk group comment'
-        if (!empty($message->field_message_group_risk_comment['und'][0]['value'])) {
+        if (count($arg_items)) {
+          $text = '<b><i>At risk group: </i></b>';
+          $text .= implode(', ', $arg_items);
+          $sect->writeText($text, $times12, $par_format);
+        }
+
+        # -------------------------------
+        # ---- At risk group comment ----
+        # -------------------------------
+        $arg_comment = trim($message_wrapper->field_message_group_risk_comment->value());
+        if (!empty($arg_comment)) {
           $text = '<b><i>At risk group comment: </i></b>';
-          $text .= $message->field_message_group_risk_comment['und'][0]['value'];
+          $text .= $arg_comment;
           $sect->writeText($text, $times12, $par_format);
         }
 
-        // Add message 'target audience'
-        $ta_items = field_get_items('node', $message, 'field_message_audience');
-        if (!empty($ta_items)) {
-          $ta_tids = array();
-          foreach ($ta_items as $item) {
-            $ta_tids[] = $item['tid'];
-          }
-
-          $ta_terms = taxonomy_term_load_multiple($ta_tids);
-          if (!empty($ta_items)) {
-            $text = '<b><i>Target audience: </i></b>';
-
-            $ta_segs = array();
-            foreach ($ta_terms as $term) {
-              $ta_segs[] = $term->name;
-            }
-            $text .= implode(', ', $ta_segs);
-            $sect->writeText($text, $times12, $par_format);
+        # -------------------------
+        # ---- Target Audience ----
+        # -------------------------
+        $ta_items = array();
+        foreach($message_wrapper->field_message_audience->getIterator() as $delta => $term_wrapper) {
+          $term_name = $term_wrapper->name->value();
+          if (!empty($term_name) && !in_array($term_name, $arg_items)) {
+            $ta_items[] = $term_name;
           }
         }
 
-        // Add message 'target audience comment'
-        if (!empty($message->field_message_target_comment['und'][0]['value'])) {
+        if (count($ta_items)) {
+          $text = '<b><i>Target audience: </i></b>';
+          $text .= implode(', ', $ta_items);
+          $sect->writeText($text, $times12, $par_format);
+        }
+
+        # ---------------------------------
+        # ---- Target Audience Comment ----
+        # ---------------------------------
+        $ta_comment = trim($message_wrapper->field_message_target_comment->value());
+        if (!empty($ta_comment)) {
           $text = '<b><i>Target audience comment: </i></b>';
-          $text .= $message->field_message_target_comment['und'][0]['value'];
+          $text .= $ta_comment;
           $sect->writeText($text, $times12, $par_format);
         }
 
-        // Add message 'infomation type'
-        $it_items = field_get_items('node', $message, 'field_message_info_type');
-        if (!empty($it_items)) {
-          $it_tids = array();
-          foreach ($it_items as $item) {
-            $it_tids[] = $item['tid'];
-          }
-
-          $it_terms = taxonomy_term_load_multiple($it_tids);
-          if (!empty($it_items)) {
-            $text = '<b><i>Information type: </i></b>';
-            $it_segs = array();
-            foreach ($it_terms as $term) {
-              $it_segs[] .= $term->name;
-            }
-            $text .= implode(', ', $it_segs);
-            $sect->writeText($text, $times12, $par_format);
+        # --------------------------
+        # ---- Information Type ----
+        # --------------------------
+        $it_items = array();
+        foreach($message_wrapper->field_message_info_type->getIterator() as $delta => $term_wrapper) {
+          $term_name = $term_wrapper->name->value();
+          if (!empty($term_name) && !in_array($term_name, $it_items)) {
+            $it_items[] = $term_name;
           }
         }
 
-        // Add sensitivity
-        $text = '<b><i>Sensitivity: </i></b>';
-        if ($sen_level == 2) {
-          $text .= 'Very sensitive';
+        if (count($it_items)) {
+          $text = '<b><i>Information type: </i></b>';
+          $text .= implode(', ', $it_items);
+          $sect->writeText($text, $times12, $par_format);
         }
-        elseif ($sen_level == 1) {
-          $text .= 'Sensitive';
-        }
-        else {
-          $text .= 'Not sensitive';
-        }
-        $sect->writeText($text, $times12, $par_format);
 
-        // Add message 'sensitivity cause'
-        if (!empty($message->field_message_sensitivity_causes['und'][0]['value'])) {
+        # --------------------------------
+        # ---- Guidance (Sensitivity) ----
+        # --------------------------------
+        $option_list = $message_wrapper->field_message_sensitivity->optionsList();
+        $guidance_level = $message_wrapper->field_message_sensitivity->value();
+
+        if (!empty($option_list) && array_key_exists($guidance_level, $option_list)) {
+          $text = '<b><i>Guidance: </i></b>';
+          $text .= $option_list[$guidance_level];
+          $sect->writeText($text, $times12, $par_format);
+        }
+
+        # -------------------------
+        # ---- Sensitive Cause ----
+        # -------------------------
+        $sen_cause = trim($message_wrapper->field_message_sensitivity_causes->value());
+        if (!empty($sen_cause)) {
           $text = '<b><i>Sensitivity causes: </i></b>';
-          $text .= $message->field_message_sensitivity_causes['und'][0]['value'];
+          $text .= $sen_cause;
           $sect->writeText($text, $times12, $par_format);
         }
 
-        // Add message 'source' (link)
-        $items = field_get_items('node', $message, 'field_message_source');
-        if (!empty($items)) {
-          $text = '<b><i>Source: </i></b>';
-          $sect->writeText($text, $times12, $par_format);
+        # -----------------------------------------
+        # ---- Source & Websites (link fields) ----
+        # -----------------------------------------
+        $link_fields = array(
+          'field_message_source',
+          'field_message_url'
+        );
 
-          foreach ($items as $item) {
-            $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $font_link, $par_list);
+        foreach ($link_fields as $link_field) {
+          $field_info = field_info_instance('node', $link_field, 'message');
+          $link_items = array();
+
+          foreach ($message_wrapper->$link_field->getIterator() as $delta => $link_wrapper) {
+            // note: Use EntityStructureWrapper::getPropertyInfo() to inspect
+            // the properties available
+            $title = $link_wrapper->title->value();
+            if (!empty($title)) {
+              $link_items[$delta]['title'] = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+            }
+
+            $url = $link_wrapper->url->value();
+            if (!empty($url)) {
+              if (link_validate_url($url) != FALSE) {
+                $link_items[$delta]['url'] = $url;
+              }
+              else {
+                watchdog('message_library_rtf', 'The :field_label field (<em>!field_name</em>) of message :title has a invalid url: <pre>!url</pre> in it.',
+                  array(':title' => $message->title, '!url' => $url, ':field_label' => $field_info['label'], '!field_name' => $link_field),
+                  WATCHDOG_ERROR, l(t('view node edit page'), 'node/' . $message->nid . '/edit'));
+              }
+            }
+          }
+
+          if (!empty($link_items)) {
+            $text = '<b><i>' . $field_info['label'] . ': </i></b>';
+            $sect->writeText($text, $times12, $par_format);
+
+            // Output as a list
+            $enum = new PHPRtfLite_List_Enumeration($rtf, TYPE_DIAMOND, $times12, $par_list);
+
+            foreach ($link_items as $item) {
+              // Only output as link only if the title and url both exist
+              if (!empty($item['url']) && !empty($item['title'])) {
+                $element = new PHPRtfLite_Element_Hyperlink($rtf, $item['title'], $font_link, $par_list);
+                $element->setHyperlink($item['title']);
+                $enum->addElement($element);
+              }
+              elseif (!empty($item['url']) && empty($item['title'])) {
+                $element = new PHPRtfLite_Element_Hyperlink($rtf, $item['url'], $font_link, $par_list);
+                $element->setHyperlink($item['url']);
+                $enum->addElement($element);
+              }
+              elseif (empty($item['url']) && !empty($item['title'])) {
+                $enum->addItem($item['title'], $times12, $par_list);
+              }
+            }
+            $sect->addList($enum);
           }
         }
 
-        // Add message 'websites' (link)
-        $items = field_get_items('node', $message, 'field_message_url');
-        if (!empty($items)) {
-          $text = '<b><i>Websites: </i></b>';
-          $sect->writeText($text, $times12, $par_format);
+        # ------------------------------------------------------------------
+        # ---- Examples of Communication around this Issue (link field) ----
+        # ------------------------------------------------------------------
+        // @TODO: Finish this
 
-          foreach ($items as $item) {
-            $sect->writeHyperLink($item['url'], '<bullet>  ' . $item['title'], $font_link, $par_list);
-          }
-        }
-
-        // Add message 'Examples of Communication around this issue'
-        $items = field_get_items('node', $message, 'field_message_example_communic');
-        if (!empty($items)) {
-          $text = '<b><i>Examples of Communication around this issue: </i></b>';
-          $sect->writeText($text, $times12, $par_format);
-          $items = array_map('unserialize', array_unique(array_map('serialize', $items)));
-          foreach ($items as $item) {
-            $url = file_create_url($item['uri']);
-            $sect->writeHyperLink($url, '<bullet>  ' . $item['filename'], $font_link, $par_list);
-          }
-        }
         $i++;
       }
+    }
+    else {
+      // Some text to say there are no messages found.
     }
     $j++;
   }
 
-  //$rtf->save('Nice');
+  // $rtf->save('Nice');
   $rtf->sendRtf('message library');
   return '';
 }
