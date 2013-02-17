@@ -64,13 +64,19 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
   // Set the right target for field 'field_message_source'
   // Only for message nodes
-  // @link: [Link project issue - support hook_entity_property_info()] (http://drupal.org/node/1079782)
-  if ($entity->nid && $entity->type && $entity->type == 'message' && !empty($item['source'])) {
-    $wrapper = entity_metadata_wrapper('node', $entity);
-    // XXX: Make sure the $item['source'] is valid
-    $wrapper->field_message_source->set(array());
-    $wrapper->field_message_source->set($item['source']);
-    $wrapper->save();
+  if ($entity->nid && $entity->type && $entity->type == 'message') {
+    $field_lan = field_language('node', $entity, 'field_message_source');
+    $entity->field_message_source = array();
+    if (!empty($item['source'])) {
+      foreach ($item['source'] as $item) {
+        $item = array_map('trim', $item);
+
+        $entity->field_message_source[$field_lan][] = array(
+          'title' => $item['title'],
+          'url' => $item['url'],
+        );
+      }
+    }
   }
 }
 
@@ -114,13 +120,13 @@ function message_library_importer_parsed_term_items_extract_tids($children) {
 function _message_library_importer_map_message_node_field(&$value, $index) {
   // Sensitivity field
   $mapping = array(
-    'Not sensitive' => 0,
-    'Sensitive' => 1,
-    'Very sensitive' => 2,
+    'no guidance required' => 0,
+    'guidance required/sensitive' => 1,
+    'highly sensitive' => 2,
   );
 
   if (!empty($value['sensitivity'])) {
-    $old_label = $value['sensitivity'];
+    $old_label = trim(strtolower($value['sensitivity']));
 
     if (array_key_exists($old_label, $mapping)) {
       $value['sensitivity'] = $mapping[$old_label];
@@ -128,6 +134,8 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
 
     // 'Alert Questions' - The feeds tamper remove the quesition mark and
     // add a empty option. Fix it here.
+    $value['alert questions'] = array_map('trim', $value['alert questions']);
+    $value['alert questions'] = array_filter($value['alert questions']);
     if ($value['sensitivity'] == 2 && !empty($value['alert questions'])) {
       foreach ($value['alert questions'] as $key => $question) {
         if (empty($question)) {
@@ -149,19 +157,26 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
   );
 
   foreach ($link_fields as $link_field) {
+    $value[$link_field] = trim($value[$link_field]);
     if (!empty($value[$link_field])) {
       $json_raw = $value[$link_field];
       // The json string must use double quotes, and the exported csv have double
       // quotes as wrappe. So the double string of the json string is turned into
       // single quotes in the master instance's csv export preprocessor
-      $json_raw = str_replace("'", '"', $json_raw);
+      $json_raw = preg_replace("/'(?=[:|,|}])/",  '"', $json_raw);
+      $json_raw = preg_replace("/(?<=[:|,|{])'/", '"', $json_raw);
+
       $result = json_decode($json_raw, true);
 
       if (!empty($result)) {
         $value[$link_field] = array();
-        foreach ($result as $key => $link) {
-          $value[$link_field][] = $link;
+        foreach ($result as $key => $item) {
+          $value[$link_field][] = $item;
         }
+      }
+      else {
+        // @todo: Log this?
+        $value[$link_field] = array();
       }
     }
   }
@@ -182,7 +197,6 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
           );
         }
         else {
-
           // @TODO: Log this
         }
       }

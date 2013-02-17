@@ -114,7 +114,6 @@ function _message_library_importer_remove_empty_terms_and_content() {
         }
         else {
           drush_log(dt('Found an empty term [tid: @tid] which has some nodes referencing it.', array('@tid' => $term->tid)), 'warning');
-          druhs_print_r($nodes);
         }
       }
     }
