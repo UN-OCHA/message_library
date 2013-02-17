@@ -32,7 +32,6 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
     'message_library_term_sector',
     'message_library_term_target_audience',
   );
-
   if (in_array($source->id, $checklist)) {
     $term_tree = message_library_importer_parsed_term_items_build_tree($result->items, 0);
     $sorted_tids = (message_library_importer_parsed_term_items_extract_tids($term_tree));
@@ -48,14 +47,12 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
 
     $result->items = $sorted_terms;
   }
-
-  if ($source->id == 'message_library_term_threat') {
+  elseif ($source->id == 'message_library_term_threat') {
     // Threat -> Hazard
     // Threat -> Issues
     // Threat -> Sector
   }
-
-  if ($source->id == 'message_library_node_message') {
+  elseif ($source->id == 'message_library_node_message') {
     array_walk($result->items, '_message_library_importer_map_message_node_field');
   }
 }
@@ -71,7 +68,7 @@ function message_library_importer_feeds_presave(FeedsSource $source, $entity, $i
   if ($entity->nid && $entity->type && $entity->type == 'message' && !empty($item['source'])) {
     $wrapper = entity_metadata_wrapper('node', $entity);
     // XXX: Make sure the $item['source'] is valid
-    $wrapper->field_message_source->set(array()); // Maybe this line is not necessary for resetting the field
+    $wrapper->field_message_source->set(array());
     $wrapper->field_message_source->set($item['source']);
     $wrapper->save();
   }
@@ -148,7 +145,7 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
   // Process link fields, Source and Websites
   $link_fields = array(
     'source',
-    'examples of communication around this issue'
+    'websites',
   );
 
   foreach ($link_fields as $link_field) {
@@ -163,7 +160,30 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
       if (!empty($result)) {
         $value[$link_field] = array();
         foreach ($result as $key => $link) {
-          $value[$link_field][$key] = $link;
+          $value[$link_field][] = $link;
+        }
+      }
+    }
+  }
+
+  // Process the attachment fields
+  $example = trim($value['examples of communication around this issue']);
+  $value['examples of communication around this issue'] = array();
+  if (!empty($example)) {
+    $example_items = explode(',', $example);
+
+    if (!empty($example_items)) {
+      foreach ($example_items as $item) {
+        $item = trim($item);
+        if (link_validate_url($item) != FALSE) {
+          $value['examples of communication around this issue'][] = array(
+            'url' => $item,
+            'title' => '',
+          );
+        }
+        else {
+
+          // @TODO: Log this
         }
       }
     }

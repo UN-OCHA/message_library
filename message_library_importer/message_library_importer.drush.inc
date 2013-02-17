@@ -40,10 +40,9 @@ function drush_message_library_importer_message_library_import() {
     'message_library_term_at_risk_group' => array('vacab_type' => 'at_risk_groups','feed_url_suffix' => 'at-risk-group'),
     'message_library_term_target_audience' =>  array('vacab_type' => 'target_audience','feed_url_suffix' => 'target-audience'),
 
-
     // Import message (after the above 4 vocabularies imported)
     // @see: admin/structure/types/manage/message/fields
-    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'issues'),
+    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'message'),
   );
 
   // The base url of the feeds url on the D6 master instance
@@ -115,6 +114,7 @@ function _message_library_importer_remove_empty_terms_and_content() {
         }
         else {
           drush_log(dt('Found an empty term [tid: @tid] which has some nodes referencing it.', array('@tid' => $term->tid)), 'warning');
+          druhs_print_r($nodes);
         }
       }
     }
