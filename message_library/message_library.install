@@ -10,10 +10,27 @@ function message_library_enable() {
 }
 
 /**
+ * Implements hook_install()
+ */
+function message_library_install() {
+  message_library_prepopulate_node();
+}
+
+/**
  * Implements hook_uninstall()
  */
 function message_library_uninstall() {
+  // Remove the node ' Message Library: Quick Reference User Manual'
+  $nid = variable_get('message_library_quick_reference_user_manual_nid');
 
+  if ($nid) {
+    $node = node_load($nid);
+    // Some check prevent removing other nodes
+    if ($node->type == 'page') {
+      node_delete($nid);
+    }
+  }
+  variable_del('message_library_quick_reference_user_manual_nid');
 }
 
 /**
@@ -54,4 +71,37 @@ function message_library_requirements($phase) {
   }
 
   return $requirements;
+}
+
+/**
+ * Helper function to create the node for 'Message Library: Quick Reference User Manual'
+ */
+function message_library_prepopulate_node() {
+  $path = drupal_get_path('module','message_library').'/resources/messsage-library-quick-reference-user-manual.html';
+
+  if (!file_exists($path) || !is_readable($path)) {
+    watchdog('mesage_library', 'Unable to read file %file',
+    array('%file' => $path) , WATCHDOG_ERROR);
+    return;
+  }
+
+  $body_text = file_get_contents($path);
+
+  $node = new stdClass();
+  $node->type = 'page';
+  node_object_prepare($node);
+
+  // Check existing node
+  $node->title = 'Message Library: Quick Reference User Manual';
+  $node->language = LANGUAGE_NONE;
+  $node->uid = 1;
+
+  $node->body[$node->language][0]['value']   = $body_text;
+  $node->body[$node->language][0]['summary'] = text_summary($body_text);
+  $node->body[$node->language][0]['format']  = 'filtered_html';
+
+  // @todo: Add the pdf attachment
+  node_save($node);
+
+  variable_set('message_library_quick_reference_user_manual_nid', $node->nid);
 }
