@@ -1,0 +1,6 @@
+- Download the message library modules into the sites/all/modules
+
+  shell> cd sites/all/modules/
+  shell> git clone git@github.com:Wiredcraft/message_library.git
+
+-

@@ -6,6 +6,7 @@ php = 5.2.4
 version = 7.x-1.0-dev
 project = message_library_i18n
 dependencies[] = features
+dependencies[] = role_export
 dependencies[] = translation
 features[features_api][] = api:1
 features[user_permission][] = translate content

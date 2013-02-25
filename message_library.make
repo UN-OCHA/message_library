@@ -1,33 +1,25 @@
 core = 7.x
 api = 2
 
-; [Search Api] - Tue Nov 6 22:35:57 2012 +0100
-projects[search_api][type] = module
-projects[search_api][download][type] = git
-projects[search_api][download][url] = http://git.drupal.org/project/search_api.git
-projects[search_api][download][revision] = e03ce203b92fcd1fb3787efddfacf51755a0efe1
-
-; [Search Api Solr] - Wed Nov 7 01:23:48 2012 +0100
-projects[search_api_solr][type] = module
-projects[search_api_solr][download][type] = git
-projects[search_api_solr][download][url] = http://git.drupal.org/project/search_api_solr.git
-projects[search_api_solr][download][revision] = a829b87cb752b6016528f712978e0b96b0500d0b
-
-; [Search Api auto-complete] - Sun Oct 28 23:48:50 2012 +0100
+; [Search Api auto-complete] - Fri Jan 4 00:14:44 2013 +0100
 projects[search_api_autocomplete][type] = module
 projects[search_api_autocomplete][download][type] = git
 projects[search_api_autocomplete][download][url] = http://git.drupal.org/project/search_api_autocomplete.git
-projects[search_api_autocomplete][download][revision] = e320907cea62636fa84cd6029ddc6146c0d68cae
-; Issue #1278042
-projects[search_api_autocomplete][patch][] = http://drupal.org/files/search_api_autocomplete-auto_submit-1278042-26.patch
-; Issue #1835108
-projects[search_api_autocomplete][patch][] = http://drupal.org/files/search_api_autocomplete_access_argument_instance.patch
+projects[search_api_autocomplete][download][revision] = ef8775f
+; Add auto-submit for the autocompletion(http://drupal.org/node/1278042)
+projects[search_api_autocomplete][patch][] = https://gist.github.com/kurtzhong/72bb3b9bf39772e63bed/raw/e3b0757539ffdbae2de252e6a28e7e692896534b/search_api_autocomplete-auto_submit-1278042-33.patch
+
+; [Feeds] - Thu Jan 24 12:52:27 2013 -0800
+projects[feeds][type] = module
+projects[feeds][version] = 2.0-alpha7
+; Drush integration(http://drupal.org/node/608408)
+projects[feeds][patch][] = http://drupal.org/files/608408-feeds_drush_vd7-71.patch
 
 ; [Nodequeue] - Tue May 15 23:27:27 2012 +0200
 projects[nodequeue][type] = module
 projects[nodequeue][download][type] = git
 projects[nodequeue][download][url] = http://git.drupal.org/project/nodequeue.git
-projects[nodequeue][download][revision] = 70c0602854643f3f488a20e8f9a88942b07d14fe
+projects[nodequeue][download][revision] = 70c0602
 ; Issue #997104
 projects[nodequeue][patch][] = http://drupal.org/files/nodequeue_undefined_property_997104_7.patch
 
@@ -35,18 +27,6 @@ projects[nodequeue][patch][] = http://drupal.org/files/nodequeue_undefined_prope
 projects[textformatter][type] = module
 projects[textformatter][version] = 1.3
 
-; [Features]
-projects[features][type] = module
-projects[features][version] = 1.0
-projects[features][patch][] = http://drupal.org/files/features-date-1279928-15.patch
-projects[features][patch][] = http://drupal.org/files/features_static_caches-1063204-32.patch
-; Drush integration(http://drupal.org/node/608408)
-projects[features][patch][] = http://drupal.org/files/608408-feeds_drush_vd7-71.patch
-
-; [Link]
-projects[link][type] = module
-projects[link][version] = 1.1
-
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
-; > drush make --no-core sites/all/modules/message_library/message_library.make
+; > drush make --no-core sites/all/modules/message_library/message_library.make -y

@@ -147,9 +147,9 @@ function message_library_user_default_permissions() {
   $permissions['use search_api_autocomplete for search_api_views_message_library'] = array(
     'name' => 'use search_api_autocomplete for search_api_views_message_library',
     'roles' => array(
-      0 => 'administrator',
-      1 => 'anonymous user',
-      2 => 'authenticated user',
+      'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'search_api_autocomplete',
   );

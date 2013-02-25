@@ -14,8 +14,8 @@ function message_library_i18n_user_default_permissions() {
   $permissions['translate content'] = array(
     'name' => 'translate content',
     'roles' => array(
-      0 => 'administrator',
-      1 => 'message library translator',
+      'administrator' => 'administrator',
+      'message library translator' => 'message library translator',
     ),
     'module' => 'translation',
   );
