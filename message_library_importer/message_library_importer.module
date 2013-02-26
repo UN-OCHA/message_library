@@ -68,12 +68,12 @@ function message_library_importer_feeds_presave(FeedsSource $source, $entity, $i
     $field_lan = field_language('node', $entity, 'field_message_source');
     $entity->field_message_source = array();
     if (!empty($item['source'])) {
-      foreach ($item['source'] as $item) {
-        $item = array_map('trim', $item);
+      foreach ($item['source'] as $entry) {
+        $entry = array_map('trim', $entry);
 
         $entity->field_message_source[$field_lan][] = array(
-          'title' => $item['title'],
-          'url' => $item['url'],
+          'title' => $entry['title'],
+          'url' => $entry['url'],
         );
       }
     }

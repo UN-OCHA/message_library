@@ -69,8 +69,6 @@ function drush_message_library_importer_message_library_import() {
   // those empty terms.
   _message_library_importer_remove_empty_terms_and_content();
 
-
-
   // Reindex
   drush_print('Reindexing...');
   drush_invoke('search-api-clear', array('message_library_index'));
@@ -129,7 +127,6 @@ function _message_library_importer_remove_empty_terms_and_content() {
         }
       }
     }
-
   }
 }
 
