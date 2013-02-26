@@ -3,4 +3,16 @@
   shell> cd sites/all/modules/
   shell> git clone git@github.com:Wiredcraft/message_library.git
 
--
+- Download other modules required
+
+  shell> cd DRUPAL_ROOT
+  shell> drush make --no-core sites/all/modules/message_library/message_library.make -y
+
+- Enable the message library modules
+
+  shell> drush en message_library* -y
+  shell> drush cc all
+
+- Make sure the solr is running
+
+  admin/config/search/search_api/server/solr_server

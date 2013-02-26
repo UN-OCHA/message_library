@@ -68,6 +68,18 @@ function drush_message_library_importer_message_library_import() {
   // @TODO: There are some empty terms created, just a quick fix for now, remove
   // those empty terms.
   _message_library_importer_remove_empty_terms_and_content();
+
+
+
+  // Reindex
+  drush_print('Reindexing...');
+  drush_invoke('search-api-clear', array('message_library_index'));
+  drush_invoke('search-api-index', array('message_library_index'));
+
+  drush_print('Flushing the caches...');
+  drupal_flush_all_caches();
+
+  drush_print('Done.');
 }
 
 /**
@@ -101,19 +113,19 @@ function _message_library_importer_remove_empty_terms_and_content() {
       if (empty($term->name)) {
         // Check if there are some node referencing it
         $nodes = taxonomy_select_nodes($term->tid);
-        // drush_print_r($nodes);
         if (empty($nodes)) {
           drush_log(dt('Found an empty term [tid: @tid] which has no nodes referencing it. Deleting...', array('@tid' => $term->tid)), 'warning');
-          $rs = taxonomy_term_delete($term->tid);
-          if ($rs == SAVED_DELETED) {
-            drush_log(dt('Term [tid: @tid] has been removed successfully.', array('@tid' => $term->tid)), 'success');
-          }
-          else {
-            drush_log(dt('Term [tid: @tid] hasn\'t been removed successfully.', array('@tid' => $term->tid)), 'error');
-          }
         }
         else {
           drush_log(dt('Found an empty term [tid: @tid] which has some nodes referencing it.', array('@tid' => $term->tid)), 'warning');
+        }
+
+        $rs = taxonomy_term_delete($term->tid);
+        if ($rs == SAVED_DELETED) {
+          drush_log(dt('Term [tid: @tid] has been removed successfully.', array('@tid' => $term->tid)), 'success');
+        }
+        else {
+          drush_log(dt('Term [tid: @tid] hasn\'t been removed successfully.', array('@tid' => $term->tid)), 'error');
         }
       }
     }
