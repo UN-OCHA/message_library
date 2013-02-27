@@ -60,7 +60,7 @@ function message_library_notices_preprocess_node(&$vars) {
       $output = '';
 
       $items = field_get_items('node', $vars['node'],'field_message_sensitivity_messag');
-      $sen_message = $items['0']['safe_value'];
+      $sen_message = trim($items['0']['safe_value']);
       if (!empty($sen_message)) {
         // xxx: Move this to field settings
         $sen_message = strip_tags(html_entity_decode($sen_message));
