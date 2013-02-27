@@ -64,28 +64,30 @@ function message_library_notices_preprocess_node(&$vars) {
       if (!empty($sen_message)) {
         // xxx: Move this to field settings
         $sen_message = strip_tags(html_entity_decode($sen_message));
-        $output .= theme('message_library_notices_sensitivity_warning',array('message' => strip_tags($sen_message)));
       }
 
+      if ($sensitivity == 1) {
+        $output .= theme('message_library_notices_sensitivity_warning', array('message' => strip_tags($sen_message)));
+      }
       // Very sensitive message also may have questions
-      if ($sensitivity == 2) {
+      else {
         // If the user has previous confirmed all the alert questions, don't
         // show it again
         if (!message_library_notices_get_warning($vars['nid'])) {
+          $output .= theme('message_library_notices_sensitivity_warning', array('message' => strip_tags($sen_message)));
           $output .= theme('message_library_notices_sensitivity_questions', array('node' => $vars['node']));
         }
         else {
           $output = '';
+          $message_body = !empty($vars['field_message_group_mess'][0]['value']) ? trim($vars['field_message_group_mess'][0]['value']) : '';
+          $output = $message_body;
         }
 
-        // The message content can only be shown to the user if he/she has
-        // confirmed all the alert questions listed.
-        global $user;
-        $vars['hide_message_content'] = !message_library_notices_get_warning($vars['nid']);
+        $vars['hide_message_content'] = TRUE;
       }
 
       if (!empty($output)) {
-        // Wrapper it arround a div
+        // Wrap it arround a div
         $classes = array('sensitivity-warning');
         ($sensitivity == 1) ? array_push($classes, 'sensitive') : array_push($classes, 'very-sensitive');
         $prefix = '<div ' . drupal_attributes(array('class' => $classes)) . '>';
@@ -103,12 +105,15 @@ function message_library_notices_preprocess_node(&$vars) {
  */
 function theme_message_library_notices_sensitivity_warning($vars) {
   $output = '';
-  $form['temp_el'] = array(
-    '#prefix' => '<div class="sensitive-message">',
-    '#markup' => !empty($vars['message']) ? $vars['message'] : '',
-    '#suffix' => '</div>',
-  );
-  $output .= drupal_render($form);
+  $vars['message'] = trim($vars['message']);
+  if (!empty($vars['message'])) {
+    $form['temp_el'] = array(
+      '#prefix' => '<div class="sensitive-message">',
+      '#markup' => !empty($vars['message']) ? $vars['message'] : '',
+      '#suffix' => '</div>',
+    );
+    $output .= drupal_render($form);
+  }
   return $output;
 }
 
