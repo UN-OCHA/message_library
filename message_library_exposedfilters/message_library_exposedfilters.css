@@ -40,7 +40,7 @@ a#ml_help_all_toggle {
 a#ml_help_general_toggle,
 a#ml_help_criteria_toggle,
 a#ml_help_quick_search_toggle {
-  background-image: url('./image/info.png');
+  background-image: url('./image/info_pt.png');
   background-size: 16px 16px;
   background-repeat: no-repeat;
   background-position: center center;
