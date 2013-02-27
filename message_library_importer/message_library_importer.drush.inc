@@ -19,6 +19,7 @@ function message_library_importer_drush_command() {
   $items['message-library-wipe-content'] = array(
     'description' => 'Wipe all the content created by the importers of Message Library.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'drupal dependencies' => array('devel_generate'),
   );
   return $items;
 }

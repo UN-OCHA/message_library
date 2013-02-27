@@ -27,6 +27,13 @@ projects[nodequeue][patch][] = http://drupal.org/files/nodequeue_undefined_prope
 projects[textformatter][type] = module
 projects[textformatter][version] = 1.3
 
+; [Field reference delete] - Wed Sep 5 18:42:10 2012 -0400
+; http://drupal.org/node/1281114
+projects[field_reference_delete][type] = module
+projects[field_reference_delete][download][type] = git
+projects[field_reference_delete][download][url] = http://git.drupal.org/sandbox/drothstein/1775816.git
+projects[field_reference_delete][download][revision] = adb0a3c
+
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make -y
