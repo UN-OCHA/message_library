@@ -125,6 +125,24 @@ function message_library_page_alter(&$page) {
       l('Message Library', 'message-library'),
     ));
   }
+
+  $pages = array(
+    'message_library_quick_reference_user_manual_nid',
+    'message_library_users_faq_nid',
+  );
+
+  $node = menu_get_object();
+  if (!empty($node->nid) && $node->type == 'page') {
+    foreach ($pages as $var_name) {
+      $nid = variable_get($var_name);
+      if ($nid == $node->nid) {
+        drupal_set_breadcrumb(array(
+          l('Home', '<front>'),
+          l('Message Library', 'message-library'),
+        ));
+      }
+    }
+  }
 }
 
 /**
