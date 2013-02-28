@@ -4,7 +4,6 @@ a.ml-views-facets {
 
 #views-exposed-form-message-library-search-page fieldset .views-widget {
   height: 45px;
-  width: 200px;
   position: relative;
 }
 
@@ -14,8 +13,12 @@ a.ml-views-facets {
   left: 0;
 }
 
+#views-exposed-form-message-library-search-page .fieldset-wrapper .views-exposed-widget{
+  width: 23%;
+}
+
 #views-exposed-form-message-library-search-page fieldset .views-widget select {
-  width : 200px;
+  width : 100%;
 }
 
 #views-exposed-form-message-library-search-page fieldset {
