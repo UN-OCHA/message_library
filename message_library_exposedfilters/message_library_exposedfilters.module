@@ -123,7 +123,7 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   // implement the HTML 5 input placehodler feature.
   if ($form['#id'] !== 'views-exposed-form-message-library-search-page') return;
 
-  $form['ml_search_text']['#attributes']['placeholder'] = t('enter search terms');
+  $form['ml_search_text']['#placeholder'] = t('enter search terms');
   // Add necessary js and css files
   $path = drupal_get_path('module', 'message_library_exposedfilters');
   //drupal_add_js('misc/jquery.cookie.js', 'file');
