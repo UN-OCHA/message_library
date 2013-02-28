@@ -104,8 +104,15 @@ function message_library_theme_link_field_create_list($entity_type, $entity, $fi
   $settings = $display['settings'];
   $list_items = array();
 
-  foreach ($items as $delta => $item) {
-    $list_items[] = theme('link_formatter_link_default', array('element' => $item));
+  if (!empty($items)) {
+    $count = count($items);
+
+    $i = 1;
+    foreach ($items as $delta => $item) {
+      $pre_num = ($count > 1) ? '<span class="entry-num">' . $i . '. </span>' : '';
+      $list_items[] = $pre_num . theme('link_formatter_link_default', array('element' => $item));
+      $i++;
+    }
   }
 
   return $list_items;
