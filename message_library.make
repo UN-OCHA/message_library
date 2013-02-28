@@ -40,6 +40,13 @@ projects[link][version] = 1.1
 ; http://drupal.org/node/1914286
 projects[link][patch][] = http://drupal.org/files/Fixed_title_value_in_link_field_update_instance_undefined-1914286-3.patch
 
+; [Views] - Tue Feb 19 22:56:39 2013 +0100
+; This dev version contains an important fix for this issue:
+projects[views][type] = module
+projects[views][download][type] = git
+projects[views][download][url] = http://git.drupal.org/project/views.git
+projects[views][download][revision] = 2aed68c
+
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make -y

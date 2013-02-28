@@ -6,6 +6,14 @@
  */
 
 /**
+ * Implements hook_init()
+ */
+function message_library_theme_init() {
+  $path = drupal_get_path('module', 'message_library_theme');
+  drupal_add_css($path . '/message_library_theme.css');
+}
+
+/**
  * Preprocess variables for page.tpl.php
  */
 function message_library_theme_preprocess_page(&$variables) {
