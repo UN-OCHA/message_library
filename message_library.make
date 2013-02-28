@@ -40,18 +40,6 @@ projects[link][version] = 1.1
 ; http://drupal.org/node/1914286
 projects[link][patch][] = http://drupal.org/files/Fixed_title_value_in_link_field_update_instance_undefined-1914286-3.patch
 
-; [Elements]
-projects[elements][type] = module
-projects[elements][version] = 1.2
-
-; [jQuery Placeholder]
-projects[jquery_placeholder][type] = module
-projects[jquery_placeholder][version] = 1.0-beta1
-
-libraries[jquery.placeholder][download][type] = git
-libraries[jquery.placeholder][download][url] = git://github.com/mathiasbynens/jquery-placeholder.git
-libraries[jquery.placeholder][download][branch] = master
-
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make -y

@@ -61,7 +61,12 @@ function message_library_exposedfilters_views_pre_render(&$view) {
     switch ($key) {
       // 1. Text field, as assign it is
       case 'ml_search_text':
-        $vars[$key] = !empty($val) ? $val : '';
+        if ($val == 'enter search terms') {
+          $vars[$key] = '';
+        }
+        else {
+          $vars[$key] = !empty($val) ? $val : '';
+        }
         break;
       // 2. For vocabularies, load and assign term name
       case 'issue':
@@ -86,6 +91,12 @@ function message_library_exposedfilters_views_pre_render(&$view) {
       array('@count' => $vars['total_rows']));
 
   $view->attachment_before .= theme('current_selected_criteria', $vars);
+}
+
+/**
+ * Implements hook_pre_pre_build()
+ */
+function message_library_exposedfilters_views_pre_build(&$view) {
 }
 
 /**
@@ -123,7 +134,7 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   // implement the HTML 5 input placehodler feature.
   if ($form['#id'] !== 'views-exposed-form-message-library-search-page') return;
 
-  $form['ml_search_text']['#placeholder'] = t('enter search terms');
+  $form['ml_search_text']['#attributes']['placeholder'] = t('enter search terms');
   // Add necessary js and css files
   $path = drupal_get_path('module', 'message_library_exposedfilters');
   //drupal_add_js('misc/jquery.cookie.js', 'file');
@@ -168,6 +179,22 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
   $options = !empty($form['threat']['#options']) ? $form['threat']['#options'] : array();
   drupal_add_js(array('messageLibraryExposedfilter' => array(
     'threatOptions' => $options)), 'setting');
+
+  array_unshift($form['#submit'], 'message_library_exposedfilters_exposed_form_submit');
+}
+
+/**
+ * Custom submit handler
+ */
+function message_library_exposedfilters_exposed_form_submit(&$form, &$form_state) {
+  // Ugly quick fix, guess nobody will ever use 'enter search term' for search
+  $values = $form_state['values'];
+  if (!empty($values['ml_search_text']) && $values['ml_search_text'] == t('enter search terms')) {
+    if (isset($form['ml_search_text'])) {
+      $form['ml_search_text']['value'] = '';
+    }
+    $form_state['values']['ml_search_text'] = '';
+  }
 }
 
 /*----------------- HELPER FUNCTIONS
