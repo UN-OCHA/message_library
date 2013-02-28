@@ -34,6 +34,12 @@ projects[field_reference_delete][download][type] = git
 projects[field_reference_delete][download][url] = http://git.drupal.org/sandbox/drothstein/1775816.git
 projects[field_reference_delete][download][revision] = adb0a3c
 
+; [Link]
+projects[link][type] = module
+projects[link][version] = 1.1
+; http://drupal.org/node/1914286
+projects[link][patch][] = http://drupal.org/files/Fixed_title_value_in_link_field_update_instance_undefined-1914286-3.patch
+
 ; Note: These modules can be download via command:
 ; > cd DRUPAL_ROOT
 ; > drush make --no-core sites/all/modules/message_library/message_library.make -y

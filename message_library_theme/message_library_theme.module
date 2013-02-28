@@ -75,3 +75,30 @@ function message_library_theme_preprocess_views_exposed_form(&$vars) {
     }
   }
 }
+
+/**
+ * Implements hook_textformatter_field_info()
+ */
+function message_library_theme_textformatter_field_info() {
+  $info = array();
+  $info['link'] = array(
+    'fields' => array('link_field'),
+    // Callback to process $items from hook_field_formatter_view.
+    'callback' => 'message_library_theme_link_field_create_list',
+  );
+  return $info;
+}
+
+/**
+ * Create list for link fields
+ */
+function message_library_theme_link_field_create_list($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $settings = $display['settings'];
+  $list_items = array();
+
+  foreach ($items as $delta => $item) {
+    $list_items[] = theme('link_formatter_link_default', array('element' => $item));
+  }
+
+  return $list_items;
+}
