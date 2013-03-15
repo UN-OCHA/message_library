@@ -117,7 +117,7 @@ function message_library_tou_url_inbound_alter(&$path, $original_path, $path_lan
 
 /**
  * Check if the user can directly access the Message Library by checking whether
- * he has agree it.
+ * he has agreed the TOU before.
  *
  * @return bool
  *  TRUE if the user can have direct access, otherwise FALSE
@@ -142,8 +142,9 @@ function message_library_tou_get_cgi_access() {
 function message_library_tou_save_cgi_access() {
   global $user;
   if (user_is_logged_in()) {
-    db_insert('message_library_tou_cgi')
-      ->fields(array('accepted' => 1,'uid' => $user->uid))
+    db_merge('message_library_tou_cgi')
+      ->key(array('uid' => $user->uid))
+      ->fields(array('accepted' => 1))
       ->execute();
   }
   else {
