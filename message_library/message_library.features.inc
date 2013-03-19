@@ -135,6 +135,15 @@ function message_library_default_search_api_index() {
         }
       },
       "processors" : {
+        "message_library_aggregate_parent_terms" : {
+          "status" : 1,
+          "weight" : "-50",
+          "settings" : { "fields" : {
+              "field_message_threat:field_threat_category:tid" : true,
+              "field_message_threat:field_threat_category:name" : true
+            }
+          }
+        },
         "search_api_case_ignore" : {
           "status" : 0,
           "weight" : "0",
