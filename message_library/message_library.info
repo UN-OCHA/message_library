@@ -170,3 +170,5 @@ features[variable][] = pathauto_message_library_ml_threat_pattern
 features[variable][] = pathauto_message_library_pattern
 features[views_view][] = message_library
 features[views_view][] = messsage_library_threat
+
+files[] = includes/processor_aggregate_parent_terms.inc

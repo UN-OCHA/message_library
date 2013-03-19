@@ -70,6 +70,9 @@ function drush_message_library_importer_message_library_import() {
   // those empty terms.
   _message_library_importer_remove_empty_terms_and_content();
 
+  // Fix the fields of threat terms
+  // _message_library_importer_fix_threat_term_fields();
+
   // Reindex
   drush_print('Reindexing...');
   drush_invoke('search-api-clear', array('message_library_index'));
@@ -174,4 +177,71 @@ function drush_message_library_importer_message_library_wipe_content() {
       array('machine_name' => $vocab, 'number_terms' => 0),
       array('kill' => TRUE));
   }
+}
+
+/**
+ * This function will fill the `field_threat_category` field with parent terms
+ * for example, when the field has value 'Child Protection', the 'Protection'
+ * the parent term, will also be added to the field value
+ *
+ * Issue links: http://atrium.wiredcraft.com/internews/node/4818
+ *              http://drupal.org/node/1100778
+ */
+function _message_library_importer_fix_threat_term_fields() {
+  $vocab = taxonomy_vocabulary_machine_name_load('threat');
+
+  if (!empty($vocab->vid)) {
+    $terms = taxonomy_get_tree($vocab->vid, 0, NULL, TRUE);
+    if (!empty($terms)) {
+      foreach($terms as $term) {
+        // Set the missing parent terms value for field 'field_threat_category'
+        $wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+
+        // Get the original field value
+        $orig_tids = array();
+        $parent_tids = array();
+        foreach ($wrapper->field_threat_category->getIterator() as $delta => $term_wrapper) {
+          $tid = $term_wrapper->tid->value();
+          $orig_tids[] = $term_wrapper->tid->value();
+          $parent_terms = _message_library_importer_get_parent_terms($term_wrapper->tid->value(), 'issues');
+          if (!empty($parent_terms)) {
+            foreach ($parent_terms as $parent_term) {
+              $parent_tids[] = $parent_term->tid;
+            }
+          }
+        }
+
+        $new_tids = array_unique(array_merge($orig_tids, $parent_tids));
+        if (!empty($new_tids)) {
+          $new_terms = taxonomy_term_load_multiple($new_tids);
+          $wrapper->field_threat_category->set($new_terms);
+          $wrapper->save();
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Get all the parent terms of a specified term
+ */
+function _message_library_importer_get_parent_terms($tid, $vocab_name) {
+  $result = array();
+  $vocab = taxonomy_vocabulary_machine_name_load($vocab_name);
+  if (!empty($vocab->vid)) {
+    $p_terms = taxonomy_get_parents($tid);
+    if (!empty($p_terms)) {
+      foreach ($p_terms as $p_term) {
+        if ($p_term->vid != $vocab->vid) {
+          continue;
+        }
+        $result[$p_term->tid] = $p_term;
+        $p_p_terms = _message_library_importer_get_parent_terms($p_term->tid, $vocab_name);
+        if (!empty($p_p_terms)) {
+          $result = array_merge($result, $p_p_terms);
+        }
+      }
+    }
+  }
+  return $result;
 }

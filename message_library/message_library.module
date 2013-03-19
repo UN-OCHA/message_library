@@ -554,3 +554,17 @@ function message_library_check_menu_entries() {
 
   return FALSE;
 }
+
+/**
+ * Implements hook_search_api_processor_info()
+ */
+function message_library_search_api_processor_info() {
+  return array(
+    'message_library_aggregate_parent_terms' => array(
+      'name' => t('Aggregate parent terms'),
+      'description' => t('Quick fix for drupal issue #1100778'),
+      'class' => 'MessageLibraryAggregateParentTerms',
+      'weight' => 100,
+    ),
+  );
+}
