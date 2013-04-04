@@ -47,7 +47,8 @@ function drush_message_library_importer_message_library_import() {
   );
 
   // The base url of the feeds url on the D6 master instance
-  $feeds_url = 'http://infoasaid.org/message-library-export/';
+  $feeds_url = 'http://staging.infoasaid.org/message-library-export/';
+
   foreach ($items as $feed_name => $item) {
     drush_print(drush_html_to_text('<br/><hr>'));
     if (!empty($item['content_type'])) {
@@ -82,56 +83,6 @@ function drush_message_library_importer_message_library_import() {
   drupal_flush_all_caches();
 
   drush_print('Done.');
-}
-
-/**
- * Remove the empty tersm and content
- */
-function _message_library_importer_remove_empty_terms_and_content() {
-  // The vocabulary to check
-  $vocabs = array(
-    'hazard',
-    'issues',
-    'sector',
-    'information_type',
-    'at_risk_groups',
-    'target_audience',
-    'threat'
-  );
-
-  // The content types to check
-  $cts = array(
-    'message',
-  );
-
-  foreach($vocabs as $vocab_name) {
-    $vocab_obj = taxonomy_vocabulary_machine_name_load($vocab_name);
-    if (empty($vocab_obj)) {
-      continue;
-    }
-
-    $terms = taxonomy_get_tree($vocab_obj->vid, 0, NULL, TRUE);
-    foreach ($terms as $term) {
-      if (empty($term->name)) {
-        // Check if there are some node referencing it
-        $nodes = taxonomy_select_nodes($term->tid);
-        if (empty($nodes)) {
-          drush_log(dt('Found an empty term [tid: @tid] which has no nodes referencing it. Deleting...', array('@tid' => $term->tid)), 'warning');
-        }
-        else {
-          drush_log(dt('Found an empty term [tid: @tid] which has some nodes referencing it.', array('@tid' => $term->tid)), 'warning');
-        }
-
-        $rs = taxonomy_term_delete($term->tid);
-        if ($rs == SAVED_DELETED) {
-          drush_log(dt('Term [tid: @tid] has been removed successfully.', array('@tid' => $term->tid)), 'success');
-        }
-        else {
-          drush_log(dt('Term [tid: @tid] hasn\'t been removed successfully.', array('@tid' => $term->tid)), 'error');
-        }
-      }
-    }
-  }
 }
 
 /**

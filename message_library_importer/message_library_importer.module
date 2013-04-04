@@ -6,6 +6,96 @@
 include_once 'message_library_importer.features.inc';
 
 /**
+ * Implements hook_menu()
+ */
+function message_library_importer_menu() {
+  $items['admin/config/message_library/importer'] = array(
+    'title' => 'Feeds Importer',
+    'description' => 'Configuration on the Feeds importer for Message Library',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('message_library_importer_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'message_library_importer.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_cron()
+ */
+function message_library_importer_cron() {
+  // Enable the option to wipe content before importing.
+  //if (variable_get('ml_importer_wipe_content', FALSE)) {
+    message_library_importer_clear_out_content();
+  //}
+
+  // Let feeds run as long he wishes...
+  drupal_set_time_limit(0);
+  variable_set('ml_importer_cron_last_run', REQUEST_TIME);
+
+  $items = array(
+    // These 3 vocabularies are required by `threat` terms
+    // @see: admin/structure/taxonomy/threat/fields
+    array('message_library_term_hazard' => 'hazard'),
+    array('message_library_term_issues' => 'issues'),
+    array('message_library_term_sector' => 'sector'),
+
+    // Import threat (after the above 3 vocabularies imported)
+    array('message_library_term_threat' =>  'threat'),
+    array('message_library_term_information_type' => 'information-type'),
+    array('message_library_term_at_risk_group' => 'at-risk-group'),
+    array('message_library_term_target_audience' => 'target-audience'),
+
+    // Import message (after the above 4 vocabularies imported)
+    // @see: admin/structure/types/manage/message/fields
+    array('message_library_node_message' => 'message'),
+  );
+
+  $queue = DrupalQueue::get('message_libary_importer', TRUE);
+  $queue->deleteQueue();
+  foreach ($items as $item) {
+    $queue->createItem($item);
+  }
+}
+
+/**
+ * Implements hook_cron_queue_info()
+ */
+function message_library_importer_cron_queue_info() {
+  return array(
+    'message_libary_importer' => array(
+      'worker callback' => 'message_library_importer_importer_feed_task',
+      'time' => 240, // in seconds
+    )
+  );
+}
+
+/**
+ * Batch operation
+ */
+function message_library_importer_importer_feed_task($item) {
+  $feed_id = key($item);
+  $url_suffix = current($item);
+
+  $feed_source = feeds_source($feed_id);
+  // Set the URL for the fetch
+  $feed_url = variable_get('ml_importer_base_url', 'http://staging.infoasaid.org/message-library-export/') . $url_suffix;
+  $config = $feed_source->getConfig();
+  $config['FeedsHTTPFetcher']['source'] = $feed_url;
+  $feed_source->setConfig($config);
+  $feed_source->save();
+  $feed_source->startImport();
+
+  $feed_source->schedule();
+  $feed_source->importer->schedule();
+
+  if ($feed_id == 'message_library_node_message') {
+    _message_library_importer_remove_empty_terms_and_content();
+  }
+}
+
+
+/**
  * Implements hook_feeds_processor_targets_alter()
  */
 function message_library_importer_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
@@ -200,6 +290,115 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
           // @TODO: Log this
         }
       }
+    }
+  }
+}
+
+/**
+ * Clear out all the content imported by message-library
+ * This will clean up the following content:
+ * + Taxonomy terms in vocabulary:
+ *   - at_risk_groups
+ *   - hazard
+ *   - information_type
+ *   - issues
+ *   - sector
+ *   - target_audience
+ *   - threat
+ * + Nodes of content type:
+ *   - message
+ */
+function message_library_importer_clear_out_content() {
+  // Clear all the content of type: Message
+  $node_types = array('message');
+
+  $results = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('type', $node_types, 'IN')
+    ->execute();
+  foreach ($results as $result) {
+    $nids[] = $result->nid;
+  }
+
+  if (!empty($nids)) {
+    node_delete_multiple($nids);
+  }
+
+  // Clear all the terms of vocabulary:
+  // - 'At Risk Group'
+  // - 'Target Audience'
+  // - 'Information Type'
+  // - ’Hazard'
+  // - 'Issues'
+  // - 'Sector'
+  // - 'Threat'
+  $vocabularies = array(
+    'at_risk_groups',
+    'hazard',
+    'information_type',
+    'issues',
+    'sector',
+    'target_audience',
+    'threat',
+  );
+
+  $vocabs = array();
+  foreach($vocabularies as $vocab_name) {
+    $vocab = taxonomy_vocabulary_machine_name_load($vocab_name);
+    if (empty($vocab)) {
+      continue;
+    }
+    $vocabs[$vocab->vid] = $vocab;
+  }
+  $vids = array_keys($vocabs);
+
+  $tids = db_select('taxonomy_term_data', 'td')
+    ->fields('td', array('tid'))
+    ->condition('vid', $vids, 'IN')
+    ->orderBy('tid', 'ASC')
+    ->execute()
+    ->fetchCol('tid');
+
+  foreach ($tids as $tid) {
+    taxonomy_term_delete($tid);
+  }
+}
+
+/**
+ * Remove the empty tersm and content
+ */
+function _message_library_importer_remove_empty_terms_and_content() {
+  // The vocabulary to check
+  $vocabs = array(
+    'hazard',
+    'issues',
+    'sector',
+    'information_type',
+    'at_risk_groups',
+    'target_audience',
+    'threat'
+  );
+
+  // The content types to check
+  $cts = array(
+    'message',
+  );
+
+  foreach($vocabs as $vocab_name) {
+    $vocab_obj = taxonomy_vocabulary_machine_name_load($vocab_name);
+    if (empty($vocab_obj)) {
+      continue;
+    }
+
+    $terms = taxonomy_get_tree($vocab_obj->vid, 0, NULL, TRUE);
+    foreach ($terms as $term) {
+      if (!empty($term->name)) {
+        continue;
+      }
+
+      // Check if there are some node referencing it
+      $nodes = taxonomy_select_nodes($term->tid);
+      $rs = taxonomy_term_delete($term->tid);
     }
   }
 }
