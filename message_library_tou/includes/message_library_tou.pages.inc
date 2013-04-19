@@ -39,8 +39,6 @@ function message_library_tou_cgi_form($form, &$form_state) {
     '#id' => 'iaa_notices_warning_cgi_submit'
   );
 
-  $form['#submit'] = array('message_library_tou_cgi_form_submit');
-
   return $form;
 }
 
@@ -61,20 +59,11 @@ function message_library_tou_cgi_form_validate($form, &$form_state) {
 function message_library_tou_cgi_form_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  // For guest user who decide to login/register
-  // if (!user_is_logged_in() && !empty($values['cgi_login'])) {
-  //   //$form_state['redirect'] = 'user/login';
-  //   $form_state['redirect'] = array('user/login',
-  //       array('query' => array(
-  //         'destination' => $values['cgi_destination'])
-  //       ));
-  //   return;
-  // }
-
   // For the guests who don't want to register, store in the session
   // For the authenticated user, store in the database, this TOU will only be
   // displayed this time
   message_library_tou_save_cgi_access();
-
+  
+  // $form_state['redirect'] = $values['cgi_destination'];
   $form_state['redirect'] = $values['cgi_destination'];
 }

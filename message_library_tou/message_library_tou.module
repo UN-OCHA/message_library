@@ -27,35 +27,6 @@ function message_library_tou_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  // The ctools modal login form
-  $items['simple_ass_modal/%ctools_js/test/form'] = array(
-    'title' => 'Message Library Login',
-    'page callback' => 'simple_ass_modal_popup',
-    'page arguments' => array(1),
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['cgi-message-library/formlogin'] = array(
-    'title' => 'Message Library CGI',
-    'page callback' => 'message_library_tou_cgi_form_login',
-    'file' => 'includes/message_library_tou.pages.inc',
-    'access arguments' => array(
-      'access content',
-    ),
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['cgi-message-library/login'] = array(
-    'title' => 'Message Library CGI',
-    'page callback' => 'message_library_tou_cgi_login',
-    'file' => 'includes/message_library_tou.pages.inc',
-    'access arguments' => array(
-      'access content',
-    ),
-    'type' => MENU_CALLBACK,
-  );
-
   return $items;
 }
 
@@ -80,21 +51,11 @@ function message_library_tou_theme($existing, $type, $theme, $path) {
 
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
- */
-function message_library_tou_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_id == 'message_library_tou_login_block') {
-    $form['#action'] = $_SERVER['HTTP_REFERER'];
-    $form["#submit"][] = "message_library_tou_user_form_submit";
-  }
-}
-
-
-/**
  * Implements hook_url_inbound_alter()
  */
 function message_library_tou_url_inbound_alter(&$path, $original_path, $path_language) {
+  return;
+  dpm(func_get_args());
   if (arg(0, $original_path) !== 'message-library') return;
   // Prevent the edit link on the content listing admin page
   // (eg. message-library/message/what-think-about/edit) from not working
@@ -109,8 +70,8 @@ function message_library_tou_url_inbound_alter(&$path, $original_path, $path_lan
     // Don't pass the destination query, as it will cause redirection problem
     // in the form submit
     $desination = drupal_get_destination();
-    drupal_goto('message-library-cgi', array('query' => array(
-        'cgi-destination' => $desination['destination'])));
+    //drupal_goto('message-library-cgi', array('query' => array(
+    //    'cgi-destination' => $desination['destination'])));
   };
 }
 
@@ -128,9 +89,11 @@ function message_library_tou_get_cgi_access() {
     $query = 'SELECT id FROM {message_library_tou_cgi} WHERE accepted = :accepted AND uid = :uid;';
     $show = db_query($query,array(':accepted' => 1, ':uid' => $user->uid))
       ->fetchField();
+    
   }
   else {
     $show = !empty($_SESSION['message_library_tou_cgi']);
+    var_dump($show);
   }
   return (bool)$show;
 }
@@ -151,39 +114,6 @@ function message_library_tou_save_cgi_access() {
     $_SESSION['message_library_tou_cgi'] = TRUE;
   }
 }
-
-
-/**
- * Implements template_preprocess_THEMENAME()
- */
-function template_preprocess_message_library_tou_cgi(&$vars) {
-  // TOU body
-  $vars['tou_text'] = isset($vars['node']->body['und'][0]['value']) ?
-    $vars['node']->body['und'][0]['value'] : '';
-  $destination = drupal_get_destination();
-  $vars['destination'] = $destination['destination'];
-  // Form's action url
-  $vars['action_url'] = url("cgi-message-library/accepted");
-}
-
-
-/**
- * Implements hook_form_FORM_ID_alter()
- */
-function message_library_tou_form_user_login_alter(&$form, &$form_state, $form_id) {
-  $parsed = drupal_parse_url($form['#action']);
-
-  $destination = !empty($parsed['query']['destination']) ?
-      $parsed['query']['destination'] : '';
-
-  if (!empty($destination) && strpos($destination, 'message-library') !== FALSE) {
-    $form['message_library_tou_agreed'] = array(
-      '#type' => 'hidden',
-      '#value' => TRUE,
-    );
-  }
-}
-
 
 /**
  * Implements hook_user_login()

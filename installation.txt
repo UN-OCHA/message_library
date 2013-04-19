@@ -16,3 +16,5 @@
 - Make sure the solr is running
 
   admin/config/search/search_api/server/solr_server
+  
+- Setting up an crontab for periodic import
