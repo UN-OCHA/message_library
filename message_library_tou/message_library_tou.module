@@ -61,7 +61,7 @@ function message_library_tou_url_inbound_alter(&$path, $original_path, $path_lan
       return;
     }
 
-    if (!$message_library_tou_get_cgi_access()) {
+    if (!message_library_tou_get_cgi_access()) {
       $desination = drupal_get_destination();
       // drupal_goto('message-library-cgi', array('query' => array(
       //  'cgi-destination' => $desination['destination'])));
