@@ -54,6 +54,13 @@ function message_library_form_alter(&$form, $form_state, $form_id) {
     }
 
     $form['ml_search_text']['#attributes'] = array('class' => array('ctools-auto-submit-exclude'));
+
+    // A ugly quick fix for the 'An illegal choice has been detected.'
+    foreach (array('issue', 'threat', 'at_risk_group', 'target_audience') as $i) {
+      if (!isset($_GET[$i])) {
+        $_GET[$i] = 'All';
+      }
+    }
   }
 }
 
