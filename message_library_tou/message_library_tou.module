@@ -54,25 +54,19 @@ function message_library_tou_theme($existing, $type, $theme, $path) {
  * Implements hook_url_inbound_alter()
  */
 function message_library_tou_url_inbound_alter(&$path, $original_path, $path_language) {
-  return;
-  dpm(func_get_args());
-  if (arg(0, $original_path) !== 'message-library') return;
-  // Prevent the edit link on the content listing admin page
-  // (eg. message-library/message/what-think-about/edit) from not working
-  if ((arg(0) == 'message-library')
-    && (arg(1, $original_path) == 'message')
-    && (arg(3, $original_path) == 'edit')) {
-    return;
-  }
+  if (arg(0, $original_path) == 'message-library') {
+    // Prevent the edit link on the content listing admin page
+    // (eg. message-library/message/what-think-about/edit) from working
+    if ((arg(1, $original_path) == 'message') && ($arg(3, $original_path) == 'edit')) {
+      return;
+    }
 
-  if (!message_library_tou_get_cgi_access()) {
-    // drupal_goto('message-library-cgi', array('query' => drupal_get_destination()));
-    // Don't pass the destination query, as it will cause redirection problem
-    // in the form submit
-    $desination = drupal_get_destination();
-    //drupal_goto('message-library-cgi', array('query' => array(
-    //    'cgi-destination' => $desination['destination'])));
-  };
+    if (!$message_library_tou_get_cgi_access()) {
+      $desination = drupal_get_destination();
+      // drupal_goto('message-library-cgi', array('query' => array(
+      //  'cgi-destination' => $desination['destination'])));
+    };
+  }
 }
 
 
@@ -84,18 +78,18 @@ function message_library_tou_url_inbound_alter(&$path, $original_path, $path_lan
  *  TRUE if the user can have direct access, otherwise FALSE
  */
 function message_library_tou_get_cgi_access() {
-  global $user;
+  if (isset($_SESSION) && !empty($_SESSION['message_library_tou_cgi'])) {
+    return TRUE;
+  }
+
   if (user_is_logged_in()) {
+    global $user;
     $query = 'SELECT id FROM {message_library_tou_cgi} WHERE accepted = :accepted AND uid = :uid;';
-    $show = db_query($query,array(':accepted' => 1, ':uid' => $user->uid))
-      ->fetchField();
-    
+    $show = db_query($query,array(':accepted' => 1, ':uid' => $user->uid))->fetchField();
+    return (bool) $show;
   }
-  else {
-    $show = !empty($_SESSION['message_library_tou_cgi']);
-    var_dump($show);
-  }
-  return (bool)$show;
+
+  return FALSE;
 }
 
 
@@ -103,15 +97,14 @@ function message_library_tou_get_cgi_access() {
  * Save the acceptance of TOU either in db or session
  */
 function message_library_tou_save_cgi_access() {
-  global $user;
+  $_SESSION['message_library_tou_cgi'] = TRUE;
+
   if (user_is_logged_in()) {
+    global $user;
     db_merge('message_library_tou_cgi')
       ->key(array('uid' => $user->uid))
       ->fields(array('accepted' => 1))
       ->execute();
-  }
-  else {
-    $_SESSION['message_library_tou_cgi'] = TRUE;
   }
 }
 
