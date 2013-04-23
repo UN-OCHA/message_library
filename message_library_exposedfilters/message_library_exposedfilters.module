@@ -75,7 +75,9 @@ function message_library_exposedfilters_views_pre_render(&$view) {
       case 'threat':
         if ((int) $val) { // option 'All' will be cast to 0 and ignored
           $term = taxonomy_term_load($val);
-          $vars[$key] = $term->name;
+          if ($term) {
+            $vars[$key] = $term->name;
+          }
         }
         else {
           $vars[$key] = '';

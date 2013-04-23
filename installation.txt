@@ -6,7 +6,7 @@
 - Download other modules required
 
   shell> cd DRUPAL_ROOT
-  shell> drush make --no-core sites/all/modules/message_library/message_library.make -y
+  shell> drush make --no-core sites/all/modules/message_library/required_module.make -y
 
 - Enable the message library modules
 

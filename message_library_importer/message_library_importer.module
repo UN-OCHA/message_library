@@ -24,6 +24,7 @@ function message_library_importer_menu() {
  * Implements hook_cron()
  */
 function message_library_importer_cron() {
+  exit();
   // Enable the option to wipe content before importing.
   //if (variable_get('ml_importer_wipe_content', FALSE)) {
     message_library_importer_clear_out_content();
@@ -362,6 +363,9 @@ function message_library_importer_clear_out_content() {
   foreach ($tids as $tid) {
     taxonomy_term_delete($tid);
   }
+
+  // Prevent from some terms from still appearing in the exposed dropdowns
+  drupal_flush_all_caches();
 }
 
 /**

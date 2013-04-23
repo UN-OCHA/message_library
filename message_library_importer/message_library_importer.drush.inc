@@ -106,7 +106,7 @@ function drush_message_library_importer_message_library_wipe_content() {
   // - 'At Risk Group'
   // - 'Target Audience'
   // - 'Information Type'
-  // - ’Hazard'
+  // - 'Hazard'
   // - 'Issues'
   // - 'Sector'
   // - 'Threat'
@@ -128,6 +128,9 @@ function drush_message_library_importer_message_library_wipe_content() {
       array('machine_name' => $vocab, 'number_terms' => 0),
       array('kill' => TRUE));
   }
+
+  // Prevent from some terms from still appearing in the exposed dropdowns
+  drupal_flush_all_caches();
 }
 
 /**
