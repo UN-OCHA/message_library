@@ -110,6 +110,7 @@
         });
 
         var threatSelect = $('#edit-threat');
+        var threatVal = threatSelect.val();
         var issueSelect = $('#edit-issue');
         var issueVal = issueSelect.val();
 
@@ -143,7 +144,12 @@
 
                 // Replace with new options
                 $.each(newOptions, function(key, value) {
-                  var optionEl = $('<option></option>').attr('value', value[0]).text(value[1]);
+                  if (threatVal == value[0]) {
+                    var optionEl = $('<option></option>').attr('value', value[0]).text(value[1]).attr('selected','selected');
+                  }
+                  else {
+                    var optionEl = $('<option></option>').attr('value', value[0]).text(value[1]);
+                  }
                   threatSelect.append(optionEl);
                 });
               }
