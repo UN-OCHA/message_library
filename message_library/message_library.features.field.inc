@@ -10,103 +10,6 @@
 function message_library_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'node-document-field_remote_media'.
-  $fields['node-document-field_remote_media'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '-1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_remote_media',
-      'field_permissions' => array(
-        'type' => '0',
-      ),
-      'foreign keys' => array(),
-      'indexes' => array(),
-      'locked' => '0',
-      'module' => 'link',
-      'settings' => array(
-        'attributes' => array(
-          'class' => '',
-          'rel' => '',
-          'target' => 'default',
-        ),
-        'display' => array(
-          'url_cutoff' => 80,
-        ),
-        'enable_tokens' => 1,
-        'entity_translation_sync' => FALSE,
-        'title' => 'optional',
-        'title_maxlength' => 128,
-        'title_value' => '',
-        'url' => 0,
-      ),
-      'translatable' => '0',
-      'type' => 'link_field',
-    ),
-    'field_instance' => array(
-      'bundle' => 'document',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'link',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-          ),
-          'type' => 'link_default',
-          'weight' => 30,
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_remote_media',
-      'label' => 'Remote Media',
-      'required' => 0,
-      'settings' => array(
-        'attributes' => array(
-          'class' => '',
-          'configurable_title' => 0,
-          'rel' => '',
-          'target' => '_blank',
-          'title' => '',
-        ),
-        'display' => array(
-          'url_cutoff' => '80',
-        ),
-        'enable_tokens' => 1,
-        'entity_translation_sync' => FALSE,
-        'title' => 'optional',
-        'title_maxlength' => '128',
-        'title_value' => '',
-        'url' => 0,
-        'user_register_form' => FALSE,
-        'validate_url' => 1,
-      ),
-      'widget' => array(
-        'active' => 0,
-        'module' => 'link',
-        'settings' => array(),
-        'type' => 'link_field',
-        'weight' => '15',
-      ),
-    ),
-  );
-
   // Exported field: 'node-message-field_message_audience'.
   $fields['node-message-field_message_audience'] = array(
     'field_config' => array(
@@ -822,9 +725,16 @@ function message_library_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'options',
-        'settings' => array(),
-        'type' => 'options_select',
+        'module' => 'inline_entity_form',
+        'settings' => array(
+          'fields' => array(),
+          'type_settings' => array(
+            'allow_existing' => 1,
+            'delete_references' => 0,
+            'match_operator' => 'CONTAINS',
+          ),
+        ),
+        'type' => 'inline_entity_form',
         'weight' => '16',
       ),
     ),
@@ -1889,7 +1799,6 @@ function message_library_field_default_fields() {
   t('Issue');
   t('Localized Message');
   t('Message');
-  t('Remote Media');
   t('Sector');
   t('Sensitivity Causes');
   t('Source');
