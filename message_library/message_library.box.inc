@@ -32,5 +32,29 @@ function message_library_default_box() {
   );
   $export['message_library_about'] = $box;
 
+  $box = new stdClass();
+  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
+  $box->api_version = 1;
+  $box->delta = 'message_library_admin';
+  $box->plugin_key = 'i18n';
+  $box->title = 'Admin Message Library';
+  $box->description = 'Message Library Admin';
+  $box->options = array(
+    'body' => array(
+      'value' => '<p><a href="/node/add/message">Add Message</a></p>
+<p><a href="/admin/structure/taxonomy/threat">Manage Threats</a></p>
+<p><a href="/admin/structure/taxonomy/issues">Manage Issues</a></p>
+<p><a href="/admin/structure/taxonomy/at_risk_groups">Manage At Risk Groups</a></p>
+<p><a href="/admin/structure/taxonomy/target_audiences">Manage Target Audiences</a></p>
+<p><a href="/admin/structure/taxonomy/hazard">Manage Hazards</a></p>
+',
+      'format' => 'simple',
+    ),
+    'i18n_boxes' => array(
+      'language' => '__LOCALIZE__',
+    ),
+  );
+  $export['message_library_admin'] = $box;
+
   return $export;
 }
