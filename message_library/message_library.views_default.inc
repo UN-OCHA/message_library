@@ -503,6 +503,58 @@ function message_library_views_default_views() {
   $handler->display->display_options['arguments']['reference']['limit'] = '0';
   $handler->display->display_options['path'] = 'message-library/threat/%';
 
+  /* Display: Manage */
+  $handler = $view->new_display('attachment', 'Manage', 'attachment_1');
+  $handler->display->display_options['defaults']['group_by'] = FALSE;
+  $handler->display->display_options['defaults']['access'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'role';
+  $handler->display->display_options['access']['role'] = array(
+    30037204 => '30037204',
+    200153887 => '200153887',
+    52310416 => '52310416',
+  );
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '1';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['row_options']['inline'] = array(
+    'field_message_threat' => 'field_message_threat',
+    'nodequeue_all_subqueues' => 'nodequeue_all_subqueues',
+  );
+  $handler->display->display_options['row_options']['separator'] = ' | ';
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Threat */
+  $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['table'] = 'field_data_field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['field'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['label'] = 'Edit Threat';
+  $handler->display->display_options['fields']['field_message_threat']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat']['alter']['path'] = 'taxonomy/term/[field_message_threat-tid]/edit';
+  $handler->display->display_options['fields']['field_message_threat']['alter']['replace_spaces'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat']['alter']['path_case'] = 'lower';
+  $handler->display->display_options['fields']['field_message_threat']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_message_threat']['type'] = 'taxonomy_term_reference_plain';
+  /* Field: Nodequeue: All subqueues */
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['id'] = 'nodequeue_all_subqueues';
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['table'] = 'node';
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['field'] = 'nodequeue_all_subqueues';
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['label'] = 'Reorder Messages';
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['link_to_queue'] = 1;
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['limit'] = 0;
+  $handler->display->display_options['fields']['nodequeue_all_subqueues']['queues'] = array(
+    'message_library_threat' => 0,
+  );
+  $handler->display->display_options['displays'] = array(
+    'main_page' => 'main_page',
+    'default' => 0,
+  );
+
   /* Display: Attachment */
   $handler = $view->new_display('attachment', 'Attachment', 'attachment_header');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
@@ -614,6 +666,9 @@ function message_library_views_default_views() {
     t('All'),
     t('%1'),
     t('Page'),
+    t('Manage'),
+    t('Edit Threat'),
+    t('Reorder Messages'),
     t('Attachment'),
     t('threat'),
     t('Issue'),
