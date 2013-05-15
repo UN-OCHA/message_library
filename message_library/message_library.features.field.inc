@@ -75,8 +75,6 @@ function message_library_field_default_fields() {
           'label' => 'inline',
           'module' => 'textformatter',
           'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
             'textformatter_class' => 'textformatter-list',
             'textformatter_comma_and' => 0,
             'textformatter_comma_full_stop' => 0,
@@ -172,7 +170,7 @@ function message_library_field_default_fields() {
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '10',
+          'weight' => '9',
         ),
       ),
       'entity_type' => 'node',
@@ -268,10 +266,7 @@ function message_library_field_default_fields() {
         'teaser' => array(
           'label' => 'hidden',
           'module' => 'text',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-          ),
+          'settings' => array(),
           'type' => 'text_default',
           'weight' => '0',
         ),
@@ -388,8 +383,6 @@ function message_library_field_default_fields() {
           'label' => 'inline',
           'module' => 'textformatter',
           'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
             'textformatter_class' => 'textformatter-list',
             'textformatter_comma_and' => 0,
             'textformatter_comma_full_stop' => 0,
@@ -484,7 +477,7 @@ function message_library_field_default_fields() {
           'label' => 'inline',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '14',
+          'weight' => '13',
         ),
       ),
       'entity_type' => 'node',
@@ -599,8 +592,6 @@ function message_library_field_default_fields() {
           'label' => 'inline',
           'module' => 'textformatter',
           'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
             'textformatter_class' => 'textformatter-list',
             'textformatter_comma_and' => 0,
             'textformatter_comma_full_stop' => 0,
@@ -710,9 +701,12 @@ function message_library_field_default_fields() {
         ),
         'teaser' => array(
           'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => '8',
+          'module' => 'entityreference',
+          'settings' => array(
+            'link' => 1,
+          ),
+          'type' => 'entityreference_label',
+          'weight' => '7',
         ),
       ),
       'entity_type' => 'node',
@@ -797,10 +791,7 @@ function message_library_field_default_fields() {
         'teaser' => array(
           'label' => 'inline',
           'module' => 'list',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-          ),
+          'settings' => array(),
           'type' => 'list_default',
           'weight' => '4',
         ),
@@ -831,6 +822,9 @@ function message_library_field_default_fields() {
       'deleted' => '0',
       'entity_types' => array(),
       'field_name' => 'field_message_sensitivity_causes',
+      'field_permissions' => array(
+        'type' => '0',
+      ),
       'foreign keys' => array(
         'format' => array(
           'columns' => array(
@@ -848,7 +842,7 @@ function message_library_field_default_fields() {
       'module' => 'text',
       'settings' => array(
         'entity_translation_sync' => FALSE,
-        'max_length' => 255,
+        'max_length' => '1024',
       ),
       'translatable' => '0',
       'type' => 'text',
@@ -879,27 +873,51 @@ function message_library_field_default_fields() {
         'teaser' => array(
           'label' => 'hidden',
           'module' => 'text',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-          ),
+          'settings' => array(),
           'type' => 'text_plain',
-          'weight' => '7',
+          'weight' => '6',
         ),
       ),
       'entity_type' => 'node',
       'field_name' => 'field_message_sensitivity_causes',
       'label' => 'Sensitivity Causes',
-      'required' => FALSE,
+      'required' => 0,
       'settings' => array(
+        'better_formats' => array(
+          'allowed_formats' => array(
+            'filtered_html' => 'filtered_html',
+            'full_html' => 'full_html',
+            'plain_text' => 'plain_text',
+            'simple' => 'simple',
+          ),
+          'allowed_formats_toggle' => 0,
+          'default_order_toggle' => 0,
+          'default_order_wrapper' => array(
+            'formats' => array(
+              'filtered_html' => array(
+                'weight' => '0',
+              ),
+              'full_html' => array(
+                'weight' => '0',
+              ),
+              'plain_text' => array(
+                'weight' => '10',
+              ),
+              'simple' => array(
+                'weight' => '0',
+              ),
+            ),
+          ),
+        ),
         'entity_translation_sync' => FALSE,
-        'text_processing' => 0,
+        'text_processing' => '0',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
+        'active' => 1,
         'module' => 'text',
         'settings' => array(
-          'size' => 60,
+          'size' => '60',
         ),
         'type' => 'text_textfield',
         'weight' => '11',
@@ -966,7 +984,7 @@ function message_library_field_default_fields() {
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '11',
+          'weight' => '10',
         ),
       ),
       'entity_type' => 'node',
@@ -1076,7 +1094,7 @@ function message_library_field_default_fields() {
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '13',
+          'weight' => '12',
         ),
       ),
       'entity_type' => 'node',
@@ -1187,8 +1205,6 @@ function message_library_field_default_fields() {
           'label' => 'inline',
           'module' => 'textformatter',
           'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
             'textformatter_class' => 'textformatter-list message-source-list',
             'textformatter_comma_and' => 0,
             'textformatter_comma_full_stop' => 0,
@@ -1300,7 +1316,7 @@ function message_library_field_default_fields() {
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '12',
+          'weight' => '11',
         ),
       ),
       'entity_type' => 'node',
@@ -1415,7 +1431,7 @@ function message_library_field_default_fields() {
           'label' => 'above',
           'settings' => array(),
           'type' => 'hidden',
-          'weight' => '9',
+          'weight' => '8',
         ),
       ),
       'entity_type' => 'node',
@@ -1432,120 +1448,6 @@ function message_library_field_default_fields() {
         'settings' => array(),
         'type' => 'options_select',
         'weight' => '12',
-      ),
-    ),
-  );
-
-  // Exported field: 'node-message-field_message_url'.
-  $fields['node-message-field_message_url'] = array(
-    'field_config' => array(
-      'active' => '1',
-      'cardinality' => '-1',
-      'deleted' => '0',
-      'entity_types' => array(),
-      'field_name' => 'field_message_url',
-      'field_permissions' => array(
-        'type' => '0',
-      ),
-      'foreign keys' => array(),
-      'indexes' => array(),
-      'locked' => '0',
-      'module' => 'link',
-      'settings' => array(
-        'attributes' => array(
-          'class' => '',
-          'rel' => '',
-          'target' => 'default',
-        ),
-        'display' => array(
-          'url_cutoff' => 80,
-        ),
-        'enable_tokens' => 1,
-        'entity_translation_sync' => FALSE,
-        'title' => 'optional',
-        'title_maxlength' => 128,
-        'title_value' => '',
-        'url' => 0,
-      ),
-      'translatable' => '0',
-      'type' => 'link_field',
-    ),
-    'field_instance' => array(
-      'bundle' => 'message',
-      'default_value' => NULL,
-      'deleted' => '0',
-      'description' => '',
-      'display' => array(
-        'default' => array(
-          'label' => 'above',
-          'module' => 'link',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-            'field_delimiter' => '',
-          ),
-          'type' => 'link_default',
-          'weight' => '30',
-        ),
-        'ical' => array(
-          'label' => 'above',
-          'settings' => array(),
-          'type' => 'hidden',
-          'weight' => 0,
-        ),
-        'teaser' => array(
-          'label' => 'above',
-          'module' => 'textformatter',
-          'settings' => array(
-            'diff_custom' => 0,
-            'diff_custom_settings' => array(),
-            'textformatter_class' => 'textformatter-list message-website-list',
-            'textformatter_comma_and' => 0,
-            'textformatter_comma_full_stop' => 0,
-            'textformatter_comma_override' => 0,
-            'textformatter_comma_tag' => 'div',
-            'textformatter_contrib' => array(),
-            'textformatter_separator_custom' => '',
-            'textformatter_separator_custom_class' => 'textformatter-separator',
-            'textformatter_separator_custom_tag' => 'span',
-            'textformatter_term_plain' => 0,
-            'textformatter_type' => 'ul',
-          ),
-          'type' => 'textformatter_list',
-          'weight' => '6',
-        ),
-      ),
-      'entity_type' => 'node',
-      'field_name' => 'field_message_url',
-      'label' => 'Websites',
-      'required' => 0,
-      'settings' => array(
-        'attributes' => array(
-          'class' => '',
-          'configurable_title' => 0,
-          'rel' => '',
-          'target' => 'default',
-          'title' => '',
-        ),
-        'display' => array(
-          'url_cutoff' => '80',
-        ),
-        'enable_tokens' => 1,
-        'entity_translation_sync' => FALSE,
-        'rel_remove' => 'default',
-        'title' => 'optional',
-        'title_maxlength' => '255',
-        'title_value' => '',
-        'url' => 'optional',
-        'user_register_form' => FALSE,
-        'validate_url' => 1,
-      ),
-      'widget' => array(
-        'active' => 0,
-        'module' => 'link',
-        'settings' => array(),
-        'type' => 'link_field',
-        'weight' => '15',
       ),
     ),
   );
@@ -1806,7 +1708,6 @@ function message_library_field_default_fields() {
   t('Target audience comment');
   t('Threat');
   t('Warning/Alert message');
-  t('Websites');
 
   return $fields;
 }

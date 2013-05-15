@@ -196,11 +196,12 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['field_message_example_communic']['field'] = 'field_message_example_communic';
   $handler->display->display_options['fields']['field_message_example_communic']['label'] = 'Resources';
   $handler->display->display_options['fields']['field_message_example_communic']['element_label_colon'] = FALSE;
-  /* Field: Indexed Node: Websites */
-  $handler->display->display_options['fields']['field_message_url']['id'] = 'field_message_url';
-  $handler->display->display_options['fields']['field_message_url']['table'] = 'search_api_index_message_library_index';
-  $handler->display->display_options['fields']['field_message_url']['field'] = 'field_message_url';
-  $handler->display->display_options['fields']['field_message_url']['exclude'] = TRUE;
+  /* Field: Indexed Node: Localized Message */
+  $handler->display->display_options['fields']['field_message_localized']['id'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_localized']['field'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['field_message_localized']['view_mode'] = 'full';
   /* Sort criterion: Threat: Name (indexed) */
   $handler->display->display_options['sorts']['field_message_threat_name']['id'] = 'field_message_threat_name';
   $handler->display->display_options['sorts']['field_message_threat_name']['table'] = 'search_api_index_message_library_index';
@@ -370,7 +371,7 @@ function message_library_views_default_views() {
     t('Target audience'),
     t('Message'),
     t('Resources'),
-    t('Websites'),
+    t('Localized Message'),
     t('Quick Search'),
     t('Issues'),
     t('Search Page'),

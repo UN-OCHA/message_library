@@ -101,7 +101,6 @@ features[field][] = node-message-field_message_sensitivity_questi
 features[field][] = node-message-field_message_source
 features[field][] = node-message-field_message_target_comment
 features[field][] = node-message-field_message_threat
-features[field][] = node-message-field_message_url
 features[field][] = taxonomy_term-threat-field_threat_category
 features[field][] = taxonomy_term-threat-field_threat_hazard
 features[field][] = taxonomy_term-threat-field_threat_sector
