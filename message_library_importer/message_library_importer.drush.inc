@@ -47,7 +47,7 @@ function drush_message_library_importer_message_library_import() {
   );
 
   // The base url of the feeds url on the D6 master instance
-  $feeds_url = 'http://infoasaid.org/message-library-export/';
+  $feeds_url = variable_get('ml_importer_base_url', 'http://infoasaid.org/message-library-export/');
 
   foreach ($items as $feed_name => $item) {
     drush_print(drush_html_to_text('<br/><hr>'));

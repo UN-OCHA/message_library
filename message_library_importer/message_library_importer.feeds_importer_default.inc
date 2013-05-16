@@ -123,7 +123,7 @@ function message_library_importer_feeds_importer_default() {
         'update_existing' => '1',
         'input_format' => 'plain_text',
         'authorize' => 0,
-        'skip_hash_check' => 1,
+        'skip_hash_check' => 0,
       ),
     ),
     'content_type' => '',
