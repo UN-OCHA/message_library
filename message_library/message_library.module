@@ -61,10 +61,11 @@ function message_library_form_alter(&$form, $form_state, $form_id) {
         $_GET[$i] = 'All';
       }
 
-      if (isset($form[$i]) && !isset($form[$i]['#value'])) {
+      // @TODO: Not sure this works or not.
+      if (isset($form[$i]) && !isset($form[$i]['#default_value'])) {
         if (!empty($form[$i]['#options'])) {
           reset($form[$i]['#options']);
-          $form[$i]['#value'] = key($form[$i]['#options']);
+          $form[$i]['#default_value'] = key($form[$i]['#options']);
         }
       }
     }
