@@ -421,11 +421,6 @@ function message_library_views_default_views() {
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Sort criterion: Nodequeue: Subqueue ID */
-  $handler->display->display_options['sorts']['sqid']['id'] = 'sqid';
-  $handler->display->display_options['sorts']['sqid']['table'] = 'nodequeue_nodes';
-  $handler->display->display_options['sorts']['sqid']['field'] = 'sqid';
-  $handler->display->display_options['sorts']['sqid']['relationship'] = 'nodequeue_rel';
   /* Contextual filter: Content: Has taxonomy term ID */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
   $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
