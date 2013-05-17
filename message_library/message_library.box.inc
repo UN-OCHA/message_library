@@ -41,7 +41,7 @@ function message_library_default_box() {
   $box->description = 'Message Library Admin';
   $box->options = array(
     'body' => array(
-      'value' => '<p><a href="/node/add/message">Add Message</a></p><p><a href="/admin/structure/taxonomy/threat">Manage Threats</a></p><p><a href="/admin/structure/taxonomy/issues">Manage Issues</a></p><p><a href="/admin/structure/taxonomy/at_risk_groups">Manage At Risk Groups</a></p><p><a href="/admin/structure/taxonomy/target_audiences">Manage Target Audiences</a></p><p><a href="/admin/structure/taxonomy/hazard">Manage Hazards</a></p><p><a href="/admin/config/search/search_api/index/message_library_index/status">Index Message Library</a></p>',
+      'value' => '<p><a href="/node/add/message">Add Message</a></p><p><a href="/admin/structure/taxonomy/threat">Manage Threats</a></p><p><a href="/admin/structure/taxonomy/issues">Manage Issues</a></p><p><a href="/admin/structure/taxonomy/at_risk_groups">Manage At Risk Groups</a></p><p><a href="/admin/structure/taxonomy/target_audience">Manage Target Audiences</a></p><p><a href="/admin/structure/taxonomy/hazard">Manage Hazards</a></p><p><a href="/admin/config/search/search_api/index/message_library_index/status">Index Message Library</a></p>',
       'format' => 'filtered_html',
     ),
     'i18n_boxes' => array(

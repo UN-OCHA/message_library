@@ -82,7 +82,7 @@ function message_library_taxonomy_default_vocabularies() {
       'name' => 'Issues',
       'machine_name' => 'issues',
       'description' => '',
-      'hierarchy' => '0',
+      'hierarchy' => '2',
       'module' => 'taxonomy',
       'weight' => '0',
       'rdf_mapping' => array(
