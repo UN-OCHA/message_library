@@ -57,13 +57,7 @@ function message_library_tou_cgi_form_validate($form, &$form_state) {
  * Submit handler for form '#message_library_tou_cgi_form'
  */
 function message_library_tou_cgi_form_submit($form, &$form_state) {
-  $values = $form_state['values'];
-
-  // For the guests who don't want to register, store in the session
-  // For the authenticated user, store in the database, this TOU will only be
-  // displayed this time
   message_library_tou_save_cgi_access();
-  
-  // $form_state['redirect'] = $values['cgi_destination'];
-  $form_state['redirect'] = $values['cgi_destination'];
+  $result = _message_library_tou_parse_cgi_destination($form_state['values']['cgi_destination']);
+  $form_state['redirect'] = array($result['path'], $result['options']);
 }
