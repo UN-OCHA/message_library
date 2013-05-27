@@ -134,7 +134,7 @@ h2#ml-view-quick-search-title {
 /* Advanced search */
 
 /* Help boxes */
-#boxes-box-ml_help_quick_search, #ml-view-quick-search-title, #boxes-box-ml_help_general {
+#boxes-box-ml_help_general, #boxes-box-ml_help_quick_search, #boxes-box-ml_help_criteria {
   display : none;
 }
 
