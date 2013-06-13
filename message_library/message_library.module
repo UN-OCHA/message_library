@@ -426,15 +426,15 @@ function message_library_set_up_menu_links() {
         }
       }
       else {
-        watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link not found.", WATCHDOG_WARNING);
+        watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link not found.", NULL, WATCHDOG_WARNING);
       }
     }
     else {
-      watchdog('message_library', "Can\'t create menu links for Comminication Tools, the page for it doesn\'t exist.", WATCHDOG_WARNING);
+      watchdog('message_library', "Can\'t create menu links for Comminication Tools, the page for it doesn\'t exist.", NULL, WATCHDOG_WARNING);
     }
   }
   else {
-    watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link Resources is not found.", WATCHDOG_WARNING);
+    watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link Resources is not found.", NULL, WATCHDOG_WARNING);
   }
 }
 
