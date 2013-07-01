@@ -79,7 +79,7 @@ function message_library_default_search_api_index() {
     "server" : "solr_server",
     "item_type" : "node",
     "options" : {
-      "index_directly" : 0,
+      "index_directly" : 1,
       "cron_limit" : "-1",
       "fields" : {
         "nid" : { "type" : "integer" },
@@ -87,21 +87,22 @@ function message_library_default_search_api_index() {
         "type" : { "type" : "string" },
         "title" : { "type" : "text" },
         "status" : { "type" : "boolean" },
+        "author" : { "type" : "integer", "entity_type" : "user" },
         "field_message_audience" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_group_mess" : { "type" : "text" },
         "field_message_group_risk" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
-        "field_message_info_type" : { "type" : "integer", "entity_type" : "taxonomy_term" },
+        "field_message_info_type" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_sensitivity" : { "type" : "integer" },
         "field_message_threat" : { "type" : "integer", "entity_type" : "taxonomy_term" },
         "search_api_language" : { "type" : "string" },
+        "search_api_aggregation_1" : { "type" : "text" },
         "field_message_threat:tid" : { "type" : "integer" },
         "field_message_threat:name" : { "type" : "string" },
         "field_message_threat:field_threat_category" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_hazard" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_sector" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_category:tid" : { "type" : "list\\u003Cinteger\\u003E" },
-        "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Ctext\\u003E" },
-        "search_api_aggregation_1" : { "type" : "text" }
+        "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Ctext\\u003E" }
       },
       "data_alter_callbacks" : {
         "search_api_alter_bundle_filter" : {

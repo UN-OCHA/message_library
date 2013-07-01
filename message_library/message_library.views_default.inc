@@ -343,6 +343,223 @@ function message_library_views_default_views() {
   $handler = $view->new_display('page', 'Feed', 'feed');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['path'] = 'message-library/export';
+
+  /* Display: Unpublished Messages */
+  $handler = $view->new_display('page', 'Unpublished Messages', 'page_1');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Message Library (Unpublished Messages)';
+  $handler->display->display_options['display_description'] = 'Unpublished Messages';
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Threat: Term ID (indexed) */
+  $handler->display->display_options['fields']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat_tid']['separator'] = '';
+  $handler->display->display_options['fields']['field_message_threat_tid']['link_to_entity'] = 0;
+  /* Field: Indexed Node: Node ID */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nid']['separator'] = '';
+  $handler->display->display_options['fields']['nid']['link_to_entity'] = 0;
+  /* Field: Threat: Issue (indexed) */
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['id'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['field'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['label'] = 'Issue';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['view_mode'] = 'full';
+  /* Field: Indexed Node: Threat */
+  $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat']['field'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]';
+  $handler->display->display_options['fields']['field_message_threat']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['field_message_threat']['view_mode'] = 'full';
+  /* Field: Indexed Node: Title */
+  $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
+  $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['title_1']['field'] = 'title';
+  $handler->display->display_options['fields']['title_1']['label'] = 'Information requirement';
+  $handler->display->display_options['fields']['title_1']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['title_1']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]#[nid] ';
+  $handler->display->display_options['fields']['title_1']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 0;
+  /* Field: Indexed Node: At risk group */
+  $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
+  $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_group_risk']['field'] = 'field_message_group_risk';
+  $handler->display->display_options['fields']['field_message_group_risk']['exclude'] = TRUE;
+  /* Field: Indexed Node: Target audience */
+  $handler->display->display_options['fields']['field_message_audience']['id'] = 'field_message_audience';
+  $handler->display->display_options['fields']['field_message_audience']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_audience']['field'] = 'field_message_audience';
+  $handler->display->display_options['fields']['field_message_audience']['exclude'] = TRUE;
+  /* Field: Indexed Node: Message */
+  $handler->display->display_options['fields']['field_message_group_mess']['id'] = 'field_message_group_mess';
+  $handler->display->display_options['fields']['field_message_group_mess']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_group_mess']['field'] = 'field_message_group_mess';
+  /* Field: Indexed Node: Examples of Communication around this issue */
+  $handler->display->display_options['fields']['field_message_example_communic']['id'] = 'field_message_example_communic';
+  $handler->display->display_options['fields']['field_message_example_communic']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_example_communic']['field'] = 'field_message_example_communic';
+  $handler->display->display_options['fields']['field_message_example_communic']['label'] = 'Resources';
+  $handler->display->display_options['fields']['field_message_example_communic']['element_label_colon'] = FALSE;
+  /* Field: Indexed Node: Localized Message */
+  $handler->display->display_options['fields']['field_message_localized']['id'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_localized']['field'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['field_message_localized']['view_mode'] = 'full';
+  /* Field: Indexed Node: Edit URL */
+  $handler->display->display_options['fields']['edit_url']['id'] = 'edit_url';
+  $handler->display->display_options['fields']['edit_url']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['edit_url']['field'] = 'edit_url';
+  $handler->display->display_options['fields']['edit_url']['label'] = 'Edi';
+  $handler->display->display_options['fields']['edit_url']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['edit_url']['alter']['text'] = 'Edit';
+  $handler->display->display_options['fields']['edit_url']['link_to_entity'] = 0;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Indexed Node: Status */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = array(
+    0 => '0',
+  );
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  /* Filter criterion: Indexed Node: Threat */
+  $handler->display->display_options['filters']['field_message_threat_1']['id'] = 'field_message_threat_1';
+  $handler->display->display_options['filters']['field_message_threat_1']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['field_message_threat_1']['field'] = 'field_message_threat';
+  $handler->display->display_options['filters']['field_message_threat_1']['operator'] = 'not empty';
+  $handler->display->display_options['filters']['field_message_threat_1']['value'] = array();
+  $handler->display->display_options['filters']['field_message_threat_1']['group'] = 1;
+  /* Filter criterion: Indexed Node: Content type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'message' => 'message',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['path'] = 'message-library/unpublished';
+
+  /* Display: My Messages */
+  $handler = $view->new_display('page', 'My Messages', 'page_2');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Message Library (My Messages)';
+  $handler->display->display_options['display_description'] = 'My Messages';
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Threat: Term ID (indexed) */
+  $handler->display->display_options['fields']['field_message_threat_tid']['id'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat_tid']['field'] = 'field_message_threat_tid';
+  $handler->display->display_options['fields']['field_message_threat_tid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat_tid']['separator'] = '';
+  $handler->display->display_options['fields']['field_message_threat_tid']['link_to_entity'] = 0;
+  /* Field: Indexed Node: Node ID */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nid']['separator'] = '';
+  $handler->display->display_options['fields']['nid']['link_to_entity'] = 0;
+  /* Field: Threat: Issue (indexed) */
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['id'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['field'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['label'] = 'Issue';
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['field_message_threat_field_threat_category']['view_mode'] = 'full';
+  /* Field: Indexed Node: Threat */
+  $handler->display->display_options['fields']['field_message_threat']['id'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_threat']['field'] = 'field_message_threat';
+  $handler->display->display_options['fields']['field_message_threat']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['field_message_threat']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]';
+  $handler->display->display_options['fields']['field_message_threat']['link_to_entity'] = 0;
+  $handler->display->display_options['fields']['field_message_threat']['view_mode'] = 'full';
+  /* Field: Indexed Node: Title */
+  $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
+  $handler->display->display_options['fields']['title_1']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['title_1']['field'] = 'title';
+  $handler->display->display_options['fields']['title_1']['label'] = 'Information requirement';
+  $handler->display->display_options['fields']['title_1']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['title_1']['alter']['path'] = 'message-library/threat/[field_message_threat_tid]#[nid] ';
+  $handler->display->display_options['fields']['title_1']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title_1']['link_to_entity'] = 0;
+  /* Field: Indexed Node: At risk group */
+  $handler->display->display_options['fields']['field_message_group_risk']['id'] = 'field_message_group_risk';
+  $handler->display->display_options['fields']['field_message_group_risk']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_group_risk']['field'] = 'field_message_group_risk';
+  $handler->display->display_options['fields']['field_message_group_risk']['exclude'] = TRUE;
+  /* Field: Indexed Node: Target audience */
+  $handler->display->display_options['fields']['field_message_audience']['id'] = 'field_message_audience';
+  $handler->display->display_options['fields']['field_message_audience']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_audience']['field'] = 'field_message_audience';
+  $handler->display->display_options['fields']['field_message_audience']['exclude'] = TRUE;
+  /* Field: Indexed Node: Message */
+  $handler->display->display_options['fields']['field_message_group_mess']['id'] = 'field_message_group_mess';
+  $handler->display->display_options['fields']['field_message_group_mess']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_group_mess']['field'] = 'field_message_group_mess';
+  /* Field: Indexed Node: Examples of Communication around this issue */
+  $handler->display->display_options['fields']['field_message_example_communic']['id'] = 'field_message_example_communic';
+  $handler->display->display_options['fields']['field_message_example_communic']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_example_communic']['field'] = 'field_message_example_communic';
+  $handler->display->display_options['fields']['field_message_example_communic']['label'] = 'Resources';
+  $handler->display->display_options['fields']['field_message_example_communic']['element_label_colon'] = FALSE;
+  /* Field: Indexed Node: Localized Message */
+  $handler->display->display_options['fields']['field_message_localized']['id'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['field_message_localized']['field'] = 'field_message_localized';
+  $handler->display->display_options['fields']['field_message_localized']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['field_message_localized']['view_mode'] = 'full';
+  /* Field: Indexed Node: Edit URL */
+  $handler->display->display_options['fields']['edit_url']['id'] = 'edit_url';
+  $handler->display->display_options['fields']['edit_url']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['fields']['edit_url']['field'] = 'edit_url';
+  $handler->display->display_options['fields']['edit_url']['label'] = 'Edit';
+  $handler->display->display_options['fields']['edit_url']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['edit_url']['alter']['text'] = 'Edit';
+  $handler->display->display_options['fields']['edit_url']['link_to_entity'] = 0;
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: Indexed Node: Author */
+  $handler->display->display_options['arguments']['author']['id'] = 'author';
+  $handler->display->display_options['arguments']['author']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['arguments']['author']['field'] = 'author';
+  $handler->display->display_options['arguments']['author']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['author']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['author']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['author']['break_phrase'] = 0;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Indexed Node: Threat */
+  $handler->display->display_options['filters']['field_message_threat_1']['id'] = 'field_message_threat_1';
+  $handler->display->display_options['filters']['field_message_threat_1']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['field_message_threat_1']['field'] = 'field_message_threat';
+  $handler->display->display_options['filters']['field_message_threat_1']['operator'] = 'not empty';
+  $handler->display->display_options['filters']['field_message_threat_1']['value'] = array();
+  $handler->display->display_options['filters']['field_message_threat_1']['group'] = 1;
+  /* Filter criterion: Indexed Node: Content type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'search_api_index_message_library_index';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'message' => 'message',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['path'] = 'message-library/mymessages';
   $translatables['message_library'] = array(
     t('Master'),
     t('Message Library'),
@@ -376,6 +593,13 @@ function message_library_views_default_views() {
     t('Issues'),
     t('Search Page'),
     t('Feed'),
+    t('Unpublished Messages'),
+    t('Message Library (Unpublished Messages)'),
+    t('Edi'),
+    t('Edit'),
+    t('My Messages'),
+    t('Message Library (My Messages)'),
+    t('All'),
   );
   $export['message_library'] = $view;
 
