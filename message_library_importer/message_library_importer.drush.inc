@@ -15,6 +15,8 @@ function message_library_importer_drush_command() {
   $items['message-library-import'] = array(
     'description' => 'Sync Message Library from remote csv feeds.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'drupal dependencies' => array('feeds'),
+    'drush dependencies' => array('feeds'),
   );
   $items['message-library-wipe-content'] = array(
     'description' => 'Wipe all the content created by the importers of Message Library.',
@@ -28,43 +30,58 @@ function message_library_importer_drush_command() {
  * Drush command callback
  */
 function drush_message_library_importer_message_library_import() {
+  drush_print(drush_html_to_text('<br/><h1>Message Library Import</h1>'));
+
   $items = array(
     // These 3 vocabularies are required by `threat` terms
     // @see: admin/structure/taxonomy/threat/fields
-    'message_library_term_hazard' => array('vacab_type' => 'hazard','feed_url_suffix' => 'hazard'),
-    'message_library_term_issues' => array('vacab_type' => 'issues','feed_url_suffix' => 'issues'),
-    'message_library_term_sector' =>  array('vacab_type' => 'sector','feed_url_suffix' => 'sector'),
+    'message_library_term_hazard',
+    'message_library_term_issues',
+    'message_library_term_sector',
 
     // Import threat (after the above 3 vocabularies imported)
-    'message_library_term_threat' =>  array('vacab_type' => 'threat','feed_url_suffix' => 'threat'),
-    'message_library_term_information_type' =>  array('vacab_type' => 'information_type','feed_url_suffix' => 'information-type'),
-    'message_library_term_at_risk_group' => array('vacab_type' => 'at_risk_groups','feed_url_suffix' => 'at-risk-group'),
-    'message_library_term_target_audience' =>  array('vacab_type' => 'target_audience','feed_url_suffix' => 'target-audience'),
+    'message_library_term_threat',
+    'message_library_term_information_type',
+    'message_library_term_at_risk_group',
+    'message_library_term_target_audience',
 
     // Import message (after the above 4 vocabularies imported)
     // @see: admin/structure/types/manage/message/fields
-    'message_library_node_message' =>  array('content_type' => 'message','feed_url_suffix' => 'message'),
+    'message_library_node_message',
   );
 
-  // The base url of the feeds url on the D6 master instance
-  $feeds_url = variable_get('ml_importer_base_url', 'http://infoasaid.org/message-library-export/');
-
-  foreach ($items as $feed_name => $item) {
-    drush_print(drush_html_to_text('<br/><hr>'));
-    if (!empty($item['content_type'])) {
-      $type_name = node_type_get_name($item['content_type']);
-      drush_print(dt("Importing [!type_name] nodes <importer: !feed_name> ...", array('!feed_name' => $feed_name, '!type_name' => $type_name)));
+  // Ensure every importer has a valid path set for the HTTP fetcher.
+  $import_paths = variable_get('ml_importer_import_paths', array());
+  foreach ($items as $id) {
+    if (empty($import_paths[$id])) {
+      drush_log(dt('No import path specified for feeds importer !id. Please check the settings at !url', array('!id' => $id, '!url' => url('admin/config/message_library/importer'))), 'error');
+      return;
     }
-    elseif (!empty($item['vacab_type'])) {
-      $vocab = taxonomy_vocabulary_machine_name_load($item['vacab_type']);
-      $type_name = !(empty($vocab)) ? $vocab->name : $item['vacab_type'];
-      drush_print(dt("Importing [!type_name] terms <importer: !feed_name> ...", array('!feed_name' => $feed_name, '!type_name' => $type_name,)));
+  }
+
+
+  $i = 1;
+  foreach ($items as $feed_name => $id) {
+    $importer = feeds_importer($id);
+    if (empty($importer->id)) {
+      drush_log(dt('Unrecgnized feeds importer: !importer', array('!importer' => $id)), 'error');
+      continue;
+    }
+
+    drush_print(drush_html_to_text('<br/><hr>'));
+    if (is_a($importer->processor, 'FeedsTermProcessor')) {
+      drush_log(dt("$i. Importing [!type] terms...", array('!type' => $importer->processor->config['vocabulary'])), 'ok');
+    }
+    else if (is_a($importer->processor, 'FeedsNodeProcessor')) {
+      drush_log(dt("$i. Importing [!type] nodes...", array('!type' => $importer->processor->config['content_type'])), 'ok');
     }
     drush_print(drush_html_to_text('<hr>'));
 
-    drush_invoke_process('@self', 'feeds-import',
-      array('feed-name' => $feed_name),
-      array('http' => $feeds_url . $item['feed_url_suffix']));
+    drush_invoke_process('@self','feeds-import',
+      array('feed-name' => $id),
+      array('http' => $import_paths[$id])
+    );
+    $i++;
   }
 
   // @TODO: There are some empty terms created, just a quick fix for now, remove
@@ -75,14 +92,20 @@ function drush_message_library_importer_message_library_import() {
   // _message_library_importer_fix_threat_term_fields();
 
   // Reindex
-  drush_print('Reindexing...');
+  drush_print(drush_html_to_text('<br/><hr>'));
+  drush_log(dt('Reindexing...'), 'ok');
+  drush_print(drush_html_to_text('<hr>'));
   drush_invoke('search-api-clear', array('message_library_index'));
   drush_invoke('search-api-index', array('message_library_index'));
 
-  drush_print('Flushing the caches...');
+  // Flush cache
+  drush_print(drush_html_to_text('<br/><hr>'));
+  drush_log(dt('Flushing the caches...'), 'ok');
+  drush_print(drush_html_to_text('<hr>'));
   drupal_flush_all_caches();
 
-  drush_print('Done.');
+  drush_print(drush_html_to_text('<br/>'));
+  drush_log(dt('Import task complete.'), 'completed');
 }
 
 /**

@@ -31,5 +31,5 @@ features[feeds_tamper][] = message_library_node_message-target_audience-explode_
 features[feeds_tamper][] = message_library_term_threat-threat_hazard-explode_hazard_by_comma
 features[feeds_tamper][] = message_library_term_threat-threat_issue-explode_issues_by_comma
 features[feeds_tamper][] = message_library_term_threat-threat_sector-explode_sectors_by_comma
-features[variable][] = ml_importer_base_url
+features[variable][] = ml_importer_import_paths
 features[variable][] = ml_importer_interval

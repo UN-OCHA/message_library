@@ -406,3 +406,8 @@ function _message_library_importer_remove_empty_terms_and_content() {
     }
   }
 }
+
+/**
+ * Add some settings for the import.
+ */
+
