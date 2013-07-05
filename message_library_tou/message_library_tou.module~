@@ -53,7 +53,7 @@ function message_library_tou_theme($existing, $type, $theme, $path) {
  * Implementation of hook_init()
  */
 function message_library_tou_init() {
-//  session_api_start_session();
+  session_api_start_session();
 
   if (current_path() == 'message-library') {
     drupal_page_is_cacheable(FALSE);
