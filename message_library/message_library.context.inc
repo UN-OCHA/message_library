@@ -26,6 +26,8 @@ function message_library_context_default_contexts() {
     ),
     'views' => array(
       'values' => array(
+        'message_library:page_1' => 'message_library:page_1',
+        'message_library:page_2' => 'message_library:page_2',
         'message_library:search_page' => 'message_library:search_page',
         'messsage_library_threat' => 'messsage_library_threat',
       ),

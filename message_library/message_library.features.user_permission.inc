@@ -10,6 +10,60 @@
 function message_library_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: access contextual links.
+  $permissions['access contextual links'] = array(
+    'name' => 'access contextual links',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'editor' => 'editor',
+      'manager' => 'manager',
+    ),
+    'module' => 'contextual',
+  );
+
+  // Exported permission: administer at_risk_groups vocabulary terms.
+  $permissions['administer at_risk_groups vocabulary terms'] = array(
+    'name' => 'administer at_risk_groups vocabulary terms',
+    'roles' => array(
+      'manager' => 'manager',
+    ),
+    'module' => 'vppr',
+  );
+
+  // Exported permission: administer information_type vocabulary terms.
+  $permissions['administer information_type vocabulary terms'] = array(
+    'name' => 'administer information_type vocabulary terms',
+    'roles' => array(),
+    'module' => 'vppr',
+  );
+
+  // Exported permission: administer issues vocabulary terms.
+  $permissions['administer issues vocabulary terms'] = array(
+    'name' => 'administer issues vocabulary terms',
+    'roles' => array(
+      'manager' => 'manager',
+    ),
+    'module' => 'vppr',
+  );
+
+  // Exported permission: administer target_audience vocabulary terms.
+  $permissions['administer target_audience vocabulary terms'] = array(
+    'name' => 'administer target_audience vocabulary terms',
+    'roles' => array(
+      'manager' => 'manager',
+    ),
+    'module' => 'vppr',
+  );
+
+  // Exported permission: administer threat vocabulary terms.
+  $permissions['administer threat vocabulary terms'] = array(
+    'name' => 'administer threat vocabulary terms',
+    'roles' => array(
+      'manager' => 'manager',
+    ),
+    'module' => 'vppr',
+  );
+
   // Exported permission: create message content.
   $permissions['create message content'] = array(
     'name' => 'create message content',
@@ -34,7 +88,9 @@ function message_library_user_default_permissions() {
   // Exported permission: delete terms in at_risk_groups.
   $permissions['delete terms in at_risk_groups'] = array(
     'name' => 'delete terms in at_risk_groups',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -55,7 +111,9 @@ function message_library_user_default_permissions() {
   // Exported permission: delete terms in issues.
   $permissions['delete terms in issues'] = array(
     'name' => 'delete terms in issues',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -69,14 +127,18 @@ function message_library_user_default_permissions() {
   // Exported permission: delete terms in target_audience.
   $permissions['delete terms in target_audience'] = array(
     'name' => 'delete terms in target_audience',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
   // Exported permission: delete terms in threat.
   $permissions['delete terms in threat'] = array(
     'name' => 'delete terms in threat',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -97,7 +159,9 @@ function message_library_user_default_permissions() {
   // Exported permission: edit terms in at_risk_groups.
   $permissions['edit terms in at_risk_groups'] = array(
     'name' => 'edit terms in at_risk_groups',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -118,7 +182,9 @@ function message_library_user_default_permissions() {
   // Exported permission: edit terms in issues.
   $permissions['edit terms in issues'] = array(
     'name' => 'edit terms in issues',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
@@ -132,14 +198,18 @@ function message_library_user_default_permissions() {
   // Exported permission: edit terms in target_audience.
   $permissions['edit terms in target_audience'] = array(
     'name' => 'edit terms in target_audience',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
   // Exported permission: edit terms in threat.
   $permissions['edit terms in threat'] = array(
     'name' => 'edit terms in threat',
-    'roles' => array(),
+    'roles' => array(
+      'manager' => 'manager',
+    ),
     'module' => 'taxonomy',
   );
 
