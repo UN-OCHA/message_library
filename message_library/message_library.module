@@ -577,6 +577,8 @@ function message_library_check_menu_entries() {
   if (!empty($communication_tools_link) && !empty($message_library_link) &&
     $message_library_link->plid == $communication_tools_link->mlid) {
     return TRUE;
+  } elseif (!empty($message_library_link)) {
+    return TRUE;
   }
 
   return FALSE;
