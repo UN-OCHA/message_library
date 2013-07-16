@@ -38,8 +38,6 @@ function message_library_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'textformatter',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
           'textformatter_class' => 'textformatter-list',
           'textformatter_comma_and' => 0,
           'textformatter_comma_full_stop' => 0,
@@ -69,7 +67,7 @@ function message_library_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 5,
+      'weight' => 6,
     ),
   );
 
@@ -101,7 +99,7 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 10,
+        'weight' => 9,
       ),
     ),
     'entity_type' => 'node',
@@ -165,10 +163,7 @@ function message_library_field_default_field_instances() {
       'teaser' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 0,
       ),
@@ -215,7 +210,7 @@ function message_library_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 2,
+      'weight' => 3,
     ),
   );
 
@@ -247,8 +242,6 @@ function message_library_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'textformatter',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
           'textformatter_class' => 'textformatter-list',
           'textformatter_comma_and' => 0,
           'textformatter_comma_full_stop' => 0,
@@ -278,7 +271,7 @@ function message_library_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 3,
+      'weight' => 4,
     ),
   );
 
@@ -310,7 +303,7 @@ function message_library_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 14,
+        'weight' => 13,
       ),
     ),
     'entity_type' => 'node',
@@ -355,7 +348,7 @@ function message_library_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 4,
+      'weight' => 5,
     ),
   );
 
@@ -387,8 +380,6 @@ function message_library_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'textformatter',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
           'textformatter_class' => 'textformatter-list',
           'textformatter_comma_and' => 0,
           'textformatter_comma_full_stop' => 0,
@@ -418,7 +409,7 @@ function message_library_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 8,
     ),
   );
 
@@ -449,9 +440,12 @@ function message_library_field_default_field_instances() {
       ),
       'teaser' => array(
         'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 8,
+        'module' => 'entityreference',
+        'settings' => array(
+          'link' => 1,
+        ),
+        'type' => 'entityreference_label',
+        'weight' => 7,
       ),
     ),
     'entity_type' => 'node',
@@ -474,7 +468,7 @@ function message_library_field_default_field_instances() {
         ),
       ),
       'type' => 'inline_entity_form',
-      'weight' => 16,
+      'weight' => 15,
     ),
   );
 
@@ -505,10 +499,7 @@ function message_library_field_default_field_instances() {
       'teaser' => array(
         'label' => 'inline',
         'module' => 'list',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-        ),
+        'settings' => array(),
         'type' => 'list_default',
         'weight' => 4,
       ),
@@ -526,7 +517,7 @@ function message_library_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 8,
+      'weight' => 9,
     ),
   );
 
@@ -557,12 +548,9 @@ function message_library_field_default_field_instances() {
       'teaser' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-        ),
+        'settings' => array(),
         'type' => 'text_plain',
-        'weight' => 7,
+        'weight' => 6,
       ),
     ),
     'entity_type' => 'node',
@@ -607,7 +595,7 @@ function message_library_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 11,
+      'weight' => 12,
     ),
   );
 
@@ -639,7 +627,7 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 11,
+        'weight' => 10,
       ),
     ),
     'entity_type' => 'node',
@@ -684,7 +672,7 @@ function message_library_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 9,
+      'weight' => 10,
     ),
   );
 
@@ -716,7 +704,7 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 13,
+        'weight' => 12,
       ),
     ),
     'entity_type' => 'node',
@@ -761,7 +749,7 @@ function message_library_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 10,
+      'weight' => 11,
     ),
   );
 
@@ -793,8 +781,6 @@ function message_library_field_default_field_instances() {
         'label' => 'inline',
         'module' => 'textformatter',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
           'textformatter_class' => 'textformatter-list message-source-list',
           'textformatter_comma_and' => 0,
           'textformatter_comma_full_stop' => 0,
@@ -873,7 +859,7 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 12,
+        'weight' => 11,
       ),
     ),
     'entity_type' => 'node',
@@ -918,7 +904,7 @@ function message_library_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 6,
+      'weight' => 7,
     ),
   );
 
@@ -950,13 +936,13 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 9,
+        'weight' => 8,
       ),
     ),
     'entity_type' => 'node',
     'field_name' => 'field_message_threat',
     'label' => 'Threat',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'entity_translation_sync' => FALSE,
       'user_register_form' => FALSE,
@@ -966,7 +952,7 @@ function message_library_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 12,
+      'weight' => 2,
     ),
   );
 
