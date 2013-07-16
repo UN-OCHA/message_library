@@ -434,7 +434,19 @@ function message_library_set_up_menu_links() {
     }
   }
   else {
-    watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link Resources is not found.", NULL, WATCHDOG_WARNING);
+    // watchdog('message_library', "Can\'t create menu links for Message Library, parent menu link Resources is not found.", NULL, WATCHDOG_WARNING);
+    // When the message library is installed on a hr_minimal install profile there are no Resources menu
+    $link_title = 'Message Library';
+    $link_path = 'message-library';
+    $ml_link = array(
+      'link_path' => $link_path,
+      'link_title' => $link_title,
+      'menu_name' => 'main-menu',
+      'router_path' => 'message-library',
+    );
+    if (!menu_link_save($ml_link)) {
+      watchdog('message_library', 'Failed to create the menu link for Message Library.');
+    }
   }
 }
 
