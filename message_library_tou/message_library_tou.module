@@ -53,29 +53,19 @@ function message_library_tou_theme($existing, $type, $theme, $path) {
  * Implementation of hook_init()
  */
 function message_library_tou_init() {
-  if (!drupal_is_cli()) {
-    if (current_path() == 'message-library') {
-      drupal_page_is_cacheable(FALSE);
+  if (drupal_is_cli()) return;
 
-      if (!message_library_tou_get_cgi_access()) {
-        $desination = drupal_get_destination();
-        drupal_goto('message-library-cgi', array('query' => array(
-          'cgi-destination' => $desination['destination'])));
-      };
+  if (current_path() == 'message-library') {
+    // Get around the lazy session
+    if (empty($GLOBALS['user']->uid)) {
+      drupal_session_start();
     }
-    elseif (current_path() == 'message-library-cgi') {
-      drupal_page_is_cacheable(FALSE);
-  //     if (message_library_tou_get_cgi_access()) {
-  //       $params = drupal_get_query_parameters();
-  //       if (!empty($params['cgi-destination'])) {
-  //         $result = _message_library_tou_parse_cgi_destination($params['cgi-destination']);
-  //         drupal_goto($result['path'], $result['options']);
-  //       }
-  //       else {
-  //         drupal_goto('message-library');
-  //       }
-  //     }
-    }
+
+    if (!message_library_tou_get_cgi_access()) {
+      $desination = drupal_get_destination();
+      drupal_goto('message-library-cgi', array('query' => array(
+        'cgi-destination' => $desination['destination'])));
+    };
   }
 }
 
