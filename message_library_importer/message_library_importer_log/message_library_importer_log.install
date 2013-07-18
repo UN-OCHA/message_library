@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function message_library_importer_log_schema() {
+  $schema['message_library_importer_log'] = array(
+    'description' => 'Simple recording of the start and end time of each message library importing cron job.',
+    'fields' => array(
+      'log_id' => array(
+        'description' => 'Log ID',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      't_start' => array(
+        'description' => 'Timestamp of the job starting time.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      't_end' => array(
+        'description' => 'Timestamp of the job finishing time.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+      't_start' => array('t_start'),
+      't_end'   => array('t_end'),
+    ),
+    'unique keys' => array(
+      'log_id' => array('log_id'),
+    ),
+    'primary key' => array('log_id'),
+  );
+  return $schema;
+}

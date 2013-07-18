@@ -1,0 +1,167 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function message_library_importer_log_menu() {
+  return array(
+    'admin/config/message_library/import_log' => array(
+      'title' => t('Feeds Importer Log'),
+      'description' => t('Summary of the import cron job for message library.'),
+      'page callback' => 'message_library_importer_log_page',
+      'access arguments' => array('access administration pages'),
+    ),
+  );
+}
+
+
+/**
+ * Page callback for displaying the summaries.
+ */
+function message_library_importer_log_page() {
+  $output = '';
+
+  $importer_ids = array(
+    'message_library_term_hazard',
+    'message_library_term_issues',
+    'message_library_term_sector',
+    'message_library_term_threat',
+    'message_library_term_information_type',
+    'message_library_term_at_risk_group',
+    'message_library_term_target_audience',
+    'message_library_node_message',
+  );
+
+  $vars = array(
+    'header' => array(
+      '#',
+      'Start Time',
+      'Duration',
+      '<u>Hazard</u> terms',
+      '<u>Issues</u> terms',
+      '<u>Sector</u> Terms',
+      '<u>Threat</u> Terms<u>',
+      '<u>Infomation Type</u> terms',
+      '<u>At Risk Group</u> terms',
+      '<u>Target Audience</u> terms',
+      '<u>Message</u> nodes',
+    ),
+    'rows' => array(),
+  );
+
+  $res = db_select('message_library_importer_log', 'l')
+    ->fields('l')
+    ->execute()
+    ->fetchAll();
+
+  $data = array();
+  $i = 1;
+  foreach ($res as $k => $v) {
+    $ts = $v->t_start;
+    $te = $v->t_end;
+
+    $data[$k][] = $i++;
+    $data[$k][] = format_date($ts, 'short');
+    $data[$k][] = format_interval($te - $ts);
+
+    $res = message_library_importer_log_get_feeds_logs($ts, $te);
+    foreach ($res as $importer_id => $v) {
+      $data[$k][$importer_id] = message_library_importer_log_extract_info($v);
+    }
+  }
+  $vars['rows'] = $data;
+  $output .= theme('table', $vars);
+  return $output;
+}
+
+/**
+ * Add a log record.
+ */
+function message_library_importer_log_add_log($t_start, $t_end) {
+  if (!empty($t_start) && !empty($t_end) && $t_start <= $t_end) {
+    drupal_write_record('message_library_importer_log', compact('t_start', 't_end'));
+  }
+}
+
+function message_library_importer_log_get_feeds_logs($ts, $te) {
+  $t_and = db_and();
+  $t_and->condition('fl.log_time', $ts, '>=');
+  $t_and->condition('fl.log_time', $te, '<=');
+
+  $res = db_select('feeds_log', 'fl')
+    ->fields('fl')
+    ->condition('fl.id', db_like('message_library_').'%', 'LIKE')
+    ->condition('fl.log_time', $ts, '>=')
+    ->condition('fl.log_time', $te, '<=')
+    ->condition('fl.type', 'import', '=')
+    ->execute()
+    ->fetchAll();
+
+  // group by importer
+  $temp = array();
+  if ($res) {
+    foreach ($res as $v) {
+      if (!isset($temp[$v->id])) {
+        $temp[$v->id] = array();
+      }
+      $temp[$v->id][] = $v;
+    }
+    $res = $temp;
+  }
+  return $res;
+}
+
+/**
+ * Parse and extact some useful information for a feeds log.
+ */
+function message_library_importer_log_extract_info($items) {
+  $result = array(
+    'time'  => NULL,
+    'count' => NULL,
+    'type'  => NULL,
+    'op'    => NULL,
+  );
+  foreach ($items as $item) {
+    if (preg_match('/There are no new (nodes|terms)\./', $item->message, $matches)) {
+      $result['count'] = 0;
+      if (!empty($matches[1])) {
+        $result['type'] = rtrim($matches[1], 's');
+      }
+      continue;
+    }
+    else if (preg_match('/^(Created|Updated) (\d+) (terms|nodes)\.$/', $item->message, $matches)) {
+      if (!empty($matches[2])) {
+        $result['count'] = $matches[2];
+      }
+
+      if ($matches[1] == 'Created') {
+        $result['op'] = 'create';
+      }
+      else if ($matches[1] == 'Updated') {
+        $result['op'] = 'create';
+      }
+
+      if ($matches[3] == 'terms') {
+        $result['type'] = 'term';
+      }
+      else if ($matches[3] == 'nodes') {
+        $result['type'] = 'node';
+      }
+    }
+    else if ($item->message == 'Imported in !s s') {
+      $v = unserialize($item->variables);
+      $result['time'] = $v['!s'];
+    }
+  }
+  // format the result.
+  $text = 'N/A';
+  if ($result['op'] && $result['count'] && $result['type'] && $result['time']) {
+    $text = $result['count'] . ' ' . ($result['op'] == 'create' ? 'created' : 'updated') . ' <em>(' . $result['time'] . 's)</em>';
+  }
+  else if ($result['count'] == 0 && $result['type']){
+    $text = 'no new ' . $result['type'] . ' <em>(' . $result['time'] . 's)</em>';;
+  }
+  return $text;
+}
+
+

@@ -22,7 +22,6 @@ dependencies[] = list
 dependencies[] = message_library_exposedfilters
 dependencies[] = message_library_help
 dependencies[] = message_library_highlight
-dependencies[] = message_library_importer
 dependencies[] = message_library_notices
 dependencies[] = message_library_queue
 dependencies[] = message_library_rtf

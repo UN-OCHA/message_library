@@ -6,6 +6,21 @@
 include_once 'message_library_importer.features.inc';
 
 /**
+ * Implements hook_cron()
+ */
+function message_library_importer_cron() {
+  // Fix for sometimes the scheduler sometimes get lost.
+  job_scheduler_rebuild_scheduler('job_scheduler_trigger');
+}
+
+/**
+ * Implements hook_cron_job_scheduler_info_alter()
+ */
+function message_library_importer_cron_job_scheduler_info_alter($info) {
+
+}
+
+/**
  * Implements hook_menu()
  */
 function message_library_importer_menu() {
@@ -21,86 +36,110 @@ function message_library_importer_menu() {
 }
 
 /**
- * Implements hook_cron()
+ * Implements hook_action_info()
  */
-function message_library_importer_cron() {
-  exit();
-  // Enable the option to wipe content before importing.
-  //if (variable_get('ml_importer_wipe_content', FALSE)) {
-    message_library_importer_clear_out_content();
-  //}
+function message_library_importer_action_info() {
+  return array(
+    'message_library_importer_message_library_import_action' => array(
+      'type' => 'job_scheduler',
+      'label' => t('Message Library Import'),
+      'configurable' => FALSE,
+      'triggers' => array(
+        'job_scheduler_message_library',
+      ),
+    ),
+  );
+}
 
-  // Let feeds run as long he wishes...
-  drupal_set_time_limit(0);
-  variable_set('ml_importer_cron_last_run', REQUEST_TIME);
+/**
+ * Action callback for import the message library.
+ * This is to be used by the trigger set up by the 'job_scheduler'.
+ */
+function message_library_importer_message_library_import_action($object, $context) {
+  $t_start = microtime(TRUE);
+  __drush_print(drush_html_to_text('<br/><h1>Message Library Import</h1>'));
 
   $items = array(
     // These 3 vocabularies are required by `threat` terms
     // @see: admin/structure/taxonomy/threat/fields
-    array('message_library_term_hazard' => 'hazard'),
-    array('message_library_term_issues' => 'issues'),
-    array('message_library_term_sector' => 'sector'),
+    'message_library_term_hazard',
+    'message_library_term_issues',
+    'message_library_term_sector',
 
     // Import threat (after the above 3 vocabularies imported)
-    array('message_library_term_threat' =>  'threat'),
-    array('message_library_term_information_type' => 'information-type'),
-    array('message_library_term_at_risk_group' => 'at-risk-group'),
-    array('message_library_term_target_audience' => 'target-audience'),
+    'message_library_term_threat',
+    'message_library_term_information_type',
+    'message_library_term_at_risk_group',
+    'message_library_term_target_audience',
 
     // Import message (after the above 4 vocabularies imported)
     // @see: admin/structure/types/manage/message/fields
-    array('message_library_node_message' => 'message'),
+    'message_library_node_message',
   );
 
-  $queue = DrupalQueue::get('message_libary_importer', TRUE);
-  $queue->deleteQueue();
-  foreach ($items as $item) {
-    $queue->createItem($item);
+  // Ensure every importer has a valid path set for the HTTP fetcher.
+  $import_paths = variable_get('ml_importer_import_paths', array());
+  foreach ($items as $id) {
+    if (empty($import_paths[$id]) || !feeds_valid_url($import_paths[$id])) {
+      if (function_exists('drush_set_error')) {
+        watchdog('message_library_importer', t('Invalid importer url for importer !id', array('!id' => $id)));
+        return FALSE;
+      }
+      else {
+        return drush_set_error('ML_FEEDS_MISSING_IMPORT_PATH', dt('No import path specified for feeds importer !id. Please check the settings at !url', array('!id' => $id, '!url' => url('admin/config/message_library/importer'))));
+      }
+    }
   }
-}
 
-/**
- * Implements hook_cron_queue_info()
- */
-function message_library_importer_cron_queue_info() {
-  return array(
-    'message_libary_importer' => array(
-      'worker callback' => 'message_library_importer_importer_feed_task',
-      'time' => 240, // in seconds
-    )
-  );
-}
+  // Import the feeds.
+  $step = 1;
+  foreach ($items as $importer_id) {
+    $feeds_source = feeds_source($importer_id);
+    if (!empty($feeds_source)
+      && is_a($feeds_source, 'FeedsSource')
+      && ($feeds_source_config = $feeds_source->getConfig())
+      && !empty($feeds_source_config['FeedsHTTPFetcher'])
+      && !empty($feeds_source_config['FeedsHTTPFetcher']['source'])
+      && feeds_valid_url($feeds_source_config['FeedsHTTPFetcher']['source'])) {
 
-/**
- * Batch operation
- */
-function message_library_importer_importer_feed_task($item) {
-  $feed_id = key($item);
-  $url_suffix = current($item);
-
-  $feed_source = feeds_source($feed_id);
-  // Set the URL for the fetch
-  $feed_url = variable_get('ml_importer_base_url', 'http://staging.infoasaid.org/message-library-export/') . $url_suffix;
-  $config = $feed_source->getConfig();
-  $config['FeedsHTTPFetcher']['source'] = $feed_url;
-  $feed_source->setConfig($config);
-  $feed_source->save();
-  $feed_source->startImport();
-
-  $feed_source->schedule();
-  $feed_source->importer->schedule();
-
-  if ($feed_id == 'message_library_node_message') {
-    _message_library_importer_remove_empty_terms_and_content();
+      $importer_info = message_library_importer_get_importer_info($feeds_source);
+      __drush_log(dt('!i. Importing !name !type', array('!name' => $importer_info['name'], '!type' => $importer_info['type'], '!i' => $step)) . 's', 'status');
+      do {
+        $state = $feeds_source->import();
+        __drush_log('   ' . round($state * 100) . '%', 'ok');
+      }
+      while ($state != FEEDS_BATCH_COMPLETE);
+    }
+    __drush_print('');
+    $step++;
   }
-}
+  $t_end = microtime(TRUE);
 
+  if (module_exists('message_library_importer_log')) {
+    message_library_importer_log_add_log($t_start, $t_end);
+  }
 
-/**
- * Implements hook_feeds_processor_targets_alter()
- */
-function message_library_importer_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
-  // dpm(func_get_args());
+  // @TODO: Check the import status.
+
+  // @TODO: There are some empty terms created, just a quick fix for now, remove
+  // those empty terms.
+  _message_library_importer_remove_empty_terms_and_content();
+
+  // Reindex
+  $id = 'message_library_index';
+  $index = search_api_index_load($id);
+  if ($index && ($index instanceof SearchApiIndex)) {
+    $index_s = search_api_index_status($index);
+    // XXX: Clear the index, and index all over. Not sure this approach
+    // is optimal and necessary, will take a look at this after havig a better
+    // understanding how search_api works. (by kurt)
+    $index->clear();
+    _search_api_batch_indexing_create($id, '-1', '-1', $index_s['total'] - $index_s['indexed']);
+  }
+
+  // Flush cache.
+  drupal_flush_all_caches();
+  return TRUE;
 }
 
 /**
@@ -329,7 +368,7 @@ function message_library_importer_clear_out_content() {
   // - 'At Risk Group'
   // - 'Target Audience'
   // - 'Information Type'
-  // - ’Hazard'
+  // - 'Hazard'
   // - 'Issues'
   // - 'Sector'
   // - 'Threat'
@@ -369,7 +408,9 @@ function message_library_importer_clear_out_content() {
 }
 
 /**
- * Remove the empty tersm and content
+ * Remove the empty tersm and content.
+ *
+ * @TODO: Solve this issue at the root.
  */
 function _message_library_importer_remove_empty_terms_and_content() {
   // The vocabulary to check
@@ -408,6 +449,59 @@ function _message_library_importer_remove_empty_terms_and_content() {
 }
 
 /**
- * Add some settings for the import.
+ * Wrapper around `drush_log()`
  */
+function __drush_log() {
+  if (function_exists('drush_log')) {
+    call_user_func_array('drush_log', func_get_args());
+  }
+}
+
+/**
+ * Wrapper around `drush_print()`
+ */
+function __drush_print() {
+  if (function_exists('drush_print')) {
+    call_user_func_array('drush_print', func_get_args());
+  }
+}
+
+/**
+ * Wrapper around `drush_html_to_text()`
+ */
+function __drush_html_to_text() {
+  if (function_exists('drush_html_to_text')) {
+    call_user_func_array('drush_html_to_text', func_get_args());
+  }
+}
+
+/**
+ * Get some general infomation about an feeds importer.
+ */
+function message_library_importer_get_importer_info($source) {
+  if (is_numeric($source)) {
+    $source = feeds_source($source);
+  }
+  // Get the entity type and entity name from the processor.
+  if (($source instanceof FeedsSource) && !empty($source->importer->processor)) {
+    // print_r($source->importer->processor);
+
+    if ($source->importer->processor instanceof FeedsNodeProcessor) {
+      return array(
+        'type' => 'node',
+        'name' => $source->importer->processor->config['content_type'],
+      );
+    }
+    else if ($source->importer->processor instanceof FeedsTermProcessor) {
+      return array(
+        'type' => 'term',
+        'name' => $source->importer->processor->config['vocabulary'],
+      );
+    }
+  }
+}
+
+
+
+
 
