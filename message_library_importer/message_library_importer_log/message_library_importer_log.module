@@ -79,7 +79,11 @@ function message_library_importer_log_page() {
  */
 function message_library_importer_log_add_log($t_start, $t_end) {
   if (!empty($t_start) && !empty($t_end) && $t_start <= $t_end) {
-    drupal_write_record('message_library_importer_log', compact('t_start', 't_end'));
+    $record = array(
+      't_start' => $t_start,
+      't_end' => $t_end,
+    );
+    drupal_write_record('message_library_importer_log', $record);
   }
 }
 

@@ -40,4 +40,3 @@ function message_library_importer_uninstall() {
   actions_synchronize();
   job_scheduler_rebuild_all();
 }
-

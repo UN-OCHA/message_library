@@ -14,13 +14,6 @@ function message_library_importer_cron() {
 }
 
 /**
- * Implements hook_cron_job_scheduler_info_alter()
- */
-function message_library_importer_cron_job_scheduler_info_alter($info) {
-
-}
-
-/**
  * Implements hook_menu()
  */
 function message_library_importer_menu() {
@@ -56,45 +49,45 @@ function message_library_importer_action_info() {
  * This is to be used by the trigger set up by the 'job_scheduler'.
  */
 function message_library_importer_message_library_import_action($object, $context) {
-  $t_start = microtime(TRUE);
-  __drush_print(drush_html_to_text('<br/><h1>Message Library Import</h1>'));
+  __drush_print("\n===== Message Library Import =====");
 
-  $items = array(
-    // These 3 vocabularies are required by `threat` terms
-    // @see: admin/structure/taxonomy/threat/fields
+  // The importing order of feeds importers.
+  $importer_ids = array(
     'message_library_term_hazard',
     'message_library_term_issues',
     'message_library_term_sector',
 
-    // Import threat (after the above 3 vocabularies imported)
     'message_library_term_threat',
     'message_library_term_information_type',
     'message_library_term_at_risk_group',
     'message_library_term_target_audience',
 
-    // Import message (after the above 4 vocabularies imported)
-    // @see: admin/structure/types/manage/message/fields
     'message_library_node_message',
   );
 
+  /* Pre-import check
+   * ------------------------------------------------------------------------ */
   // Ensure every importer has a valid path set for the HTTP fetcher.
   $import_paths = variable_get('ml_importer_import_paths', array());
-  foreach ($items as $id) {
+  foreach ($importer_ids as $id) {
     if (empty($import_paths[$id]) || !feeds_valid_url($import_paths[$id])) {
-      if (function_exists('drush_set_error')) {
-        watchdog('message_library_importer', t('Invalid importer url for importer !id', array('!id' => $id)));
-        return FALSE;
-      }
-      else {
-        return drush_set_error('ML_FEEDS_MISSING_IMPORT_PATH', dt('No import path specified for feeds importer !id. Please check the settings at !url', array('!id' => $id, '!url' => url('admin/config/message_library/importer'))));
-      }
+      watchdog('message_library_importer', t('No import path for feeds importer !id', array('!id' => $id)));
+      return FALSE;
     }
   }
 
-  // Import the feeds.
+  /* Import the feeds.
+   * ------------------------------------------------------------------------ */
+  $t_start = microtime(TRUE);
   $step = 1;
-  foreach ($items as $importer_id) {
+  foreach ($importer_ids as $importer_id) {
     $feeds_source = feeds_source($importer_id);
+
+    $config = $feeds_source->getConfig();
+    $config['FeedsHTTPFetcher']['source'] = $import_paths[$importer_id];
+    $feeds_source->setConfig($config);
+    $feeds_source->save();
+
     if (!empty($feeds_source)
       && is_a($feeds_source, 'FeedsSource')
       && ($feeds_source_config = $feeds_source->getConfig())
@@ -103,29 +96,27 @@ function message_library_importer_message_library_import_action($object, $contex
       && feeds_valid_url($feeds_source_config['FeedsHTTPFetcher']['source'])) {
 
       $importer_info = message_library_importer_get_importer_info($feeds_source);
-      __drush_log(dt('!i. Importing !name !type', array('!name' => $importer_info['name'], '!type' => $importer_info['type'], '!i' => $step)) . 's', 'status');
+      __drush_log(t('!i. Importing !name !type', array('!name' => $importer_info['name'], '!type' => $importer_info['type'], '!i' => $step++)) . 's', 'status');
       do {
         $state = $feeds_source->import();
         __drush_log('   ' . round($state * 100) . '%', 'ok');
       }
       while ($state != FEEDS_BATCH_COMPLETE);
     }
-    __drush_print('');
-    $step++;
   }
   $t_end = microtime(TRUE);
 
+  /* Log.
+   * ------------------------------------------------------------------------ */
   if (module_exists('message_library_importer_log')) {
     message_library_importer_log_add_log($t_start, $t_end);
   }
 
   // @TODO: Check the import status.
 
-  // @TODO: There are some empty terms created, just a quick fix for now, remove
-  // those empty terms.
-  _message_library_importer_remove_empty_terms_and_content();
-
-  // Reindex
+  /* Reindex the content.
+   * ------------------------------------------------------------------------ */
+  __drush_log(t("Reindexing..."), 'status');
   $id = 'message_library_index';
   $index = search_api_index_load($id);
   if ($index && ($index instanceof SearchApiIndex)) {
@@ -134,22 +125,37 @@ function message_library_importer_message_library_import_action($object, $contex
     // is optimal and necessary, will take a look at this after havig a better
     // understanding how search_api works. (by kurt)
     $index->clear();
-    _search_api_batch_indexing_create($id, '-1', '-1', $index_s['total'] - $index_s['indexed']);
+    _search_api_batch_indexing_create($index, '-1', '-1', $index_s['total'] - $index_s['indexed']);
   }
 
-  // Flush cache.
+  /* Flush cache.
+   * ------------------------------------------------------------------------ */
+  __drush_log(t("Flushing caches..."), 'status');
   drupal_flush_all_caches();
   return TRUE;
 }
 
 /**
+ *
  * Implements hook_feeds_after_parse()
  *
- * Invoked after a feed source has been parsed, before it will be processed.
+ * This is invoked between second and third stage of the importing. The three
+ * stages are fetch, parse and process. What we are dealing here is the result
+ * parsed by the csv parsers.
+ *
+ * @see: FeedsSource::import()
  */
 function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
   if (empty($result->items)) return;
 
+  $result->items = message_library_importer_clean_result_items($result->items);
+
+  // Prevent some at risk group terms from importing.
+  // TODO: Not sure this is necessary, as the at risk group vocabulary seems
+  // not useful on the HR platform.
+  if ($source->id == 'message_library_term_at_risk_group') {
+    $result->items = message_library_importer_filter_arg_terms($result->items);
+  }
   // The order of the terms to be processed matters, it will decide whether
   // the parent/child relationship will be properly set up. We do some custom
   // processing here to put the term with the highest hierarchy to the top of
@@ -162,6 +168,7 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
     'message_library_term_sector',
     'message_library_term_target_audience',
   );
+
   if (in_array($source->id, $checklist)) {
     $term_tree = message_library_importer_parsed_term_items_build_tree($result->items, 0);
     $sorted_tids = (message_library_importer_parsed_term_items_extract_tids($term_tree));
@@ -174,22 +181,20 @@ function message_library_importer_feeds_after_parse(FeedsSource $source, FeedsPa
         unset($result->terms[$key]);
       }
     }
-
     $result->items = $sorted_terms;
   }
-  elseif ($source->id == 'message_library_term_threat') {
-    // Threat -> Hazard
-    // Threat -> Issues
-    // Threat -> Sector
-  }
-  elseif ($source->id == 'message_library_node_message') {
+  else if ($source->id == 'message_library_node_message') {
     array_walk($result->items, '_message_library_importer_map_message_node_field');
+    $result->items = message_library_importer_remap_message_arg_field($result->items);
   }
 }
 
 /**
+ *
  * Implemements hook_feeds_presave()
  * This hook is invoked before a feed item is saved.
+ *
+ * @see: FeedsProcessor::process()
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
   // Set the right target for field 'field_message_source'
@@ -408,47 +413,6 @@ function message_library_importer_clear_out_content() {
 }
 
 /**
- * Remove the empty tersm and content.
- *
- * @TODO: Solve this issue at the root.
- */
-function _message_library_importer_remove_empty_terms_and_content() {
-  // The vocabulary to check
-  $vocabs = array(
-    'hazard',
-    'issues',
-    'sector',
-    'information_type',
-    'at_risk_groups',
-    'target_audience',
-    'threat'
-  );
-
-  // The content types to check
-  $cts = array(
-    'message',
-  );
-
-  foreach($vocabs as $vocab_name) {
-    $vocab_obj = taxonomy_vocabulary_machine_name_load($vocab_name);
-    if (empty($vocab_obj)) {
-      continue;
-    }
-
-    $terms = taxonomy_get_tree($vocab_obj->vid, 0, NULL, TRUE);
-    foreach ($terms as $term) {
-      if (!empty($term->name)) {
-        continue;
-      }
-
-      // Check if there are some node referencing it
-      $nodes = taxonomy_select_nodes($term->tid);
-      $rs = taxonomy_term_delete($term->tid);
-    }
-  }
-}
-
-/**
  * Wrapper around `drush_log()`
  */
 function __drush_log() {
@@ -484,7 +448,6 @@ function message_library_importer_get_importer_info($source) {
   }
   // Get the entity type and entity name from the processor.
   if (($source instanceof FeedsSource) && !empty($source->importer->processor)) {
-    // print_r($source->importer->processor);
 
     if ($source->importer->processor instanceof FeedsNodeProcessor) {
       return array(
@@ -501,7 +464,186 @@ function message_library_importer_get_importer_info($source) {
   }
 }
 
+/**
+ * Implements hook_feeds_plugins()
+ */
+function message_library_importer_feeds_plugins() {
+  $info = array();
+  $path = drupal_get_path('module', 'message_library_importer') . '/plugins';
 
+  $info['MlFeedsTermProcessor'] = array(
+    'name' => 'Taxonomy term processor (Message Library)',
+    'description' => 'Create taxonomy terms.',
+    'help' => 'Create taxonomy terms from parsed content.',
+    'handler' => array(
+      'parent' => 'FeedsTermProcessor',
+      'class' => 'MlFeedsTermProcessor',
+      'file' => 'MlFeedsTermProcessor.inc',
+      'path' => $path,
+    ),
+  );
+  $info['MlFeedsNodeProcessor'] = array(
+    'name' => 'Node processor (Message Library)',
+    'description' => 'Create and update nodes.',
+    'help' => 'Create and update nodes from parsed content.',
+    'handler' => array(
+      'parent' => 'FeedsNodeProcessor',
+      'class' => 'MlFeedsNodeProcessor',
+      'file' => 'MlFeedsNodeProcessor.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
 
+/**
+ * Remap the 'At risk group' terms (from infoasaid) to terms in 'Population
+ * Types' vocabulary (hr platform)
+ *
+ */
+function message_library_importer_remap_arg_terms(&$items) {
+  // On the left is the term to replace, on the right is the replacement.
+  $mappings = array(
+    'All children under 18' => 'Children',
+    'All women'             => 'Women',
+    'All Vulnerable Groups' => 'Marginalised Groups',
+  );
 
+  // Get the old tids of terms we'll gonna mapped to.
+  $old_tids = array();
+  foreach ($items as $k => $item) {
+    $name = trim($item['term name']);
+    if (in_array($item['term name'], $mappings)) {
+      $old_tids[$name] = $items[$k]['term id'];
+    }
+  }
 
+  $incoming_terms = array();
+  $new_terms = array();
+  $vocab_p = taxonomy_vocabulary_machine_name_load('population_types');
+
+  // Check if whether all the incoming terms already exists the in 'Population
+  // types'
+  foreach ($items as $k => &$item) {
+    $item['term name'] = trim($item['term name']);
+    // Check if there are some new term (which only exist in the infoasaid.org)
+    // if found, don't import it...if we import it, we will add new term to the
+    // 'population types' vocabulary.
+    $term_search = taxonomy_get_term_by_name($item['term name'], $vocab_p->machine_name);
+    if (empty($term_search)) {
+      unset($items[$k]);
+    }
+
+    // Remap the terms.
+    if (array_key_exists($item['term name'], $mappings)) {
+      if (isset($old_tids[$item['term name']])) {
+        $item['term id'] = $old_tids[$item['term name']];
+        $item['term name'] = $mappings[$item['term name']];
+        $item['parent term id']   = '';
+        $item['parent term name'] = '';
+      }
+      else {
+        unset($items[$k]);
+      }
+    }
+  }
+}
+
+/**
+ * Prevent some at risk group terms from importing.
+ *
+ * TODO: Not sure this is right place to implement this. Because the population
+ * types vocabulary is used to replace this vocabulary.
+ *
+ */
+function message_library_importer_filter_arg_terms($items) {
+  $blacklist = array(
+    'All children under 18',
+    'All women',
+    'All vulnerable groups'
+  );
+
+  foreach ($items as $k => $item) {
+    $name = ucfirst(strtolower(trim($item['term name'])));
+    if (in_array($name, $blacklist)) {
+      unset($items[$k]);
+    }
+  }
+  return $items;
+}
+
+/**
+ * Remap some terms from infoasaid's at risk group vocabulary to the terms in
+ * HR platform's 'population types' terms.
+ */
+function message_library_importer_remap_message_arg_field($items) {
+  if (!count($items)) return $items;
+
+  $mappings = array(
+    'All women'             => 'Women',
+    'All children under 18' => 'Children',
+    'All vulnerable groups' => 'Vulnerable Groups',
+  );
+
+  foreach ($items as $k => $item) {
+    if (!empty($item['at risk group'])) {
+      foreach ($item['at risk group'] as $j => $v) {
+        if (isset($mappings[$v])) {
+          $items[$k]['at risk group'][$j] = $mappings[$v];
+        }
+      }
+      $items[$k]['at risk group'] = array_unique($items[$k]['at risk group']);
+    }
+  }
+
+  // Some extra work. Check all the terms in 'at risk group' field, if it doesn't exist in the
+  // population type vocabulary, then don't import it and log it.
+  // We do this check so our import process doesn't alter the accidentally add new term
+  // to population types vocabulary.
+  $incoming_terms = array();
+  $vocab_p = taxonomy_vocabulary_machine_name_load('population_types');
+  foreach ($items as $item) {
+    if (!empty($item['at risk group'])) {
+      foreach ($item['at risk group'] as $v) {
+        $v = trim($v);
+        if (!in_array($v, $incoming_terms)) {
+          // Remove any empty term.
+          if (!$v) {
+            $empty_terms = taxonomy_get_term_by_name($v, $vocab_p->machine_name);
+            foreach ($empty_terms as $empty_term) {
+              taxonomy_term_delete($empty_term->tid);
+            }
+          }
+          else if ($result = taxonomy_get_term_by_name($v, $vocab_p->machine_name)) {
+            foreach ($result as $t) {
+              $incoming_terms[$t->tid] = $t->name;
+            }
+          }
+          else {
+            // something must goes wrong..
+          }
+        }
+      }
+    }
+  }
+  return $items;
+}
+
+/**
+ * Some cleaning on the parsed result - remove the surrounding space, remove
+ * empty array entry, etc. This step could effective prevent some empty terms
+ * from being created.
+ */
+function message_library_importer_clean_result_items($items) {
+  foreach ($items as $i => $item) {
+    foreach ($item as $field_name => $field_val) {
+      if (is_array($field_val)) {
+        $items[$i][$field_name] = array_filter(array_map('trim', $field_val));
+      }
+      else if (is_string($field_val)) {
+        $item[$i][$field_name] = trim($field_val);
+      }
+    }
+  }
+  return $items;
+}
