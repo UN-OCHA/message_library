@@ -54,26 +54,41 @@ function drush_message_library_importer_message_library_import() {
   $import_paths = variable_get('ml_importer_import_paths', array());
   foreach ($items as $id) {
     if (empty($import_paths[$id])) {
-      drush_log(dt('No import path specified for feeds importer !id. Please check the settings at !url', array('!id' => $id, '!url' => url('admin/config/message_library/importer'))), 'error');
-      return;
+      return drush_set_error('ML_FEEDS_MISSING_IMPORT_PATH', dt('No import path specified for feeds importer !id. Please check the settings at !url', array('!id' => $id, '!url' => url('admin/config/message_library/importer'))));
     }
   }
-
 
   $i = 1;
   foreach ($items as $feed_name => $id) {
     $importer = feeds_importer($id);
     if (empty($importer->id)) {
-      drush_log(dt('Unrecgnized feeds importer: !importer', array('!importer' => $id)), 'error');
-      continue;
+      return drush_set_error(dt('Unrecognized feeds importer: !importer', array('!importer' => $id)), 'error');
     }
 
     drush_print(drush_html_to_text('<br/><hr>'));
+
+    if (empty($importer->processor) || !is_a($importer->processor, 'FeedsProcessor')) {
+      return drush_set_error('ML_FEEDS_INVALID_PROCESSOR', dt('No valid processor found.'));
+    }
+
     if (is_a($importer->processor, 'FeedsTermProcessor')) {
-      drush_log(dt("$i. Importing [!type] terms...", array('!type' => $importer->processor->config['vocabulary'])), 'ok');
+      if (!empty($importer->processor->config['vocabulary'])) {
+        drush_log(dt("$i. Importing [!type] terms...", array('!type' => $importer->processor->config['vocabulary'])), 'ok');
+      }
+      else {
+        return drush_set_error('ML_FEEDS_NO_VOCABULARY_SET', dt('No vocabulary target.'));
+      }
     }
     else if (is_a($importer->processor, 'FeedsNodeProcessor')) {
-      drush_log(dt("$i. Importing [!type] nodes...", array('!type' => $importer->processor->config['content_type'])), 'ok');
+      if (!empty($importer->processor->config['content_type'])) {
+        drush_log(dt("$i. Importing [!type] nodes...", array('!type' => $importer->processor->config['content_type'])), 'ok');
+      }
+      else {
+        return drush_set_error('ML_FEEDS_NO_CONTENT_TYPE_SET', dt('No content type target.'));
+      }
+    }
+    else {
+      return drush_set_error('ML_FEEDS_INCORRECT_PROCESSOR', dt('Uncognized feeds processor.'));
     }
     drush_print(drush_html_to_text('<hr>'));
 

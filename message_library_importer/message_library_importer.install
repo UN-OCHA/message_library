@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implements hook_install()
+ */
+function message_library_importer_install() {
+  // Create a trigger
+  $record = array(
+    'hook'    => 'job_scheduler_message_library',
+    'title'   => 'Every Four Hours',
+    'crontab' => '*/1 * * * * ',
+    'status'  => 1,
+  );
+  drupal_write_record('job_scheduler_trigger', $record);
+
+  // Create a trigger asignment
+  $record = array(
+    'hook'   => 'job_scheduler_message_library',
+    'aid'    => 'message_library_importer_message_library_import_action',
+    'weight' => 1,
+  );
+  drupal_write_record('trigger_assignments', $record);
+
+  actions_synchronize();
+  job_scheduler_rebuild_all();
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function message_library_importer_uninstall() {
+  db_delete('job_scheduler_trigger')
+    ->condition('hook', 'job_scheduler_message_library')
+    ->execute();
+
+  db_delete('trigger_assignments')
+    ->condition('hook', 'job_scheduler_message_library')
+    ->execute();
+
+  actions_synchronize();
+  job_scheduler_rebuild_all();
+}

@@ -8,31 +8,9 @@
  * Generates a config form for the automatic import job
  */
 function message_library_importer_admin_form($form, &$form_state) {
-  $form = array();
-
-  // Give some pre-defined intervals
-  $intervals = array(
-    3600,
-    3600 *  2,
-    3600 *  4,
-    3600 *  6,
-    3600 *  8,
-    3600 * 12,
-    3600 * 16,
-    3600 * 24,
-    3600 * 24 * 2,
-  );
-
-  $interval_options = drupal_map_assoc($intervals, 'format_interval');
-  $interval_setting = variable_get('ml_importer_interval', 14400);
-  $form['ml_importer_interval'] = array(
-    '#type' => 'select',
-    '#title' => 'Auto Import Interval',
-    '#options' => $interval_options,
-    '#default_value' => $interval_setting,
-  );
-
   $import_paths_settings = variable_get('ml_importer_import_paths', array());
+
+  $form = array();
   $form['ml_importer_import_paths'] = array(
     '#tree' => TRUE,
     '#type' => 'fieldset',
