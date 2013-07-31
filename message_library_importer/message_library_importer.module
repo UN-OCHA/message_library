@@ -310,7 +310,7 @@ function _message_library_importer_map_message_node_field(&$value, $index) {
         }
       }
       else {
-        // @todo: Log this?
+        watchdog('message_library_importer', t('Unable to parse the url data: %url', array('%url' => $json_raw)));
         $value[$link_field] = array();
       }
     }
