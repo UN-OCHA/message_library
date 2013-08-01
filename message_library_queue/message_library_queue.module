@@ -196,7 +196,6 @@ function message_library_queue_add_subqueue_for_term($term) {
   }
 }
 
-
 /**
  * Implements hook_nodequeue_delete()
  */
@@ -222,4 +221,65 @@ function message_library_queue_nodequeue_alter(&$loaded, $context) {
       unset($loaded['message_library_threat']);
     }
   }
+}
+
+/**
+ * Implements hook_node_insert()
+ */
+function message_library_queue_node_insert($node) {
+  if ($node->type == 'message' && !empty($node->form_id) && $node->form_id == 'message_node_form') {
+    if ($items = field_get_items('node', $node, 'field_message_threat') ) {
+      if (
+        ($queue = nodequeue_load('message_library_threat')) &&
+        ($subqueues = nodequeue_load_subqueues_by_reference(array('message_library_threat' => $items[0]['tid'])))
+      ) {
+        $subqueue = reset($subqueues);
+        $messages = message_library_queue_load_subqueue_nodes($subqueue);
+        if (!empty($messages) && !array_key_exists($node->nid, $messages)) {
+          nodequeue_subqueue_add($queue, $subqueue, $node->nid);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_node_update()
+ */
+function message_library_queue_node_update($node) {
+  if (($node->type != 'message') || empty($node->form_id) || ($node->form_id != 'message_node_form')) {
+    return;
+  }
+
+  // When the threat value changes, change the queue this message is possibly in
+  $old_items = field_get_items('node', $node->original, 'field_message_threat');
+  $new_items = field_get_items('node', $node, 'field_message_threat');
+
+  if (!empty($old_items[0]['tid']) && !empty($new_items[0]['tid']) && ($old_items[0]['tid'] != $new_items[0]['tid'])) {
+    if ($queue = nodequeue_load('message_library_threat')) {
+      $old_subqueue = nodequeue_load_subqueues_by_reference(array('message_library_threat' => $old_items[0]['tid']));
+      if ($old_subqueue = reset($old_subqueue)) {
+        nodequeue_subqueue_remove_node($old_subqueue->sqid, $node->nid);
+      }
+
+      $new_subqueue = nodequeue_load_subqueues_by_reference(array('message_library_threat' => $new_items[0]['tid']));
+      if ($new_subqueue = reset($new_subqueue)) {
+        nodequeue_subqueue_add($queue, $new_subqueue, $node->nid);
+      }
+    }
+  }
+}
+
+function message_library_queue_load_subqueue_nodes($subqueue) {
+  if (empty($subqueue->sqid)) {
+    return;
+  }
+  $result = db_select('nodequeue_nodes', 'nn')
+    ->fields('nn')
+    ->condition('nn.name', 'message_library_threat')
+    ->condition('nn.sqid', $subqueue->sqid)
+    ->orderBy('nn.position')
+    ->execute()
+    ->fetchAllAssoc('nid');
+  return $result;
 }
