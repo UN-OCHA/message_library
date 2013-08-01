@@ -200,6 +200,7 @@ function message_library_importer_feeds_presave(FeedsSource $source, $entity, $i
   // Set the right target for field 'field_message_source'
   // Only for message nodes
   if (!empty($entity->nid) && !empty($entity->type) && ($entity->type == 'message')) {
+    $entity->status = 1;
     $field_lan = field_language('node', $entity, 'field_message_source');
     $entity->field_message_source = array();
     if (!empty($item['source'])) {

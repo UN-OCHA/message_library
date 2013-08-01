@@ -28,11 +28,10 @@ function message_library_tou_prepopulate_node() {
   $body_text = file_get_contents($path);
 
   $node = new stdClass();
-  $node->type = 'page';
+  $node->type = 'ml_page';
   node_object_prepare($node);
 
   // Check existing node
-
   $node->title = 'Message Library Terms of Use';
   $node->language = LANGUAGE_NONE;
   $node->uid = 1;
@@ -56,7 +55,7 @@ function message_library_tou_uninstall() {
   if ($nid) {
     $node = node_load($nid);
     // Some check prevent removing other nodes
-    if ($node->type == 'page') {
+    if ($node->type == 'ml_page') {
       node_delete($nid);
     }
   }

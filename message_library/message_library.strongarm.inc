@@ -20,6 +20,13 @@ function message_library_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_anonymous_ml_page';
+  $strongarm->value = 0;
+  $export['comment_anonymous_ml_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_anonymous_threat';
   $strongarm->value = 0;
   $export['comment_anonymous_threat'] = $strongarm;
@@ -30,6 +37,13 @@ function message_library_strongarm() {
   $strongarm->name = 'comment_default_mode_message';
   $strongarm->value = 0;
   $export['comment_default_mode_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_mode_ml_page';
+  $strongarm->value = 1;
+  $export['comment_default_mode_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -48,6 +62,13 @@ function message_library_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_default_per_page_ml_page';
+  $strongarm->value = '50';
+  $export['comment_default_per_page_ml_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_default_per_page_threat';
   $strongarm->value = '50';
   $export['comment_default_per_page_threat'] = $strongarm;
@@ -58,6 +79,13 @@ function message_library_strongarm() {
   $strongarm->name = 'comment_form_location_message';
   $strongarm->value = 0;
   $export['comment_form_location_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_form_location_ml_page';
+  $strongarm->value = 1;
+  $export['comment_form_location_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -76,9 +104,23 @@ function message_library_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'comment_ml_page';
+  $strongarm->value = '1';
+  $export['comment_ml_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_preview_message';
   $strongarm->value = '1';
   $export['comment_preview_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_preview_ml_page';
+  $strongarm->value = '1';
+  $export['comment_preview_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -93,6 +135,13 @@ function message_library_strongarm() {
   $strongarm->name = 'comment_subject_field_message';
   $strongarm->value = 0;
   $export['comment_subject_field_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'comment_subject_field_ml_page';
+  $strongarm->value = 1;
+  $export['comment_subject_field_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -208,6 +257,13 @@ function message_library_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'language_content_type_ml_page';
+  $strongarm->value = '0';
+  $export['language_content_type_ml_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'language_content_type_threat';
   $strongarm->value = '0';
   $export['language_content_type_threat'] = $strongarm;
@@ -216,10 +272,15 @@ function message_library_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'menu_options_message';
-  $strongarm->value = array(
-    0 => 'main-menu',
-  );
+  $strongarm->value = array();
   $export['menu_options_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'menu_options_ml_page';
+  $strongarm->value = array();
+  $export['menu_options_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -236,6 +297,13 @@ function message_library_strongarm() {
   $strongarm->name = 'menu_parent_message';
   $strongarm->value = 'main-menu:0';
   $export['menu_parent_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'menu_parent_ml_page';
+  $strongarm->value = 'main-menu:0';
+  $export['menu_parent_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -299,9 +367,19 @@ Click on the "Show" button to learn about a feature. The best browsers to use wh
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_message';
   $strongarm->value = array(
-    0 => 'revision',
+    0 => 'status',
+    1 => 'revision',
   );
   $export['node_options_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_ml_page';
+  $strongarm->value = array(
+    0 => 'status',
+  );
+  $export['node_options_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
@@ -323,6 +401,13 @@ Click on the "Show" button to learn about a feature. The best browsers to use wh
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_preview_ml_page';
+  $strongarm->value = '1';
+  $export['node_preview_ml_page'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_preview_threat';
   $strongarm->value = '1';
   $export['node_preview_threat'] = $strongarm;
@@ -333,6 +418,13 @@ Click on the "Show" button to learn about a feature. The best browsers to use wh
   $strongarm->name = 'node_submitted_message';
   $strongarm->value = 0;
   $export['node_submitted_message'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_submitted_ml_page';
+  $strongarm->value = 0;
+  $export['node_submitted_ml_page'] = $strongarm;
 
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
