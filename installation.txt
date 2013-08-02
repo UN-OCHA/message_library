@@ -1,3 +1,52 @@
+Aegir
+=====
+
+ - git clone https://github.com/humanitarianresponse/hr_platform 
+ - Comment the following lines in common.make (due to patches having been rolled out in modules):
+
+ ; projects[entity_translation][patch][] = "https://drupal.org/files/entity_translation-expose_translations_to_views-beta2-1605406-23.patch"
+ ; projects[views_pdf][patch][] = "https://drupal.org/files/grouping-1313404-14.patch"
+ ; projects[views_pdf][patch][] = "https://drupal.org/files/2032863-hide_fields-1.patch"
+ ; projects[views_pdf][patch][] = "https://drupal.org/files/1886066-header_footer-2.patch"
+ ; projects[views_pdf][patch][] = "https://drupal.org/files/views_pdf-undefined_index_function-1513490-28.patch"
+ ; projects[views_pdf][patch][] = "https://drupal.org/files/1972158-page_break-3.patch"
+ 
+ - (optional) Might be some problems in downloading the following library files in which case comment :
+ 
+ ;libraries[colorbox][type] = "libraries"
+ ;libraries[colorbox][download][type] = "file"
+ ;libraries[colorbox][download][url] = "https://nodeload.github.com/jackmoore/colorbox/zip/1.4.10"
+
+ ;libraries[flexslider][type] = "libraries"
+ ;libraries[flexslider][download][type] = "file"
+ ;libraries[flexslider][download][url] = "https://nodeload.github.com/woothemes/FlexSlider/zip/version/2.1"
+
+ - Create Platform in aegir using humanitarian_response.make
+ - (optional) To download the latest version of the message library
+   - Go to /var/aegir/platforms/humanitarian-response-7.x-xxx/sites/all/modules
+   - Delete message_library directory : rm -Rf message_library
+   - Clone from github : git clone https://github.com/humanitarianresponse/message_library.git
+ - Create Site in aegir using "Humanitarianresponse Minimal" install profile.
+ - Login with the one time login link on Aegir.
+ - (CHECK: I think setting up the solr server should be done here to avoid errors when activating the features below) 
+ - Activate the following Features at /admin/structure/features
+   - Message Library
+   - Message Library Importer
+   - Message Library
+   - Message Library
+   - Humanitarian Response Assessment (temporary to import the population types vocabulary).
+ - An error might be displayed regarding the Solr_Server. To update the Solr configuration.
+   - Flush the cache (for instance with drush cc all) - you might need to disable the message library features and reenable it.
+   - Go to /admin/config/search/search_api/server/solr_server
+   - Create local Solr Server.
+ - (optional) Redirect the home page to the message library in site configuration. 
+ - (optional) Trigger the import : drush message-library-import
+ - Test that the messages have been properly imported and that the search works.
+ 
+Manual install (obsolete)
+=================
+
+
 - Download the message library modules into the sites/all/modules
 
   shell> cd sites/all/modules/
