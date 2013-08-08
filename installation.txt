@@ -29,16 +29,15 @@ Aegir
  - Create Site in aegir using "Humanitarianresponse Minimal" install profile.
  - Login with the one time login link on Aegir.
  - (CHECK: I think setting up the solr server should be done here to avoid errors when activating the features below) 
+ - Activate the Humanitarian Response - Search Feature at /admin/structure/features
+   - Go to /admin/config/search/search_api/server/solr_server
+   - Configure the local Solr Server.
  - Activate the following Features at /admin/structure/features
    - Message Library
    - Message Library Importer
    - Message Library
    - Message Library
    - Humanitarian Response Assessment (temporary to import the population types vocabulary).
- - An error might be displayed regarding the Solr_Server. To update the Solr configuration.
-   - Flush the cache (for instance with drush cc all) - you might need to disable the message library features and reenable it.
-   - Go to /admin/config/search/search_api/server/solr_server
-   - Create local Solr Server.
  - (optional) Redirect the home page to the message library in site configuration. 
  - (optional) Trigger the import : drush message-library-import
  - Test that the messages have been properly imported and that the search works.
