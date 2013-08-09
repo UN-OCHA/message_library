@@ -101,7 +101,7 @@ function drush_message_library_importer_message_library_import() {
 
   // @TODO: There are some empty terms created, just a quick fix for now, remove
   // those empty terms.
-  _message_library_importer_remove_empty_terms_and_content();
+  // _message_library_importer_remove_empty_terms_and_content();
 
   // Fix the fields of threat terms
   // _message_library_importer_fix_threat_term_fields();
@@ -110,8 +110,8 @@ function drush_message_library_importer_message_library_import() {
   drush_print(drush_html_to_text('<br/><hr>'));
   drush_log(dt('Reindexing...'), 'ok');
   drush_print(drush_html_to_text('<hr>'));
-  drush_invoke('search-api-clear', array('message_library_index'));
-  drush_invoke('search-api-index', array('message_library_index'));
+  drush_invoke('search-api-clear', 'message_library_index');
+  drush_invoke('search-api-index', 'message_library_index');
 
   // Flush cache
   drush_print(drush_html_to_text('<br/><hr>'));
