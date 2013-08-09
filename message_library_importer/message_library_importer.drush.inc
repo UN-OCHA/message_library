@@ -80,8 +80,8 @@ function drush_message_library_importer_message_library_import() {
       }
     }
     else if (is_a($importer->processor, 'FeedsNodeProcessor')) {
-      if (!empty($importer->processor->config['content_type'])) {
-        drush_log(dt("$i. Importing [!type] nodes...", array('!type' => $importer->processor->config['content_type'])), 'ok');
+      if (!empty($importer->processor->config['bundle'])) {
+        drush_log(dt("$i. Importing [!type] nodes...", array('!type' => $importer->processor->config['bundle'])), 'ok');
       }
       else {
         return drush_set_error('ML_FEEDS_NO_CONTENT_TYPE_SET', dt('No content type target.'));
