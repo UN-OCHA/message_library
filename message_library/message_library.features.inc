@@ -42,14 +42,6 @@ function message_library_node_info() {
       'title_label' => t('Information Requirement'),
       'help' => '',
     ),
-    'ml_page' => array(
-      'name' => t('Page (Message Library)'),
-      'base' => 'node_content',
-      'description' => t('Create a simple page  for <strong>Message Library</strong>. '),
-      'has_title' => '1',
-      'title_label' => t('Title'),
-      'help' => '',
-    ),
   );
   return $items;
 }
