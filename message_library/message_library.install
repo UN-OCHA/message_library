@@ -94,7 +94,7 @@ function message_library_prepopulate_node() {
     $body_text = file_get_contents($path);
 
     $node = new stdClass();
-    $node->type = 'ml_page';
+    $node->type = 'page';
     node_object_prepare($node);
 
     // Check existing node
@@ -123,7 +123,7 @@ function message_library_prepopulate_node() {
     $body_text = file_get_contents($path);
 
     $node = new stdClass();
-    $node->type = 'ml_page';
+    $node->type = 'page';
     node_object_prepare($node);
 
     // Check existing node
