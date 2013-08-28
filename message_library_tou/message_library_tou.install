@@ -4,65 +4,6 @@
  * Install, update and uninstall functions for the message_library_tou module.
  */
 
-
-/**
- * Implements hook_install()
- */
-function message_library_tou_install() {
-  message_library_tou_prepopulate_node();
-}
-
-
-/**
- * Heler function to create a node used for message library's TOU
- */
-function message_library_tou_prepopulate_node() {
-  $path = drupal_get_path('module','message_library_tou').'/resources/message-library-terms-of-use.html';
-
-  if (!file_exists($path) || !is_readable($path)) {
-    watchdog('mesage_library_tou', 'Unable to read file %file',
-        array('%file' => $path) , WATCHDOG_ERROR);
-    return;
-  }
-
-  $body_text = file_get_contents($path);
-
-  $node = new stdClass();
-  $node->type = 'page';
-  node_object_prepare($node);
-
-  // Check existing node
-
-  $node->title = 'Message Library Terms of Use';
-  $node->language = LANGUAGE_NONE;
-  $node->uid = 1;
-
-  $node->body[$node->language][0]['value']   = $body_text;
-  $node->body[$node->language][0]['summary'] = text_summary($body_text);
-  $node->body[$node->language][0]['format']  = 'filtered_html';
-
-  // @todo: Add the pdf attachment
-  node_save($node);
-
-  variable_set('message_library_tou_nid', $node->nid);
-}
-
-/**
- * Implements hook_uninstall()
- */
-function message_library_tou_uninstall() {
-  $nid = variable_get('message_library_tou_nid');
-
-  if ($nid) {
-    $node = node_load($nid);
-    // Some check prevent removing other nodes
-    if ($node->type == 'page') {
-      node_delete($nid);
-    }
-  }
-  variable_del('message_library_tou_nid');
-}
-
 /**
  * Implements hook_schema()
  */
