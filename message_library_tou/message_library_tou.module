@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the Message Library TOU feature.
+ */
+
+include_once 'message_library_tou.features.inc';
 
 /**
  * Implements hook_permission().

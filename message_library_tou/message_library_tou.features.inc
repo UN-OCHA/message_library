@@ -1,0 +1,14 @@
+<?php
+/**
+ * @file
+ * message_library_tou.features.inc
+ */
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function message_library_tou_ctools_plugin_api($module = NULL, $api = NULL) {
+  if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => "1");
+  }
+}
