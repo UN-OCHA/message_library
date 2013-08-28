@@ -1,7 +1,15 @@
 name = Message Library TOU
 description = Provide a 'Term of Use' for the Message Library.
-package = Message Library
 core = 7.x
+package = Message Library
 version = 7.x-1.0-dev
-
+project = message_library_tou
+dependencies[] = ctools
+dependencies[] = features
+dependencies[] = humanitarianresponse_page
+dependencies[] = strongarm
+dependencies[] = uuid_features
+__drupal_alter_by_ref[][node][page] = page
+features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
+features[uuid_node][] = 85f259f3-7183-4f53-9f76-ff00c1b009dc
