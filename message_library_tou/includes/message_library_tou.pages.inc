@@ -20,7 +20,7 @@ function message_library_tou_cgi_form($form, &$form_state) {
     $body_renderable = field_view_value('node', $node, 'body', $body_field[0]);
 
     $form['cgi_tou_text'] = array(
-      '#prefix' => '<div class="tou-text">',
+      '#prefix' => '<div class="tou-text node">',
       '#markup' => render($body_renderable),
       '#suffix' => '</div>'
     );
