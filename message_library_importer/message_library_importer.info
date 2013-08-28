@@ -13,6 +13,7 @@ dependencies[] = feeds_ui
 dependencies[] = field_reference_delete
 dependencies[] = job_scheduler
 dependencies[] = job_scheduler_trigger
+dependencies[] = message_library_importer_log
 dependencies[] = strongarm
 dependencies[] = trigger
 features[ctools][] = feeds:feeds_importer_default:1
