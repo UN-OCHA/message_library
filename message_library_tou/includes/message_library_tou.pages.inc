@@ -13,8 +13,9 @@ function message_library_tou_cgi_form($form, &$form_state) {
   );
 
   // The TOU text
-  $tou_nid = variable_get('message_library_tou_nid');
-  if ($tou_nid && ($node = node_load($tou_nid))) {
+  $nodes = entity_uuid_load('node', array('85f259f3-7183-4f53-9f76-ff00c1b009dc'));
+  if (count($nodes) > 0) {
+    $node = reset($nodes);
     $body_field  = field_get_items('node', $node, 'body');
     $body_renderable = field_view_value('node', $node, 'body', $body_field[0]);
 
