@@ -19,6 +19,7 @@ function message_library_tou_uuid_features_default_content() {
   'promote' => 1,
   'sticky' => 0,
   'vuuid' => '1343ff2d-6c71-42cf-a56b-18fe1a428ba3',
+  'title_original' => 'Message Library Terms of Use',
   'type' => 'page',
   'language' => 'und',
   'created' => 1377607256,
