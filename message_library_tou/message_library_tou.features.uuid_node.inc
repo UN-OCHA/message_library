@@ -148,20 +148,8 @@ function message_library_tou_uuid_features_default_content() {
     ),
   ),
   'translations' => array(
-    'original' => 'und',
-    'data' => array(
-      'und' => array(
-        'entity_type' => 'node',
-        'entity_id' => 1,
-        'language' => 'und',
-        'source' => '',
-        'uid' => 1,
-        'status' => 1,
-        'translate' => 0,
-        'created' => 1377607256,
-        'changed' => 1377679072,
-      ),
-    ),
+    'original' => NULL,
+    'data' => array(),
   ),
   'cid' => 0,
   'last_comment_name' => NULL,
