@@ -1,5 +1,4 @@
 name =  Message Library Exposed Filter
 description = Shows views' exposed filters as facets
 package = Message Library
-version = 7.x-1.0-dev
 core = 7.x

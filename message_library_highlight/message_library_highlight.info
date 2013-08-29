@@ -1,5 +1,4 @@
 name = Message Library Highlight
 description = Highlight keywords being searched for the Message Library.
 core = 7.x
-version = 7.x-1.0-dev
 package = Message Library
