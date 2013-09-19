@@ -3,5 +3,3 @@ description = Theme related customizations; supposed to be in the theme package 
 core = 7.x
 package = Message Library
 php = 5.2.4
-version = 7.x-1.0-dev
-project = message_library_theme
