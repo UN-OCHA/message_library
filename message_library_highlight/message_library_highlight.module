@@ -23,8 +23,8 @@ function message_library_highlight_init() {
 /**
  * Implements hook_theme()
  */
-function message_library_highlight_theme() {
-  return array(
+//function message_library_highlight_theme() {
+/*  return array(
     'message_library_prev_message_link' => array(
        'variables' => array('dest_tid' => NULL, 'dest_nid' => NULL),
      ),
@@ -34,8 +34,8 @@ function message_library_highlight_theme() {
     'message_library_threat_nav_links' => array(
       'variables' => array('next_tid' => NULL, 'prev_tid' => NULL, 'crt_search_link' => NULL),
      ),
-  );
-}
+  );*/
+//}
 
 /*
  * Theme function for a prev highlighted message link
