@@ -119,8 +119,13 @@ function message_library_importer_feeds_importer_default() {
             'target' => 'field_message_url:url',
             'unique' => FALSE,
           ),
+          16 => array(
+            'source' => 'Synonyms',
+            'target' => 'field_message_synonyms',
+            'unique' => FALSE,
+          ),
         ),
-        'update_existing' => '2',
+        'update_existing' => '1',
         'input_format' => 'plain_text',
         'authorize' => 0,
         'skip_hash_check' => 1,
@@ -576,6 +581,11 @@ function message_library_importer_feeds_importer_default() {
           4 => array(
             'source' => 'Threat Sector',
             'target' => 'field_threat_sector',
+            'unique' => FALSE,
+          ),
+          5 => array(
+            'source' => 'Threat Synonyms',
+            'target' => 'description',
             'unique' => FALSE,
           ),
         ),
