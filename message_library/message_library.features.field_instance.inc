@@ -250,11 +250,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'taxonomy',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 20,
       ),
@@ -311,11 +307,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'link',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'link_default',
         'weight' => 38,
       ),
@@ -376,11 +368,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 28,
       ),
@@ -454,11 +442,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'taxonomy',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 17,
       ),
@@ -515,11 +499,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 19,
       ),
@@ -592,11 +572,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'taxonomy',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 22,
       ),
@@ -654,9 +630,6 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -712,11 +685,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'list_default',
         'weight' => 32,
       ),
@@ -761,11 +730,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 26,
       ),
@@ -839,11 +804,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 33,
       ),
@@ -916,11 +877,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 25,
       ),
@@ -1061,6 +1018,74 @@ function message_library_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-message-field_message_synonyms'
+  $field_instances['node-message-field_message_synonyms'] = array(
+    'bundle' => 'message',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_plain',
+        'weight' => 39,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_plain',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_message_synonyms',
+    'label' => 'Message Synonyms',
+    'required' => 0,
+    'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'filtered_html' => 'filtered_html',
+          'full_html' => 'full_html',
+          'plain_text' => 'plain_text',
+          'simple' => 'simple',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'filtered_html' => array(
+              'weight' => 0,
+            ),
+            'full_html' => array(
+              'weight' => 0,
+            ),
+            'plain_text' => array(
+              'weight' => 10,
+            ),
+            'simple' => array(
+              'weight' => 0,
+            ),
+          ),
+        ),
+      ),
+      'entity_translation_sync' => FALSE,
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 16,
+    ),
+  );
+
   // Exported field_instance: 'node-message-field_message_target_comment'
   $field_instances['node-message-field_message_target_comment'] = array(
     'bundle' => 'message',
@@ -1071,11 +1096,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'text_default',
         'weight' => 21,
       ),
@@ -1148,11 +1169,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'taxonomy',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
         'weight' => 34,
       ),
@@ -1180,9 +1197,7 @@ function message_library_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'apply_chosen' => 0,
-      ),
+      'settings' => array(),
       'type' => 'options_select',
       'weight' => 2,
     ),
@@ -1198,11 +1213,7 @@ function message_library_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'link',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-          'field_delimiter' => '',
-        ),
+        'settings' => array(),
         'type' => 'link_default',
         'weight' => 30,
       ),
@@ -1216,8 +1227,6 @@ function message_library_field_default_field_instances() {
         'label' => 'above',
         'module' => 'textformatter',
         'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
           'textformatter_class' => 'textformatter-list message-website-list',
           'textformatter_comma_and' => 0,
           'textformatter_comma_full_stop' => 0,
@@ -1405,6 +1414,7 @@ function message_library_field_default_field_instances() {
   t('Issue');
   t('Localized Message');
   t('Message');
+  t('Message Synonyms');
   t('Sector');
   t('Sensitivity Causes');
   t('Source');
