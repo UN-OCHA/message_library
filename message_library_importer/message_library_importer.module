@@ -223,7 +223,7 @@ function message_library_importer_parsed_term_items_build_tree($items, $parent) 
   $result = array();
 
   foreach ($items as $item) {
-    if ($item['parent term id'] == $parent) {
+    if (!is_null($item['parent term id']) && $item['parent term id'] == $parent) {
       $new_item = $item;
       $new_item['children'] = message_library_importer_parsed_term_items_build_tree($items, $new_item['term id']);
       $result[] = $new_item;
