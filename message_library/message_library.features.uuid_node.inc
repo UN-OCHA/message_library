@@ -19,57 +19,17 @@ function message_library_uuid_features_default_content() {
   'promote' => 1,
   'sticky' => 0,
   'vuuid' => '0c82ddad-25fc-4aca-bf1d-a9c19fe622a3',
-  'title_original' => 'Frequently Asked Questions - Users FAQ',
   'type' => 'page',
   'language' => 'und',
   'created' => 1377607256,
   'tnid' => 0,
   'translate' => 0,
   'uuid' => '295bdf1f-6776-45e8-a888-7328188050cb',
-  'reliefweb' => 0,
   'revision_uid' => 1,
-  'base_reliefweb' => 0,
   'body' => array(
     'und' => array(
       0 => array(
-        'value' => '<ul>
-  <li><a href="#ml-aim">What is the aim of the message library?</a></li>
-  <li><a href="#ml-inteted-use">What are its intended uses?</a></li>
-  <li><a href="#ml-how-access">How can people access the library?</a></li>
-  <li><a href="#ml-who-will-use">Who will use the message library?</a></li>
-  <li><a href="#ml-for">Who are the messages for?</a></li>
-  <li><a href="#ml-limitations">What are the limitations of the message library?</a></li>
-</ul>
-
-<h3 id="ml-aim">What is the aim of the message library?</h3>
-<div>
-  <p>The aim of the message library is to have a set of generic, multi-sectoral messages targeted at crisis-affected populations. The message library includes alerts, advice on how to mitigate risk, what to do in the absence of any assistance and prompts for messages on programmatic interventions/services available.</p>
-  <p>The library is not designed to be a ‘rip and read’ resource – instead it should be used as a reference for those working in emergency situations about what can be shared with affected communities during and after disasters be they natural or man-made. It is not an exhaustive list. As this is a dynamic tool, messages can be added, edited, and revised at any point, should the need arise.</p>
-  <p>The message library is designed for sudden onset emergencies, but it can also be a useful tool in protracted crises.</p>
-</div>
-
-<h3 id="ml-inteted-use">What are its intended uses?</h3>
-<p>The library has several intended uses:</p>
-<ul>
-  <li>a) To act as a reference for what can and should be communicated to affected populations during the first few days and weeks of an emergency</li>
-  <li>b) To help improve collaboration and coordination specifically around messaging to affected populations.</li>
-</ul>
-
-<h3 id="ml-how-access">How can people access the library?</h3>
-<p>The library will sit on-line but users will also be able to download and/or print an off-line version and store it on their laptops. As the content is likely to be added to regularly by cluster leads, it is advisable to access and download the on-line version every time an emergency hits, in order to get the most up to date content</p>
-
-<h3 id="ml-who-will-use">Who will use the message library?</h3>
-<p>Users will depend on the organisation involved and the roles and responsibilities of individual staff. It is expected they will be a mixture of programme managers, sector specialists, ‘beneficiary communication’ specialists, accountability officers and public health officers.</p>
-<p>The content of the message library will be owned and maintained by the Global Cluster leads. It’s hoped that all actors involved in humanitarian response, including national governments, NGOs, international aid agencies, media development organisations, local media channels and the communities themselves can work in partnership wherever possible to contextualise, adapt and disseminate potentially life-saving information to populations.</p>
-
-<h3 id="ml-for">Who are the messages for?</h3>
-<p>The messages are for crisis-affected populations. Each message has a target audience and depending on the “at risk” group, these can include some of the following groups: affected population, community leaders, parents and teachers. Many of the messages are targeted at mothers, fathers and other primary caregivers. This is because babies and children under 5 are often the most vulnerable in emergencies and so many of the messages are aimed at saving their lives. However, even though there are ‘at risk’ groups, many of the messages will be useful for everyone affected by the crisis.</p>
-
-<h3 id="ml-limitations">What are the limitations of the message library?</h3>
-<p>The message library has several limitations. While it may act as a tool to help improve the timing and coordination of information dissemination, it can only accommodate messages in their generic form. This means that users would still need to spend time adapting, translating and pilot testing each message according to the context on the ground (see section 2 on contextualisation for guidance). For example, messages on how to treat water using a particular method could only be disseminated if that method was feasible and acceptable. Understanding the context therefore is crucial to make the message library work and, more importantly, to make messaging to populations effective.</p>
-<p>Another limitation is the fact that it is a tool that is essentially designed for ‘one way’ communication, i.e. organisations telling the affected population what the threats are, how to mitigate risk, what to do in the absence of assistance. Two-way communication - where the affected populations engage with humanitarian responders, giving their views and opinions around specific ‘threats’  and needs -  is likely to produce far better results.</p>
-<p>Finally, if behaviour change is your objective (e.g. trying to get people to defecate in a latrine rather than the open air to avoid diarrhoea), it is important to recognise that messaging alone will not necessarily lead to behaviour change in practice. There are many other factors that act as barriers to change – social norms, structural constraints, historical/political context etc. Therefore, messaging is just one small part of a much wider process to facilitate actual behaviour change</p>
-',
+        'value' => '<ul><li><a href="#ml-aim">What is the aim of the message library?</a></li><li><a href="#ml-inteted-use">What are its intended uses?</a></li><li><a href="#ml-how-access">How can people access the library?</a></li><li><a href="#ml-who-will-use">Who will use the message library?</a></li><li><a href="#ml-for">Who are the messages for?</a></li><li><a href="#ml-limitations">What are the limitations of the message library?</a></li></ul><h3 id="ml-aim">What is the aim of the message library?</h3><div><p>The aim of the message library is to have a set of generic, multi-sectoral messages targeted at crisis-affected populations. The message library includes alerts, advice on how to mitigate risk, what to do in the absence of any assistance and prompts for messages on programmatic interventions/services available.</p><p>The library is not designed to be a ‘rip and read’ resource – instead it should be used as a reference for those working in emergency situations about what can be shared with affected communities during and after disasters be they natural or man-made. It is not an exhaustive list. As this is a dynamic tool, messages can be added, edited, and revised at any point, should the need arise.</p><p>The message library is designed for sudden onset emergencies, but it can also be a useful tool in protracted crises.</p></div><h3 id="ml-inteted-use">What are its intended uses?</h3><p>The library has several intended uses:</p><ul><li>a) To act as a reference for what can and should be communicated to affected populations during the first few days and weeks of an emergency</li><li>b) To help improve collaboration and coordination specifically around messaging to affected populations.</li></ul><h3 id="ml-how-access">How can people access the library?</h3><p>The library will sit on-line but users will also be able to download and/or print an off-line version and store it on their laptops. As the content is likely to be added to regularly by cluster leads, it is advisable to access and download the on-line version every time an emergency hits, in order to get the most up to date content</p><h3 id="ml-who-will-use">Who will use the message library?</h3><p>Users will depend on the organisation involved and the roles and responsibilities of individual staff. It is expected they will be a mixture of programme managers, sector specialists, ‘beneficiary communication’ specialists, accountability officers and public health officers.</p><p>The content of the message library will be owned and maintained by the Global Cluster leads. It’s hoped that all actors involved in humanitarian response, including national governments, NGOs, international aid agencies, media development organisations, local media channels and the communities themselves can work in partnership wherever possible to contextualise, adapt and disseminate potentially life-saving information to populations.</p><h3 id="ml-for">Who are the messages for?</h3><p>The messages are for crisis-affected populations. Each message has a target audience and depending on the “at risk” group, these can include some of the following groups: affected population, community leaders, parents and teachers. Many of the messages are targeted at mothers, fathers and other primary caregivers. This is because babies and children under 5 are often the most vulnerable in emergencies and so many of the messages are aimed at saving their lives. However, even though there are ‘at risk’ groups, many of the messages will be useful for everyone affected by the crisis.</p><h3 id="ml-limitations">What are the limitations of the message library?</h3><p>The message library has several limitations. While it may act as a tool to help improve the timing and coordination of information dissemination, it can only accommodate messages in their generic form. This means that users would still need to spend time adapting, translating and pilot testing each message according to the context on the ground (see section 2 on contextualisation for guidance). For example, messages on how to treat water using a particular method could only be disseminated if that method was feasible and acceptable. Understanding the context therefore is crucial to make the message library work and, more importantly, to make messaging to populations effective.</p><p>Another limitation is the fact that it is a tool that is essentially designed for ‘one way’ communication, i.e. organisations telling the affected population what the threats are, how to mitigate risk, what to do in the absence of assistance. Two-way communication - where the affected populations engage with humanitarian responders, giving their views and opinions around specific ‘threats’ and needs - is likely to produce far better results.</p><p>Finally, if behaviour change is your objective (e.g. trying to get people to defecate in a latrine rather than the open air to avoid diarrhoea), it is important to recognise that messaging alone will not necessarily lead to behaviour change in practice. There are many other factors that act as barriers to change – social norms, structural constraints, historical/political context etc. Therefore, messaging is just one small part of a much wider process to facilitate actual behaviour change</p>',
         'summary' => '',
         'format' => 'full_html',
       ),
@@ -140,17 +100,29 @@ function message_library_uuid_features_default_content() {
     ),
   ),
   'translations' => array(
-    'original' => NULL,
-    'data' => array(),
+    'original' => 'und',
+    'data' => array(
+      'und' => array(
+        'entity_type' => 'node',
+        'entity_id' => 2,
+        'language' => 'und',
+        'source' => '',
+        'uid' => 1,
+        'status' => 1,
+        'translate' => 0,
+        'created' => 1377607256,
+        'changed' => 1387525817,
+      ),
+    ),
   ),
   'cid' => 0,
   'last_comment_name' => NULL,
-  'last_comment_uid' => 1,
+  'last_comment_uid' => 0,
   'comment_count' => 0,
-  'name' => 'guillaumev',
+  'name' => 'admin',
   'picture' => 0,
   'data' => 'b:0;',
-  'date' => '2013-08-27 14:40:56 +0200',
+  'date' => '2013-08-27 20:40:56 +0800',
 );
   $nodes[] = array(
   'uid' => 1,
@@ -161,16 +133,13 @@ function message_library_uuid_features_default_content() {
   'promote' => 1,
   'sticky' => 0,
   'vuuid' => '2b88182e-424c-43cb-838d-3778a71a9d88',
-  'title_original' => 'Message Library: Quick Reference User Manual',
   'type' => 'page',
   'language' => 'und',
   'created' => 1377607256,
   'tnid' => 0,
   'translate' => 0,
   'uuid' => '2f65a574-0bf6-4ba6-9be2-4116404fe663',
-  'reliefweb' => 0,
   'revision_uid' => 1,
-  'base_reliefweb' => 0,
   'body' => array(
     'und' => array(
       0 => array(
@@ -245,17 +214,29 @@ function message_library_uuid_features_default_content() {
     ),
   ),
   'translations' => array(
-    'original' => NULL,
-    'data' => array(),
+    'original' => 'und',
+    'data' => array(
+      'und' => array(
+        'entity_type' => 'node',
+        'entity_id' => 3,
+        'language' => 'und',
+        'source' => '',
+        'uid' => 1,
+        'status' => 1,
+        'translate' => 0,
+        'created' => 1377607256,
+        'changed' => 1387525839,
+      ),
+    ),
   ),
   'cid' => 0,
   'last_comment_name' => NULL,
-  'last_comment_uid' => 1,
+  'last_comment_uid' => 0,
   'comment_count' => 0,
-  'name' => 'guillaumev',
+  'name' => 'admin',
   'picture' => 0,
   'data' => 'b:0;',
-  'date' => '2013-08-27 14:40:56 +0200',
+  'date' => '2013-08-27 20:40:56 +0800',
 );
   return $nodes;
 }
