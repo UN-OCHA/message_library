@@ -20,10 +20,25 @@ function message_library_importer_menu() {
   $items['admin/config/message_library/importer'] = array(
     'title' => 'Feeds Importer',
     'description' => 'Configuration on the Feeds importer for Message Library',
+    'page callback' => 'message_library_importer_log_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'message_library_importer_log.module',
+    'file path' => drupal_get_path('module', 'message_library_importer_log'),
+  );
+  $items['admin/config/message_library/importer/status'] = array(
+    'title' => 'Status',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/config/message_library/importer/import_path'] = array(
+    'title' => 'Import Path',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('message_library_importer_admin_form'),
-    'access arguments' => array('access administration pages'),
     'file' => 'message_library_importer.admin.inc',
+    'file path' => drupal_get_path('module', 'message_library_importer'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+    'access arguments' => array('administer site configuration'),
   );
   return $items;
 }

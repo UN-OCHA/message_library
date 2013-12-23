@@ -15,7 +15,7 @@ function message_library_importer_admin_form($form, &$form_state) {
     '#tree' => TRUE,
     '#type' => 'fieldset',
     '#title' => t('Importer Paths'),
-    '#collapsible' => TRUE,
+    //'#collapsible' => TRUE,
     '#default_value' => 'http://infoasaid.org/message-library-export/',
   );
 

@@ -1,21 +1,6 @@
 <?php
 
 /**
- * Implements hook_menu()
- */
-function message_library_importer_log_menu() {
-  return array(
-    'admin/config/message_library/import_log' => array(
-      'title' => t('Feeds Importer Log'),
-      'description' => t('Summary of the import cron job for message library.'),
-      'page callback' => 'message_library_importer_log_page',
-      'access arguments' => array('access administration pages'),
-    ),
-  );
-}
-
-
-/**
  * Page callback for displaying the summaries.
  */
 function message_library_importer_log_page() {
