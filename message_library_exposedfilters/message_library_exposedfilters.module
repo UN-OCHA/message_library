@@ -14,11 +14,10 @@ function message_library_exposedfilters_menu() {
   return $items;
 }
 
-/**
- * Implements hook_init()
- */
-function message_library_exposedfilters_init() {
-  //drupal_add_js('misc/jquery.cookie.js', 'file');
+function message_library_exposedfilters_views_api() {
+  return array(
+      'api' => 3,
+  );
 }
 
 /**
@@ -41,9 +40,6 @@ function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
     'current_selected_criteria' => array(
       'template' => 'templates/message_library_exposedfilters_current_selected_criteria',
     ),
-    'issues_options_display_mode_switcher' => array(
-      'template' =>  'templates/issues_options_display_mode_switcher',
-    )
   );
 }
 
@@ -95,10 +91,18 @@ function message_library_exposedfilters_views_pre_render(&$view) {
   $view->attachment_before .= theme('current_selected_criteria', $vars);
 }
 
-/**
- * Implements hook_pre_pre_build()
- */
-function message_library_exposedfilters_views_pre_build(&$view) {
+function message_library_exposedfilters_views_pre_build(view &$view) {
+  if ($view->name != 'message_library') return;
+  // this handles the sinario when the user select a sector term, and then
+  // switch to the 'Alphabetically' display mode, there will be a illegal option
+  // error.
+  $input = $view->get_exposed_input();
+  if (isset($input['iss_mode']) && $input['iss_mode'] == '0' && !empty($input['issue']) && $input['issue'] != 'All') {
+    if (($term = taxonomy_term_load($input['issue'])) && $term->vocabulary_machine_name != 'issues') {
+      $input['issue'] = 'All';
+      $view->set_exposed_input($input);
+    }
+  }
 }
 
 /**
@@ -132,56 +136,6 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
  * Implements hook_form_alter()
  */
 function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
-  // For the search field in the exposed widget for views 'message_library',
-  // implement the HTML 5 input placehodler feature.
-  if ($form['#id'] !== 'views-exposed-form-message-library-search-page') return;
-
-  $form['ml_search_text']['#attributes']['placeholder'] = t('enter search terms');
-  // Add necessary js and css files
-  $path = drupal_get_path('module', 'message_library_exposedfilters');
-  //drupal_add_js('misc/jquery.cookie.js', 'file');
-  $form['#attached']['library'][]  = array('system', 'jquery.cookie');
-  $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
-  $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
-
-  $nested_terms = _taxonomy_get_nested_terms('issues');
-
-  // Get all the outter terms and sort alphabetically
-  $alpha_list_terms = _get_issues_outter_terms($nested_terms);
-  // asort() is good because the index(tid) will be preserved.
-  asort($alpha_list_terms);
-  $nested_issue_terms = _get_issues_nested_terms('issues');
-
-  // Prepare two set of select options, for the exposed filter of 'Issues'
-  // - 'Sectors' : A nested list
-  $form['issue']['#prefix'] = theme('issues_options_display_mode_switcher');
-
-  $form['edit-issue-nested'] = array(
-    '#type' => 'markup',
-    '#markup' => theme('select', array(
-      'element' => array(
-        '#options' => $nested_issue_terms,
-        '#attributes' => array('id' => 'edit-issue-nested', 'style' => 'display:none'),
-      ),
-    )),
-    //'#attributes' => array('style' => 'display:none'),
-  );
-  // - 'Alphabetically' : A flat list, in alphabetical order
-  $form['edit-issue-alpha'] = array(
-    '#type' => 'markup',
-    '#markup' => theme('select', array(
-      'element' => array(
-        '#options' => $alpha_list_terms,
-        '#attributes' => array('id' => 'edit-issue-alpha', 'style' => 'display:none'),
-      ),
-    )),
-  );
-
-  // Add the threat options to js settings, so it can be access from the js side
-  $options = !empty($form['threat']['#options']) ? $form['threat']['#options'] : array();
-  drupal_add_js(array('messageLibraryExposedfilter' => array(
-    'threatOptions' => $options)), 'setting');
-
   array_unshift($form['#submit'], 'message_library_exposedfilters_exposed_form_submit');
 }
 
@@ -199,113 +153,4 @@ function message_library_exposedfilters_exposed_form_submit(&$form, &$form_state
   }
 }
 
-/*----------------- HELPER FUNCTIONS
- *----------------------------------------------------------------------------*/
 
-/**
- * Get all the terms arranged in the order of depth.s
- */
-function _taxonomy_get_nested_terms($v_machine_name) {
-  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_machine_name);
-  if (empty($vocab_obj->vid)) return;
-
-  $terms = taxonomy_get_tree($vocab_obj->vid);
-
-  // Adapted from an answer on stackoverflow
-  // @see: http://stackoverflow.com/questions/7046364/php-building-recursive-array-from-list
-  $children = $nested_terms = array();
-  if (!empty($terms)) {
-    foreach($terms as $term){
-      foreach ($term->parents as $parent) {
-        $children[$parent] = !isset($children[$parent]) ? array() : $children[$parent];
-        $children[$parent][$term->tid] = array('id' => $term->tid,'name' => $term->name);
-      }
-    }
-    $nested_terms = _recursive_append_children($children[0], $children);
-  }
-  return $nested_terms;
-}
-
-
-/**
- * Callback, sort by term's depth.
- */
-function _term_depth_sort($a, $b) {
-  return $a->depth - $b->depth;
-}
-
-
-/**
- * Callback, to organize the array into a hierachical structure.
- */
-function _recursive_append_children($arr, $children){
-  foreach($arr as $key => $item) {
-    if(isset($children[$key])) {
-      $arr[$key]['children'] = _recursive_append_children($children[$key], $children);
-    }
-  }
-  return $arr;
-}
-
-
-/**
- * Prepare a array that can be processed by theme_select()
- */
-function _get_issues_nested_terms($v_name) {
-  $vocab_obj = taxonomy_vocabulary_machine_name_load((string) $v_name);
-  if (empty($vocab_obj->vid)) return;
-
-  // We want to display only the terms in 2nd and 3rd levels
-  $parent_tid = _get_issues_top_level_tid($v_name);
-  $tree = taxonomy_get_tree($vocab_obj->vid, $parent_tid);
-
-  $options = array();
-
-  if ($tree) {
-    foreach ($tree as $term) {
-      $entity = taxonomy_term_load($term->tid);
-      $options[$term->tid] = str_repeat('-', $term->depth) . ' ' . $term->name;
-    }
-  }
-  // This can append element and maintain index at the same time
-  $options = array('All' => '<All issues>') + $options;
-  return $options;
-}
-
-
-/**
- * Get the outter most terms, which has no parent
- * This list can be directly used by 'theme_select'
- */
-function _get_issues_outter_terms($arr) {
-  $elements = array();
-
-  foreach($arr as $key => $child) {
-    if(isset($child['children']) && !empty($child['children'])) {
-      $elements += _get_issues_outter_terms($child['children']);
-    }
-    else {
-      $elements[$child['id']] = $child['name'];
-    }
-  }
-
-  $elements = array('All' => '<All issues>') + $elements;
-  return $elements;
-}
-
-
-/**
- * Get the tid of the top term in vocabulary 'Issues', for the moment there is
- * only one top term 'Sectors', this is used to help specify the parent tid for
- * function 'taxonomy_get_tree'
- */
-function _get_issues_top_level_tid($v_name) {
-  $query = db_select('taxonomy_term_data', 'td');
-  $query->addField('td', 'tid');
-  $query->innerJoin('taxonomy_vocabulary', 'tv', 'tv.vid = td.vid');
-  $query->innerJoin('taxonomy_term_hierarchy', 'th', 'th.tid = td.tid');
-  $query->condition('tv.machine_name', $v_name, '=');
-  $query->condition('th.parent', 0, '=');
-  $result = $query->execute()->fetchCol();
-  return reset($result);
-}

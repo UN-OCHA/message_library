@@ -24,9 +24,9 @@
         $('#ml-view-crt-criteria-title').append('<a id="ml_help_criteria_toggle" class="ml-help-toggle hidden" toggle-box-target="ml_help_criteria"  href="#" >show</a>');
       }
 
-      // 5. display h1 title 
+      // 5. display h1 title
       var page_title = $('#page-title').html();
-      if (page_title.substring(0, 15) == "Message Library") {
+      if (page_title && page_title.substring(0, 15) == "Message Library") {
          $('#page-title').css("display", "block");
       }
 

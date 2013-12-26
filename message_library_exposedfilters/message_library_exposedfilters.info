@@ -2,3 +2,9 @@ name =  Message Library Exposed Filter
 description = Shows views' exposed filters as facets
 package = Message Library
 core = 7.x
+dependencies[] = search_api
+dependencies[] = views
+
+; Views handlers/plugins
+files[] = includes/handler_filter_options.inc
+files[] = message_library_exposedfilters.views.inc
