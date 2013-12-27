@@ -27,7 +27,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlMessageCsvParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -158,11 +158,8 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
-      'config' => array(
-        'delimiter' => ',',
-        'no_headers' => 0,
-      ),
+      'plugin_key' => 'MlArgCsvParser',
+      'config' => array(),
     ),
     'processor' => array(
       'plugin_key' => 'FeedsTermProcessor',
@@ -222,7 +219,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlHazardParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -286,7 +283,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlItParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -350,7 +347,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlIssuesCsvParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -377,8 +374,8 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           3 => array(
-            'source' => 'Parent Term ID',
-            'target' => 'parentguid',
+            'source' => 'Sector',
+            'target' => 'field_issues_sector',
             'unique' => FALSE,
           ),
         ),
@@ -414,7 +411,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlSectorParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -478,7 +475,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlTaParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -547,7 +544,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'FeedsCSVParser',
+      'plugin_key' => 'MlThreatParser',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
