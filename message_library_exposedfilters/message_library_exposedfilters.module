@@ -1,35 +1,14 @@
 <?php
 
 /**
- * Implements hook_menu()
+ * Implements hook_views_api()
  */
-function message_library_exposedfilters_menu() {
-  $items = array();
-  $items['message-library-filter-threat-by-issue'] = array(
-    'title' => 'Filter threat by issue',
-    'page callback' => 'message_library_exposedfilter_filter_threat_by_issue_callback',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
 function message_library_exposedfilters_views_api() {
+  $path = drupal_get_path('module', 'message_library_exposedfilters');
   return array(
-      'api' => 3,
+    'api' => 3,
+    'template path' => $path. '/templates',
   );
-}
-
-/**
- * Ajax page callback
- */
-function message_library_exposedfilter_filter_threat_by_issue_callback($tid) {
-  $items = array();
-  if ($tid !== 'All') {
-    $items = message_library_get_threat_by_issue($tid);
-    $items = drupal_map_assoc($items);
-  }
-  return drupal_json_output($items);
 }
 
 /**
@@ -42,6 +21,18 @@ function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
     ),
   );
 }
+
+/**
+ * Preprocess variables for page.tpl.php
+ */
+function message_library_exposedfilters_preprocess_page(&$variables) {
+  if (empty($variables['title_suffix'])) {
+    $variables['title_suffix'] = array();
+  }
+
+  $variables['title_suffix']['message_library_theme'] = array();
+}
+
 
 /**
  * Implements hook_views_pre_render()
@@ -91,18 +82,40 @@ function message_library_exposedfilters_views_pre_render(&$view) {
   $view->attachment_before .= theme('current_selected_criteria', $vars);
 }
 
+/**
+ * Implements hook_views_pre_build()
+ */
 function message_library_exposedfilters_views_pre_build(view &$view) {
   if ($view->name != 'message_library') return;
+  $input = $view->get_exposed_input();
+
   // this handles the sinario when the user select a sector term, and then
   // switch to the 'Alphabetically' display mode, there will be a illegal option
   // error.
-  $input = $view->get_exposed_input();
   if (isset($input['iss_mode']) && $input['iss_mode'] == '0' && !empty($input['issue']) && $input['issue'] != 'All') {
     if (($term = taxonomy_term_load($input['issue'])) && $term->vocabulary_machine_name != 'issues') {
       $input['issue'] = 'All';
-      $view->set_exposed_input($input);
     }
   }
+  // when the user changes the issues, we need to reset the option of threat to prevent illegal option.
+  if (!empty($input['issue']) && !empty($input['threat']) && $input['issue'] != 'All' && $input['threat'] != 'All') {
+    $threats = message_library_exposedfilters_get_issue_threats();
+    $trt_tid = $input['threat'];
+    $iss_tid = $input['issue'];
+    if ($threats && isset($threats[$iss_tid]) && !isset($threats[$iss_tid][$trt_tid])) {
+      $input['threat'] = 'All';
+    }
+  }
+  // prevent the user submit the placeholder's content
+  if (!empty($input['ml_search_text'])) {
+    $s_text = trim($input['ml_search_text']);
+    if ($s_text == 'enter search terms') {
+      $s_text = '';
+    }
+    $input['ml_search_text'] = $s_text;
+  }
+
+  $view->set_exposed_input($input);
 }
 
 /**
@@ -136,21 +149,123 @@ function message_library_exposedfilters_preprocess_current_selected_criteria(&$v
  * Implements hook_form_alter()
  */
 function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$form_state) {
-  array_unshift($form['#submit'], 'message_library_exposedfilters_exposed_form_submit');
-}
 
-/**
- * Custom submit handler
- */
-function message_library_exposedfilters_exposed_form_submit(&$form, &$form_state) {
-  // Ugly quick fix, guess nobody will ever use 'enter search term' for search
-  $values = $form_state['values'];
-  if (!empty($values['ml_search_text']) && $values['ml_search_text'] == t('enter search terms')) {
-    if (isset($form['ml_search_text'])) {
-      $form['ml_search_text']['value'] = '';
+  if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
+    if (!empty($form['target_audience']['#options'])) {
+      $form['target_audience']['#options']['All'] = t('<Any target audience>');
     }
-    $form_state['values']['ml_search_text'] = '';
+    if (!empty($form['at_risk_group']['#options'])) {
+      $form['at_risk_group']['#options']['All'] = t('<Any group>');
+    }
+    if (!empty($form['issue']['#options'])) {
+      $form['issue']['#options']['All'] = t('<All issues>');
+    }
+
+    $form['ml_search_text']['#attributes'] = array('class' => array('ctools-auto-submit-exclude'));
+
+    $path = drupal_get_path('module', 'message_library_exposedfilters');
+    $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
+    $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
+    // Note: use `dpm(drupal_get_library('system'));` to check what libraries
+    // are available.
+    $form['#attached']['library'][]  = array('system', 'drupal.collapse');
   }
 }
 
+/**
+ * Get a list of threats grouped by issue.
+ */
+function message_library_exposedfilters_get_issue_threats() {
+  $result = variable_get('ml_issue_threats', array());
+  if (!empty($result)) {
+    return $result;
+  }
+  else {
+    $result = array();
+    $threat_vocab = taxonomy_vocabulary_machine_name_load('threat');
+    $threat_terms = taxonomy_get_tree($threat_vocab->vid, 0, 1, true);
+    foreach ($threat_terms as $term) {
+      if (empty($term->field_threat_category)) {
+        continue;
+      }
+      $items = field_get_items('taxonomy_term', $term, 'field_threat_category');
+      foreach($items as $v) {
+        if (empty($v['tid'])) continue;
+        if (!isset($result[$v['tid']])) {
+          $result[$v['tid']] = array();
+        }
+        if (in_array($term->tid, $result[$v['tid']])) continue;
+        $result[$v['tid']][$term->tid] = $term->name;
+      }
+    }
+
+    if ($result) {
+      variable_set('ml_issue_threats', $result);
+    }
+    return $result;
+  }
+}
+
+/**
+ * Implements MODULENAME_preprocess_hook()
+ */
+function message_library_exposedfilters_preprocess_views_exposed_form(&$vars) {
+  $form = $vars['form'];
+  if ($form['#id'] == 'views-exposed-form-message-library-search-page') {
+    // If there are values set in the 'Advanced search', then don't set the
+    // default collapsed status
+    $vars['advanced_search_collapsed'] = TRUE;
+
+    $advanced_widgets = array(
+        'issue',
+        'threat',
+        'at_risk_group',
+        'target_audience',
+    );
+
+    foreach ($advanced_widgets as $widget_name) {
+      $value = $form[$widget_name]['#value'];
+      $type = $form[$widget_name]['#type'];
+
+      if (($type == 'select' && strtolower($value) !== 'all') ||
+      ($type == 'text' && !empty($value))) {
+        $vars['advanced_search_collapsed'] = FALSE;
+        continue;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_textformatter_field_info()
+ */
+function message_library_exposedfilters_textformatter_field_info() {
+  $info = array();
+  $info['link'] = array(
+      'fields' => array('link_field'),
+      // Callback to process $items from hook_field_formatter_view.
+      'callback' => 'message_library_theme_link_field_create_list',
+  );
+  return $info;
+}
+
+/**
+ * Create list for link fields
+ */
+function message_library_exposedfilters_link_field_create_list($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $settings = $display['settings'];
+  $list_items = array();
+
+  if (!empty($items)) {
+    $count = count($items);
+
+    $i = 1;
+    foreach ($items as $delta => $item) {
+      $pre_num = ($count > 1) ? '<span class="entry-num">' . $i . '. </span>' : '';
+      $list_items[] = $pre_num . theme('link_formatter_link_default', array('element' => $item));
+      $i++;
+    }
+  }
+  return $list_items;
+}
 

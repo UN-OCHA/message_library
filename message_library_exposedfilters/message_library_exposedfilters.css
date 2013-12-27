@@ -138,4 +138,12 @@ h2#ml-view-quick-search-title {
   display : none;
 }
 
-
+/* gbv source ul padding reset*/
+#block-system-main .content .message-source-list{
+  padding-left: 0;
+}
+/* fixed height of warning with little words */
+.sensitivity-warning.sensitive,
+.sensitivity-warning.very-sensitive{
+  min-height: 40px;
+}

@@ -6,5 +6,6 @@ dependencies[] = search_api
 dependencies[] = views
 
 ; Views handlers/plugins
-files[] = includes/handler_filter_options.inc
+files[] = includes/MLHandlerFilterOptionsIssue.inc
+files[] = includes/MLHandlerFilterOptionsThreat.inc
 files[] = message_library_exposedfilters.views.inc

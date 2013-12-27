@@ -33,46 +33,6 @@ function message_library_modules_enabled($modules) {
 }
 
 /**
- * Implementation of hook_form_alter()
- *
- * Change the default placeholders for the (-Any-) options on the exposed filter
- */
-function message_library_form_alter(&$form, $form_state, $form_id) {
-  if(!empty($form_state['view']) && $form_state['view']->name == 'message_library') {
-    // overrides <All> on the dropdown
-    if (!empty($form['target_audience']['#options'])) {
-      $form['target_audience']['#options']['All'] = t('<Any target audience>');
-    }
-    if (!empty($form['at_risk_group']['#options'])) {
-      $form['at_risk_group']['#options']['All'] = t('<Any group>');
-    }
-    if (!empty($form['issue']['#options'])) {
-      $form['issue']['#options']['All'] = t('<All issues>');
-    }
-    if (!empty($form['threat']['#options'])) {
-      $form['threat']['#options']['All'] = t('<All threats>');
-    }
-
-    $form['ml_search_text']['#attributes'] = array('class' => array('ctools-auto-submit-exclude'));
-
-    // A ugly quick fix for the 'An illegal choice has been detected.'
-    foreach (array('issue', 'threat', 'at_risk_group', 'target_audience') as $i) {
-      if (!isset($_GET[$i])) {
-        $_GET[$i] = 'All';
-      }
-
-      // @TODO: Not sure this works or not.
-      if (isset($form[$i]) && !isset($form[$i]['#default_value'])) {
-        if (!empty($form[$i]['#options'])) {
-          reset($form[$i]['#options']);
-          $form[$i]['#default_value'] = key($form[$i]['#options']);
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_menu().
  *
  * Creates a 'Message Library' section on the administration page
@@ -89,23 +49,6 @@ function message_library_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
   return $items;
-}
-
-/**
- * Implements hook_views_pre_execute()
- */
-function message_library_views_pre_execute(&$view) {
-  return;
-  // @todo: it's will be good when the Solr sever is not accessible, or the
-  // message_library_index not available, it still can work gracefully.
-  $solr_server = search_api_server_load('solr_server');
-  if ((!empty($solr_server)) && ($solr_server instanceof SearchApiServer)) {
-    $solr_service = new SearchApiSolrService($solr_server);
-
-    if (!$solr_service->ping()) {
-      //
-    }
-  }
 }
 
 /**
@@ -160,47 +103,6 @@ function message_library_page_alter(&$page) {
   }
 }
 
-/**
- * Implements hook_menu_breadcrumb_alter()
- */
-function message_library_menu_breadcrumb_alter(&$active_trail, $item) {
-  // @xxx: Why it doesn't work?
-}
-/**
- * Get all the threat terms under an issue
- * @return An array of all the threat tids
- */
-function message_library_get_threat_by_issue($tid) {
-  $terms = array();
-
-  // Get all the sub-terms of this term
-  $tids = array($tid);
-  $vocab = taxonomy_vocabulary_machine_name_load('issues');
-  if (!empty($vocab->vid)) {
-    $vid = $vocab->vid;
-
-    $items = taxonomy_get_tree($vid, $tid);
-    if (!empty($items)) {
-      foreach ($items as $item) {
-        if (empty($item->tid)) continue;
-        $tids[] = $item->tid;
-      }
-    }
-  }
-
-  $query = new EntityFieldQuery();
-  $query
-    ->entityCondition('entity_type', 'taxonomy_term')
-    ->entityCondition('bundle', 'threat')
-    ->fieldCondition('field_threat_category', 'tid', $tids, 'IN');
-  $result = $query->execute();
-
-  if (!empty($result) && !empty($result['taxonomy_term'])) {
-    $terms = array_keys($result['taxonomy_term']);
-  }
-
-  return $terms;
-}
 
 /**
  * Get all of the messages under a threat

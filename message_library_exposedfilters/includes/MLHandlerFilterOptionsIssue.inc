@@ -11,7 +11,7 @@ define('ML_ISSUES_NEST', 1);  // grouped by sector terms.
 /**
  * Views filter handler for fields with a limited set of possible values.
  */
-class MLViewsHandlerFilterOptions extends SearchApiViewsHandlerFilterOptions {
+class MLHandlerFilterOptionsIssue extends SearchApiViewsHandlerFilterOptions {
   private $nest_value_options;
 
   public function construct() {
@@ -75,9 +75,6 @@ class MLViewsHandlerFilterOptions extends SearchApiViewsHandlerFilterOptions {
   public function exposed_form(&$form, &$form_state) {
     parent::exposed_form($form, $form_state);
 
-    $path = drupal_get_path('module', 'message_library_exposedfilters');
-    $form['#attached']['js'][]  = $path . '/message_library_exposedfilters.js';
-    $form['#attached']['css'][] = $path . '/message_library_exposedfilters.css';
 
     // add a hidden field for the issue field's display mode.
     $form['iss_mode'] = array(
@@ -97,8 +94,6 @@ class MLViewsHandlerFilterOptions extends SearchApiViewsHandlerFilterOptions {
     else {
       $form['issue']['#prefix'] = '<div id="issues-options-dispaly-mode-switcher"><a href="#" class="mode-link flat">'.t('Alphabetically').'</a><a href="#" class="mode-link nest" style="display:none">'.t('Sectors').'</a></div>';
     }
-
-    dpm(func_get_args());
   }
 
   public function value_form(&$form, &$form_state) {
@@ -114,9 +109,10 @@ class MLViewsHandlerFilterOptions extends SearchApiViewsHandlerFilterOptions {
   public function accept_exposed_input($input) {
     parent::accept_exposed_input($input);
 
-    if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
-      $input['issue'] = 'All';
-    }
+
+//     if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
+//       $input['issue'] = 'All';
+//     }
 
     // convert the a sector value to multiple issues values
     $sec_tids = array_keys($this->nested_options);
@@ -134,14 +130,15 @@ class MLViewsHandlerFilterOptions extends SearchApiViewsHandlerFilterOptions {
     parent::store_exposed_input($input, $status);
 
     $session = &$_SESSION['views']['message_library']['default'];
+
     if (isset($input['iss_mode'])) {
       $session['iss_mode'] = $input['iss_mode'];
       $this->view->exposed_input['iss_mode'] = $input['iss_mode'];
     }
 
     if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
+      dpm($this);
       $this->view->exposed_input['issue'] = 'All';
     }
-    dpm(func_get_args());
   }
 }

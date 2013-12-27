@@ -28,7 +28,6 @@ dependencies[] = message_library_highlight
 dependencies[] = message_library_notices
 dependencies[] = message_library_queue
 dependencies[] = message_library_rtf
-dependencies[] = message_library_theme
 dependencies[] = message_library_tou
 dependencies[] = message_library_views
 dependencies[] = node
