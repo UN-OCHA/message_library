@@ -57,7 +57,19 @@ function message_library_default_search_api_autocomplete_search() {
     "index_id" : "message_library_index",
     "type" : "search_api_views",
     "enabled" : "1",
-    "options" : { "result count" : true, "results" : 1 },
+    "options" : {
+      "result count" : true,
+      "results" : 1,
+      "fields" : [
+        "title",
+        "field_message_group_mess",
+        "field_message_synonyms",
+        "search_api_aggregation_1",
+        "field_message_threat:description",
+        "field_message_threat:field_threat_category:name"
+      ],
+      "custom" : { "display" : "default" }
+    },
     "rdf_mapping" : []
   }');
   return $items;
@@ -92,8 +104,8 @@ function message_library_default_search_api_index() {
         "field_message_group_risk" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_info_type" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_sensitivity" : { "type" : "integer" },
-        "field_message_threat" : { "type" : "integer", "entity_type" : "taxonomy_term" },
         "field_message_synonyms" : { "type" : "text" },
+        "field_message_threat" : { "type" : "integer", "entity_type" : "taxonomy_term" },
         "search_api_language" : { "type" : "string" },
         "search_api_aggregation_1" : { "type" : "text" },
         "field_message_threat:tid" : { "type" : "integer" },
@@ -101,7 +113,6 @@ function message_library_default_search_api_index() {
         "field_message_threat:description" : { "type" : "text" },
         "field_message_threat:field_threat_category" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_hazard" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
-        "field_message_threat:field_threat_sector" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
         "field_message_threat:field_threat_category:tid" : { "type" : "list\\u003Cinteger\\u003E" },
         "field_message_threat:field_threat_category:name" : { "type" : "list\\u003Ctext\\u003E" }
       },

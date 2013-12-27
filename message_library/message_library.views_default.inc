@@ -250,10 +250,21 @@ function message_library_views_default_views() {
   $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['remember_roles'] = array(
     2 => '2',
     1 => '1',
-    6 => 0,
-    5 => 0,
-    4 => 0,
-    3 => 0,
+    218860149 => 0,
+    188284353 => 0,
+    200153887 => 0,
+    197637936 => 0,
+    52310416 => 0,
+    30037204 => 0,
+  );
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['expose']['reduce'] = 0;
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['group_info']['label'] = 'Issue (indexed)';
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['group_info']['identifier'] = 'field_message_threat_field_threat_category';
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['group_info']['remember'] = FALSE;
+  $handler->display->display_options['filters']['field_message_threat_field_threat_category']['group_info']['group_items'] = array(
+    1 => array(),
+    2 => array(),
+    3 => array(),
   );
   /* Filter criterion: Indexed Node: Threat */
   $handler->display->display_options['filters']['field_message_threat']['id'] = 'field_message_threat';
@@ -589,6 +600,7 @@ function message_library_views_default_views() {
     t('Message Synonyms'),
     t('Quick Search'),
     t('Issues'),
+    t('Issue (indexed)'),
     t('Search Page'),
     t('Feed'),
     t('Unpublished Messages'),

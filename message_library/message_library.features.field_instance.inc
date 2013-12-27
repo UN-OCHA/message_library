@@ -1279,6 +1279,38 @@ function message_library_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'taxonomy_term-issues-field_issues_sector'
+  $field_instances['taxonomy_term-issues-field_issues_sector'] = array(
+    'bundle' => 'issues',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_issues_sector',
+    'label' => 'Sector',
+    'required' => 1,
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'taxonomy_term-threat-field_threat_category'
   $field_instances['taxonomy_term-threat-field_threat_category'] = array(
     'bundle' => 'threat',
@@ -1358,47 +1390,6 @@ function message_library_field_default_field_instances() {
       'settings' => array(),
       'type' => 'taxonomy_hs',
       'weight' => 32,
-    ),
-  );
-
-  // Exported field_instance: 'taxonomy_term-threat-field_threat_sector'
-  $field_instances['taxonomy_term-threat-field_threat_sector'] = array(
-    'bundle' => 'threat',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'taxonomy',
-        'settings' => array(
-          'diff_custom' => 0,
-          'diff_custom_settings' => array(),
-        ),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 2,
-      ),
-      'ical' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'taxonomy_term',
-    'field_name' => 'field_threat_sector',
-    'label' => 'Sector',
-    'required' => 0,
-    'settings' => array(
-      'entity_translation_sync' => FALSE,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_buttons',
-      'weight' => 36,
     ),
   );
 

@@ -57,6 +57,24 @@ function message_library_user_default_permissions() {
     'module' => 'vppr',
   );
 
+  // Exported permission: 'administer message library notices'.
+  $permissions['administer message library notices'] = array(
+    'name' => 'administer message library notices',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'message_library_notices',
+  );
+
+  // Exported permission: 'administer notices warning'.
+  $permissions['administer notices warning'] = array(
+    'name' => 'administer notices warning',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'message_library_tou',
+  );
+
   // Exported permission: 'administer population_types vocabulary terms'.
   $permissions['administer population_types vocabulary terms'] = array(
     'name' => 'administer population_types vocabulary terms',
@@ -98,6 +116,20 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'clear message_library_node_message feeds'.
+  $permissions['clear message_library_node_message feeds'] = array(
+    'name' => 'clear message_library_node_message feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'clear message_library_term_at_risk_group feeds'.
+  $permissions['clear message_library_term_at_risk_group feeds'] = array(
+    'name' => 'clear message_library_term_at_risk_group feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'clear message_library_term_hazard feeds'.
   $permissions['clear message_library_term_hazard feeds'] = array(
     'name' => 'clear message_library_term_hazard feeds',
@@ -112,9 +144,23 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'clear message_library_term_issues feeds'.
+  $permissions['clear message_library_term_issues feeds'] = array(
+    'name' => 'clear message_library_term_issues feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'clear message_library_term_sector feeds'.
   $permissions['clear message_library_term_sector feeds'] = array(
     'name' => 'clear message_library_term_sector feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'clear message_library_term_target_audience feeds'.
+  $permissions['clear message_library_term_target_audience feeds'] = array(
+    'name' => 'clear message_library_term_target_audience feeds',
     'roles' => array(),
     'module' => 'feeds',
   );
@@ -293,6 +339,20 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'import message_library_node_message feeds'.
+  $permissions['import message_library_node_message feeds'] = array(
+    'name' => 'import message_library_node_message feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'import message_library_term_at_risk_group feeds'.
+  $permissions['import message_library_term_at_risk_group feeds'] = array(
+    'name' => 'import message_library_term_at_risk_group feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'import message_library_term_hazard feeds'.
   $permissions['import message_library_term_hazard feeds'] = array(
     'name' => 'import message_library_term_hazard feeds',
@@ -307,9 +367,23 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'import message_library_term_issues feeds'.
+  $permissions['import message_library_term_issues feeds'] = array(
+    'name' => 'import message_library_term_issues feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'import message_library_term_sector feeds'.
   $permissions['import message_library_term_sector feeds'] = array(
     'name' => 'import message_library_term_sector feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'import message_library_term_target_audience feeds'.
+  $permissions['import message_library_term_target_audience feeds'] = array(
+    'name' => 'import message_library_term_target_audience feeds',
     'roles' => array(),
     'module' => 'feeds',
   );
@@ -377,6 +451,20 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'unlock message_library_node_message feeds'.
+  $permissions['unlock message_library_node_message feeds'] = array(
+    'name' => 'unlock message_library_node_message feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'unlock message_library_term_at_risk_group feeds'.
+  $permissions['unlock message_library_term_at_risk_group feeds'] = array(
+    'name' => 'unlock message_library_term_at_risk_group feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'unlock message_library_term_hazard feeds'.
   $permissions['unlock message_library_term_hazard feeds'] = array(
     'name' => 'unlock message_library_term_hazard feeds',
@@ -391,9 +479,23 @@ function message_library_user_default_permissions() {
     'module' => 'feeds',
   );
 
+  // Exported permission: 'unlock message_library_term_issues feeds'.
+  $permissions['unlock message_library_term_issues feeds'] = array(
+    'name' => 'unlock message_library_term_issues feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
   // Exported permission: 'unlock message_library_term_sector feeds'.
   $permissions['unlock message_library_term_sector feeds'] = array(
     'name' => 'unlock message_library_term_sector feeds',
+    'roles' => array(),
+    'module' => 'feeds',
+  );
+
+  // Exported permission: 'unlock message_library_term_target_audience feeds'.
+  $permissions['unlock message_library_term_target_audience feeds'] = array(
+    'name' => 'unlock message_library_term_target_audience feeds',
     'roles' => array(),
     'module' => 'feeds',
   );
@@ -414,17 +516,6 @@ function message_library_user_default_permissions() {
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'search_api_autocomplete',
-  );
-
-  // Exported permission: 'view own unpublished content'.
-  $permissions['view own unpublished content'] = array(
-    'name' => 'view own unpublished content',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'editor' => 'editor',
-      'manager' => 'manager',
-    ),
-    'module' => 'node',
   );
 
   return $permissions;
