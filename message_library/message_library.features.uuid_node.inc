@@ -25,7 +25,7 @@ function message_library_uuid_features_default_content() {
   'tnid' => 0,
   'translate' => 0,
   'uuid' => '295bdf1f-6776-45e8-a888-7328188050cb',
-  'revision_uid' => 1,
+  'revision_uid' => 0,
   'body' => array(
     'und' => array(
       0 => array(
@@ -100,24 +100,12 @@ function message_library_uuid_features_default_content() {
     ),
   ),
   'translations' => array(
-    'original' => 'und',
-    'data' => array(
-      'und' => array(
-        'entity_type' => 'node',
-        'entity_id' => 2,
-        'language' => 'und',
-        'source' => '',
-        'uid' => 1,
-        'status' => 1,
-        'translate' => 0,
-        'created' => 1377607256,
-        'changed' => 1387525817,
-      ),
-    ),
+    'original' => NULL,
+    'data' => array(),
   ),
   'cid' => 0,
   'last_comment_name' => NULL,
-  'last_comment_uid' => 0,
+  'last_comment_uid' => 1,
   'comment_count' => 0,
   'name' => 'admin',
   'picture' => 0,
@@ -139,7 +127,7 @@ function message_library_uuid_features_default_content() {
   'tnid' => 0,
   'translate' => 0,
   'uuid' => '2f65a574-0bf6-4ba6-9be2-4116404fe663',
-  'revision_uid' => 1,
+  'revision_uid' => 0,
   'body' => array(
     'und' => array(
       0 => array(
@@ -214,24 +202,12 @@ function message_library_uuid_features_default_content() {
     ),
   ),
   'translations' => array(
-    'original' => 'und',
-    'data' => array(
-      'und' => array(
-        'entity_type' => 'node',
-        'entity_id' => 3,
-        'language' => 'und',
-        'source' => '',
-        'uid' => 1,
-        'status' => 1,
-        'translate' => 0,
-        'created' => 1377607256,
-        'changed' => 1387525839,
-      ),
-    ),
+    'original' => NULL,
+    'data' => array(),
   ),
   'cid' => 0,
   'last_comment_name' => NULL,
-  'last_comment_uid' => 0,
+  'last_comment_uid' => 1,
   'comment_count' => 0,
   'name' => 'admin',
   'picture' => 0,

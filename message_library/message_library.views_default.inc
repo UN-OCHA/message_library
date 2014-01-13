@@ -883,18 +883,44 @@ function message_library_views_default_views() {
   $handler->display->display_options['fields']['php']['field'] = 'php';
   $handler->display->display_options['fields']['php']['label'] = 'Sector';
   $handler->display->display_options['fields']['php']['use_php_setup'] = 0;
-  $handler->display->display_options['fields']['php']['php_value'] = '$issues_parent_list = array();
-$threat_term = taxonomy_term_load($row->field_threat_category);
-foreach ($threat_term->field_threat_category[\'und\'] as $key => $val){
-$issue_parent = taxonomy_get_parents($val[\'tid\']);
-foreach($issue_parent as $key => $val) {
-$issues_parent_list[] = $val->name;
+  $handler->display->display_options['fields']['php']['php_value'] = '// get the issues of this threat
+$issue_tids = array();
+$term = taxonomy_term_load($row->field_threat_category);
+$items = field_get_items(\'taxonomy_term\', $term, \'field_threat_category\');
+foreach($items as $i) {
+  if (empty($i[\'tid\'])) continue;
+  $issue_tids[] = $i[\'tid\'];
 }
-}
-$result = array_unique($issues_parent_list);
 
-$static[\'parent\'] = $result 
-';
+dpm($issue_tids);
+
+// get the sector by issues
+$sector_tids = array();
+if ($issue_tids) {
+  foreach ($issue_tids as $tid) {
+    $issue = taxonomy_term_load($tid);
+    $items = field_get_items(\'taxonomy_term\', $issue, \'field_issues_sector\');
+    foreach ($items as $i) {
+      if (empty($i[\'tid\'])) continue;
+      $sector_tids[] = $i[\'tid\'];
+    }
+  }
+}
+
+dpm($sector_tids);
+
+// sector 
+$result = array();
+if ($sector_tids) {
+  foreach ($sector_tids as $tid) {
+    $t = taxonomy_term_load($tid);
+    if ($t && !in_array($t->name, $result)) {
+      $result[] = $t->name;
+    }
+  }
+}
+
+$static[\'parent\'] = $result ';
   $handler->display->display_options['fields']['php']['php_output'] = '<div class="item-list">
 <ul>
 <?php
