@@ -892,8 +892,6 @@ foreach($items as $i) {
   $issue_tids[] = $i[\'tid\'];
 }
 
-dpm($issue_tids);
-
 // get the sector by issues
 $sector_tids = array();
 if ($issue_tids) {
@@ -906,8 +904,6 @@ if ($issue_tids) {
     }
   }
 }
-
-dpm($sector_tids);
 
 // sector 
 $result = array();
