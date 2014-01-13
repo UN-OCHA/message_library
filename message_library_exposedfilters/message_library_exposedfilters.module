@@ -12,6 +12,13 @@ function message_library_exposedfilters_views_api() {
 }
 
 /**
+ * Implements hook_flush_caches()
+ */
+function message_library_exposedfilters_flush_caches() {
+  message_library_exposedfilters_get_issue_threats(true);
+}
+
+/**
  * Implements hook_theme()
  */
 function message_library_exposedfilters_theme($existing, $type, $theme, $path) {
@@ -35,7 +42,7 @@ function message_library_exposedfilters_preprocess_page(&$variables) {
 
 
 /**
- * Implements hook_views_pre_render()
+ * Implements hook_viws_pre_render()
  */
 function message_library_exposedfilters_views_pre_render(&$view) {
   // This will prepend a 'Currently Selected Criteria' section to the views
@@ -175,9 +182,9 @@ function message_library_exposedfilters_form_views_exposed_form_alter(&$form, &$
 /**
  * Get a list of threats grouped by issue.
  */
-function message_library_exposedfilters_get_issue_threats() {
+function message_library_exposedfilters_get_issue_threats($reset = false) {
   $result = variable_get('ml_issue_threats', array());
-  if (!empty($result)) {
+  if (!empty($result) && !$reset) {
     return $result;
   }
   else {

@@ -35,3 +35,16 @@ features[feeds_tamper][] = message_library_term_threat-threat_issue-explode_issu
 features[feeds_tamper][] = message_library_term_threat-threat_sector-explode_sectors_by_comma
 features[variable][] = ml_importer_import_paths
 features[variable][] = ml_importer_interval
+
+; Plugins
+files[] = plugins/MlFeedsCSVParserArg.inc
+files[] = plugins/MlFeedsCSVParserHazard.inc
+files[] = plugins/MlFeedsCSVParser.inc
+files[] = plugins/MlFeedsCSVParserInfotype.inc
+files[] = plugins/MlFeedsCSVParserIssues.inc
+files[] = plugins/MlFeedsCSVParserMessage.inc
+files[] = plugins/MlFeedsCSVParserSector.inc
+files[] = plugins/MlFeedsCSVParserTa.inc
+files[] = plugins/MlFeedsCSVParserThreat.inc
+files[] = plugins/MlFeedsNodeProcessor.inc
+files[] = plugins/MlFeedsTermProcessor.inc

@@ -27,7 +27,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlMessageCsvParser',
+      'plugin_key' => 'MlFeedsCSVParserMessage',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -158,7 +158,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlArgCsvParser',
+      'plugin_key' => 'MlFeedsCSVParserArg',
       'config' => array(),
     ),
     'processor' => array(
@@ -219,7 +219,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlHazardParser',
+      'plugin_key' => 'MlFeedsCSVParserHazard',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -283,7 +283,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlItParser',
+      'plugin_key' => 'MlFeedsCSVParserInfotype',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -347,7 +347,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlIssuesCsvParser',
+      'plugin_key' => 'MlFeedsCSVParserIssues',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -411,7 +411,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlSectorParser',
+      'plugin_key' => 'MlFeedsCSVParserSector',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -475,7 +475,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlTaParser',
+      'plugin_key' => 'MlFeedsCSVParserTa',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,
@@ -544,7 +544,7 @@ function message_library_importer_feeds_importer_default() {
       ),
     ),
     'parser' => array(
-      'plugin_key' => 'MlThreatParser',
+      'plugin_key' => 'MlFeedsCSVParserThreat',
       'config' => array(
         'delimiter' => ',',
         'no_headers' => 0,

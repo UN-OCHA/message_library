@@ -1,8 +1,8 @@
 <?php
 
-require_once 'MlCSVParser.inc';
+require_once 'MlFeedsCSVParser.inc';
 
-class MlArgCsvParser extends  MlCSVParser {
+class MlFeedsCSVParserArg extends  MlFeedsCSVParser {
   public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     $result = parent::parse($source, $fetcher_result);
 

@@ -91,105 +91,104 @@ function message_library_importer_feeds_plugins() {
   /**
    * Here is a few custom CSV parsers hope to make things simpler.
    */
-  $info['MlCsvParser'] = array(
+  $info['MlFeedsCSVParser'] = array(
     'name' => '[Message Library] CSV parser',
     'description' => 'Parse data in Comma Separated Value format.',
     'handler' => array(
       'parent' => 'FeedsCSVParser',
-      'class' => 'MlCsvParser',
-      'file' => 'MlCsvParser.inc',
-      'path' => $path . '/parser',
+      'class'  => 'MlFeedsCSVParser',
+      'file'   => 'MlFeedsCSVParser.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlIssuesCsvParser'] = array(
+  $info['MlFeedsCSVParserIssues'] = array(
     'name' => '[Message Library] CSV parser - Issues',
     'description' => 'Parse \'Issues\' terms from csv file.',
     'help' => 'Parse \'Issues\' terms from csv file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlIssuesCSVParser',
-      'file' => 'MlIssuesCSVParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserIssues',
+      'file'   => 'MlFeedsCSVParserIssues.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlArgCsvParser'] = array(
+  $info['MlFeedsCSVParserArg'] = array(
     'name' => '[Message Library] CSV parser - ARG',
     'description' => 'Parse \'At Risk Group\' terms from CSV file.',
     'help' => 'Parse \'At Risk Group\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlArgCsvParser',
-      'file' => 'MlArgCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserArg',
+      'file'   => 'MlFeedsCSVParserArg.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlHazardParser'] = array(
+  $info['MlFeedsCSVParserHazard'] = array(
     'name' => '[Message Library] CSV parser - Hazard',
     'description' => 'Parse \'Hazard\' terms from CSV file.',
     'help' => 'Parse \'Hazard\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlHazardCsvParser',
-      'file' => 'MlHazardCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserHazard',
+      'file'   => 'MlFeedsCSVParserHazard.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlItParser'] = array(
+  $info['MlFeedsCSVParserInfotype'] = array(
     'name' => '[Message Library] CSV parser - IT',
     'description' => 'Parse \'Information Type\' terms from CSV file.',
     'help' => 'Parse \'Information Type\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlItCsvParser',
-      'file' => 'MlItCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserInfotype',
+      'file'   => 'MlFeedsCSVParserInfotype.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlSectorParser'] = array(
+  $info['MlFeedsCSVParserSector'] = array(
     'name' => '[Message Library] CSV parser - Sector',
     'description' => 'Parse \'Sector\' terms from CSV file.',
     'help' => 'Parse \'Sector\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlSectorCsvParser',
-      'file' => 'MlSectorCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserSector',
+      'file'   => 'MlFeedsCSVParserSector.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlTaParser'] = array(
+  $info['MlFeedsCSVParserTa'] = array(
     'name' => '[Message Library] CSV parser - TA',
     'description' => 'Parse \'Target Audience\' terms from CSV file.',
     'help' => 'Parse \'Target Audience\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlTaCsvParser',
-      'file' => 'MlTaCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserTa',
+      'file'   => 'MlFeedsCSVParserTa.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlThreatParser'] = array(
+  $info['MlFeedsCSVParserThreat'] = array(
     'name' => '[Message Library] CSV parser - Threat',
     'description' => 'Parse \'Threat\' terms from CSV file.',
     'help' => 'Parse \'Threat\' terms from CSV file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlThreatCsvParser',
-      'file' => 'MlThreatCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserThreat',
+      'file'   => 'MlFeedsCSVParserThreat.inc',
+      'path'   => $path,
     ),
   );
-  $info['MlMessageCsvParser'] = array(
+  $info['MlFeedsCSVParserMessage'] = array(
     'name' => '[Message Library] CSV parser - Message',
     'description' => 'Parse Message nodes from csv file.',
     'help' => 'Parse \'Message\' nodes from csv file.',
     'handler' => array(
-      'parent' => 'MlCsvParser',
-      'class' => 'MlMessageCsvParser',
-      'file' => 'MlMessageCsvParser.inc',
-      'path' => $path . '/parser',
+      'parent' => 'MlFeedsCSVParser',
+      'class'  => 'MlFeedsCSVParserMessage',
+      'file'   => 'MlFeedsCSVParserMessage.inc',
+      'path'   => $path,
     ),
   );
-
   return $info;
 }
 
@@ -203,8 +202,8 @@ function message_library_importer_message_library_import_action($object, $contex
   // The importing order of feeds importers.
   $importer_ids = array(
     'message_library_term_hazard',
-    'message_library_term_issues',
     'message_library_term_sector',
+    'message_library_term_issues',
 
     'message_library_term_threat',
     'message_library_term_information_type',

@@ -107,12 +107,12 @@ class MLHandlerFilterOptionsIssue extends SearchApiViewsHandlerFilterOptions {
   }
 
   public function accept_exposed_input($input) {
-    parent::accept_exposed_input($input);
 
+    if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
+      $input['issue'] = 'All';
+    }
 
-//     if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
-//       $input['issue'] = 'All';
-//     }
+    $return = parent::accept_exposed_input($input);
 
     // convert the a sector value to multiple issues values
     $sec_tids = array_keys($this->nested_options);
@@ -123,7 +123,7 @@ class MLHandlerFilterOptionsIssue extends SearchApiViewsHandlerFilterOptions {
         $this->value = $sec_issue_tids;
       }
     }
-    return true;
+    return $return;
   }
 
   public function store_exposed_input($input, $status) {
@@ -137,7 +137,6 @@ class MLHandlerFilterOptionsIssue extends SearchApiViewsHandlerFilterOptions {
     }
 
     if ($input['iss_mode'] == '0' && array_key_exists($input['issue'], $this->nested_options)) {
-      dpm($this);
       $this->view->exposed_input['issue'] = 'All';
     }
   }

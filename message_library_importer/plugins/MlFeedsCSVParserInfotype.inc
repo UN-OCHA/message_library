@@ -1,7 +1,7 @@
 <?php
 
-require_once 'MlCSVParser.inc';
+require_once 'MlFeedsCSVParser.inc';
 
-class MlItCsvParser extends MlCsvParser {
+class MlFeedsCSVParserInfotype extends MlFeedsCSVParser {
   // 'Information Type' vocabulary doesn't have nested terms, and no need to reorder.
 }

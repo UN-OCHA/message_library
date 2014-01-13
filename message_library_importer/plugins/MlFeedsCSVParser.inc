@@ -1,5 +1,5 @@
 <?php
-class MlCSVParser extends FeedsCSVParser {
+class MlFeedsCSVParser extends FeedsCSVParser {
 
   public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     $result = parent::parse ( $source, $fetcher_result );

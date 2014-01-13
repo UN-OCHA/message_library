@@ -17,3 +17,10 @@ function message_library_exposedfilters_install() {
     ->condition('type', 'module')
     ->execute();
 }
+
+/**
+ * Implements hook_uninstall()
+ */
+function message_library_exposedfilters_uninstall() {
+  variable_del('ml_issue_threats');
+}

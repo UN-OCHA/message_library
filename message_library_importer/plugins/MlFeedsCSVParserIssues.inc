@@ -1,8 +1,8 @@
 <?php
 
-require_once 'MlCSVParser.inc';
+require_once 'MlFeedsCSVParser.inc';
 
-class MlIssuesCSVParser extends MlCSVParser {
+class MlFeedsCSVParserIssues extends MlFeedsCSVParser {
   /**
    * Implements FeedsParser::parse().
    */
@@ -13,10 +13,9 @@ class MlIssuesCSVParser extends MlCSVParser {
       // remove all the sector terms.
       foreach ( $result->items as $m => $item ) {
         if ($item ['term name'] == 'Sectors' && !empty($item['term id']) && empty($item['parent term id'])) {
-          $tid = $item['term id'];
-
+          $root_tid = $item['term id'];
           foreach ($result->items as $n => $item) {
-            if (!empty($item['parent term id']) && $item['parent term id'] == $tid) {
+            if (!empty($item['parent term id']) && $item['parent term id'] == $root_tid) {
               unset($result->items[$n]);  // remove all embedding sector terms
             }
           }
