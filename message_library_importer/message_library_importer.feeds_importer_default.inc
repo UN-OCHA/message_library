@@ -105,23 +105,18 @@ function message_library_importer_feeds_importer_default() {
             'unique' => FALSE,
           ),
           13 => array(
-            'source' => 'Source',
-            'target' => 'field_message_source:url',
-            'unique' => FALSE,
-          ),
-          14 => array(
-            'source' => 'Examples of Communication around this Issue',
-            'target' => 'field_message_example_communic',
-            'unique' => FALSE,
-          ),
-          15 => array(
             'source' => 'Websites',
             'target' => 'field_message_url:url',
             'unique' => FALSE,
           ),
-          16 => array(
+          14 => array(
             'source' => 'Synonyms',
             'target' => 'field_message_synonyms',
+            'unique' => FALSE,
+          ),
+          15 => array(
+            'source' => 'Examples of Communication around this Issue',
+            'target' => 'field_message_example_communic:url',
             'unique' => FALSE,
           ),
         ),

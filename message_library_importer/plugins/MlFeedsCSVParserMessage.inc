@@ -2,6 +2,9 @@
 
 require_once 'MlFeedsCSVParser.inc';
 
+/**
+ * @see: message_library_importer_feeds_presave()
+ */
 class MlFeedsCSVParserMessage extends MlFeedsCSVParser {
 
   public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
@@ -62,7 +65,7 @@ class MlFeedsCSVParserMessage extends MlFeedsCSVParser {
         if (!empty($example_items)) {
           foreach ($example_items as $v) {
             if (link_validate_url($v) == FALSE) continue;
-            $value['examples of communication around this issue'][] =
+            $item['examples of communication around this issue'][] =
               array('url' => $v,'title' => '');
           }
         }

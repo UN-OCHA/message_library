@@ -307,8 +307,9 @@ function message_library_field_default_field_instances() {
       ),
       'teaser' => array(
         'label' => 'above',
+        'module' => 'message_library',
         'settings' => array(),
-        'type' => 'hidden',
+        'type' => 'ml_list',
         'weight' => 9,
       ),
     ),

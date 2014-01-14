@@ -289,24 +289,48 @@ function message_library_importer_message_library_import_action($object, $contex
  * This hook is invoked before a feed item is saved.
  *
  * @see: FeedsProcessor::process()
+ * @see: MlFeedsCSVParserMessage:parse()
  */
 function message_library_importer_feeds_presave(FeedsSource $source, $entity, $item) {
-  // Set the right target for field 'field_message_source'
-  // Only for message nodes
   if (!empty($entity->nid) && !empty($entity->type) && ($entity->type == 'message')) {
     $entity->status = 1;
+
+    // Set target for field 'Source'
     $field_lan = field_language('node', $entity, 'field_message_source');
     $entity->field_message_source = array();
     if (!empty($item['source'])) {
       foreach ($item['source'] as $entry) {
-        $entry = array_map('trim', $entry);
-
         $entity->field_message_source[$field_lan][] = array(
           'title' => $entry['title'],
-          'url' => $entry['url'],
+          'url'   => $entry['url'],
         );
       }
     }
+
+    // Set target for field 'Websites'
+    $field_lan = field_language('node', $entity, 'field_message_url');
+    $entity->field_message_url = array();
+    if (!empty($item['websites'])) {
+      foreach ($item['websites'] as $entry) {
+        $entity->field_message_url[$field_lan][] = array(
+          'title' => $entry['title'],
+          'url'   => $entry['url'],
+        );
+      }
+    }
+
+    // Set target for field 'Examples of Communication around this issue'
+    $field_lan = field_language('node', $entity, 'field_message_example_communic');
+    $entity->field_message_example_communic = array();
+    if (!empty($item['examples of communication around this issue'])) {
+      foreach ($item['examples of communication around this issue'] as $entry) {
+        $entity->field_message_example_communic[$field_lan][] = array(
+            'title' => $entry['title'],
+            'url'   => $entry['url'],
+        );
+      }
+    }
+
   }
 }
 
