@@ -499,3 +499,57 @@ function message_library_search_api_processor_info() {
     ),
   );
 }
+
+/**
+ * Implements hook_field_formatter_info()
+ */
+function message_library_field_formatter_info() {
+  return array(
+    'ml_list' => array(
+      'label' => t('List (Message Library)'),
+      'field types' => array('taxonomy_term_reference', 'link_field'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view()
+ */
+function message_library_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  if ($display['type'] == 'ml_list') {
+    if ($field['type'] == 'link_field') {
+      foreach ($items as $delta => $item) {
+        $markup  = '<div>';
+        if (!empty($item['url']) && !empty($item['title'])) {
+          $markup .= l($item['title'], $item['url'], array('html' => $item['html'], 'attributes' => $item['attributes']));
+        }
+        else if (!empty($item['url']) && empty($item['title'])) {
+          $markup .= check_plain($item['title']);
+        }
+        $markup .= '</div>';
+        $element[$delta] = array(
+          '#markup' => $markup,
+        );
+      }
+    }
+    else if ($field['type'] == 'taxonomy_term_reference') {
+      $tids = array();
+      foreach ($items as $item) {
+        if (!empty($item['tid'])) {
+          $tids[$item['tid']] = (int) $item['tid'];
+        }
+      }
+      $result = db_query('SELECT tid, name FROM {taxonomy_term_data} WHERE tid in (:tids)', array(':tids' => $tids));
+      $rows = $result->fetchAllKeyed(0, 1);
+      $markup = '';
+      if ($rows) {
+        $markup .= implode(', ', $rows);
+      }
+      $element[] = array(
+        '#markup' => $markup,
+      );
+    }
+  }
+  return $element;
+}
